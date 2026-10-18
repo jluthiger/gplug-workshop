@@ -1,0 +1,34 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Secrets (Infomaniak / LLM API keys, device passwords)
+.env
+.env.*
+*.key
+secrets*.json
+opencode.json.local
+
+# Desktop harness run artefacts (run from a scratch dir, never commit)
+app/spot_20*.csv
+app/spot_h_20*.csv
+mock/*.csv
+bkw*.json
+!reference/bkw_sample.json
+
+# Device dumps / logs
+*.log
+console*.txt
+
+# Python helpers
+__pycache__/
+*.pyc
+.venv/
+
+# Agent tooling
+.opencode/
+.claude/
+node_modules/
