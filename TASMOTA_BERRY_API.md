@@ -142,7 +142,7 @@ wc = nil
 tasmota.gc()
 ```
 
-- **`get_string()` drops responses > 32 KB.** Alternative: `wc.write_file("/bkw.json")` → bytes written or -1, then parse from flash.
+- **`get_string()` drops responses > 32 KB, and silently truncates them when the heap is fragmented** (chunked response, no error; seen 19.10. at 65 kB free: 8.7 of 21 kB). For anything over a few kB use `wc.write_file("/file.json")` → bytes written or -1, then parse from flash in blocks with `f.read(2048)` (see `parse_file` in `app/spot.be`).
 - HTTPS is insecure mode (no cert check) — fine for public read-only APIs. Cipher ECDHE_RSA_AES128_GCM_SHA256 only.
 - Redirects off by default: `wc.set_follow_redirects(true)`.
 - `GET()` blocks Tasmota for the duration of the request (several hundred ms). Acceptable a few times a day; never in a fast loop.
@@ -195,6 +195,9 @@ Rounding: no `math.round` — use `int(x + 0.5)` for x ≥ 0, `int(x - 0.5)` for
 
 ## 7. Gotchas
 
+- **`f.read(n)` leaks** (Tasmota 15.3.0, measured 19.10.): each pass over a file with `f.read(2048)` loses ~3 kB of Berry heap for good, `gc()` does not get it back. Read files in blocks with `f.readbytes(n).asstring()` or line by line with `f.readline()`; both are leak-free. `f.read()` without size is fine but needs the whole file in RAM.
+- **`BrRestart` is not free**: each VM restart costs ~1 kB of heap outside Berry, and only a real `Restart 1` returns it. 20 upload cycles ≈ 20 kB. `upload.sh` reboots the device by itself when the heap drops below 80 kB.
+- Memory floor: HTTPS needs ~40 kB free for the TLS handshake. Below ~50 kB a 21 kB `get_string()` reboots the device ("MEMORY ALLOCATION FAILED"); between ~50 and ~70 kB it returns a silently truncated string. Check `tasmota.memory("heap_free")` after `tasmota.gc()`, aim to stay above 90 kB.
 - Cron pattern has **6 fields** (seconds first) and runs in **local** time, DST included.
 - `tasmota.add_rule/add_cron/add_cmd` with the same id replace the previous registration — use ids so `BrRestart` doesn't double-register.
 - `tasmota.web_send` is only valid inside `web_sensor()`; `webserver.on` only inside `web_add_handler()`. Calling elsewhere = crash or silence.

@@ -43,7 +43,7 @@ Nützliche Prüfungen:
 ./brcmd.sh 'tasmota.cmd("SpotPrices")'        # nächste 10 h
 ./brcmd.sh 'tasmota.gc()'                      # erst aufräumen, dann:
 ./brcmd.sh 'tasmota.memory("heap_free")'      # freier Heap in kB, soll > 100 bleiben
-./brcmd.sh 'load("spot")'                     # App neu laden ohne Upload (idempotent)
+./brcmd.sh 'load("spot")'                     # App neu laden ohne Upload (erster Reload +20 kB, danach stabil)
 ```
 
 ## 4. Arbeitszyklus
@@ -77,6 +77,12 @@ einhalten. Unklar, ob ein Kommando harmlos ist: Mensch fragen.
 - Strict Mode: keine undeklarierten Globals lesen; Klassen-Member mit `var` deklarieren.
 - RAM ist knapp (~120 kB frei): keine grossen Strings oder Listen aufbauen, HTML/SVG stückweise
   senden, BKW-Antwort nie mit `json.load` parsen.
+- Heap im Blick behalten: nach jedem Upload meldet `upload.sh` `heap_free`; unter 80 kB startet es
+  das Gerät selbst neu (jeder `BrRestart` kostet ~1 kB, nur ein Neustart gibt das zurück). Fällt der
+  Heap nach einer Änderung dauerhaft (gleiche Aktion mehrmals, `tasmota.gc()` davor), ist die
+  Änderung schuld: Ursache suchen, nicht weiterbauen.
+- Dateien nie mit `f.read(n)` blockweise lesen (leckt in Tasmota 15.3 ~1.5 × n Byte pro Durchlauf):
+  `f.readbytes(n).asstring()` oder `f.readline()` verwenden, siehe `parse_file` in `spot.be`.
 - Flash schonen: nicht öfter als nötig in Dateien schreiben (CSV einmal pro Tag bzw. Stunde).
 - Jeder Callback-Body in `try ... except .. as e, m ... end`, Fehler mit `log("SPOT: ...", 2)`.
 - Neue Commands mit `tasmota.add_cmd`, Crons mit fester Id, damit `load("spot")` nichts doppelt

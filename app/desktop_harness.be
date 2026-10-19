@@ -35,7 +35,7 @@ NOW_UTC = 0          # wird im Szenario gesetzt
 TZ_MIN = 60          # wie das Testgerät: +01:00 fix
 
 class Tas
-  var out, drivers, cmds, crons, rules, resp, heap
+  var out, drivers, cmds, crons, rules, resp, heap, net_up
   def init() self.out = [] self.drivers = [] self.cmds = {} self.crons = {} self.rules = {} self.heap = 150 end
   def rtc(k)
     var m = {"utc": NOW_UTC, "local": NOW_UTC + TZ_MIN * 60, "timezone": TZ_MIN, "restart": NOW_UTC - 3600}
@@ -81,7 +81,7 @@ class Tas
   def add_cron(p, f, id) self.crons[id] = f end
   def add_rule(t, f, id) self.rules[t] = f end
   def set_timer(ms, f, id) f() end
-  def when_network_up(f) f() end
+  def when_network_up(f) self.net_up = f end     # Harness ruft es nach der Pfad-Konfiguration
   def read_sensors() return '{"Time":"2026-10-18T17:04:11","z":{"SMid":"","Eo":0.0}}' end
 end
 tasmota = Tas()
@@ -93,11 +93,14 @@ class webclient
   def add_header(a, b) end
   def set_timeouts(a, b) return self end
   def GET() return 200 end
-  def get_string()
+  def write_file(name)                     # kopiert bkw.json, wie der Download aufs Gerät
     var f = open("bkw.json", "r")
     var s = f.read()
     f.close()
-    return s
+    f = open(name, "w")
+    f.write(s)
+    f.close()
+    return size(s)
   end
   def close() end
 end
@@ -116,6 +119,8 @@ spot_day = nil
 NOW_UTC = local_epoch(2026, 10, 18, 6, 0)          # 06:00 lokal
 compile("spot.be", "file")()
 spot.cfg["csv_dir"] = ""                             # CSV ins aktuelle Verzeichnis
+spot.cfg["dl_file"] = "spot_dl.json"                 # Download ins aktuelle Verzeichnis
+tasmota.net_up()                                     # Netz da -> Preisabruf
 assert(tasmota.drivers.size() == 1)
 print("after load: prices today =", spot.store.count(spot.store.prices, spot_day(spot_now())),
       "energy backfilled =", spot.store.count(spot.store.energy, spot_day(spot_now())))

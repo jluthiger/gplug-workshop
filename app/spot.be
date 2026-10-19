@@ -30,6 +30,7 @@ spot_cfg = {
   "url": "https://api.bkw.ch/api/dyntariffs/v1/Tariffs/energyreturn",
   "days": 4,                   # Tage im Ringpuffer (heute, morgen, gestern, vorgestern)
   "csv_dir": "/",              # Ablage der CSV-Dateien
+  "dl_file": "/spot_dl.json",  # letzte BKW-Antwort (Download landet im Flash, nicht im RAM)
   "csv_hourly": false          # ERWEITERUNGSPUNKT Übung B: Stundenwerte zusätzlich ablegen
 }
 
@@ -193,9 +194,13 @@ class SpotApp
       wc.set_timeouts(10000, 5000)
       var rc = wc.GET()
       if rc == 200
-        var s = wc.get_string()         # ca. 21 kB, nur bis Ende parse() im RAM
-        n = self.parse(s)
-        s = nil
+        # Nicht get_string(): bei fragmentiertem Heap liefert es die (chunked) Antwort still
+        # abgeschnitten (19.10., 65 kB frei: 8.7 von 21 kB). write_file streamt ins Flash.
+        if wc.write_file(self.cfg["dl_file"]) > 0
+          n = self.parse_file(self.cfg["dl_file"])
+        else
+          self.last_fetch = "Download fehlgeschlagen"
+        end
       else
         self.last_fetch = "HTTP " + str(rc)
       end
@@ -218,11 +223,7 @@ class SpotApp
   def fetch_file(name)
     var n = 0
     try
-      var f = open(name, "r")
-      var s = f.read()
-      f.close()
-      n = self.parse(s)
-      s = nil
+      n = self.parse_file(name)
     except .. as e, m
       self.last_fetch = "Datei: " + str(m)
     end
@@ -251,13 +252,37 @@ class SpotApp
     if n > 0 self.last_fetch += string.format(", %d heute aus Folgetag (Sim)", n) end
   end
 
-  # Werte direkt aus dem JSON-String ziehen (kein json.load der 21 kB).
+  # BKW-Antwort blockweise aus einer Datei parsen: nie mehr als ca. 2.5 kB Text im RAM.
+  # Ein am Blockende abgeschnittener Eintrag wird mit dem nächsten Block fertig gelesen.
+  # readbytes statt f.read(n): f.read(n) verliert in Tasmota 15.3 pro Durchlauf ~1.5 x n
+  # Byte Berry-Heap (gemessen 19.10.), readbytes()/readline() nicht.
+  def parse_file(name)
+    var n = 0
+    var rest = ""
+    var f = open(name, "r")
+    while true
+      var chunk = f.readbytes(2048)
+      if size(chunk) == 0 break end
+      var s = rest + chunk.asstring()
+      chunk = nil
+      var r = self.parse(s)
+      n += r[0]
+      rest = s[r[1]..]
+      if size(rest) > 4096 break end             # kein Eintrag in 4 kB: kein BKW-Format
+    end
+    f.close()
+    return n
+  end
+
+  # Werte direkt aus dem JSON-Text ziehen (kein json.load).
   # Jeder Eintrag: "start_timestamp": "2026-10-17T22:00:00Z" ... "value": 0.194
   # Leerzeichen/Zeilenumbrüche nach den Doppelpunkten sind erlaubt.
+  # Liefert [Anzahl Werte, Position nach dem letzten vollständigen Eintrag].
   def parse(s)
     var tz = tasmota.rtc("timezone") * 60
     var n = 0
     var pos = 0
+    var done = 0
     while true
       var p = string.find(s, '"start_timestamp"', pos)
       if p < 0 break end
@@ -270,6 +295,7 @@ class SpotApp
       while b < size(s) && (s[b] == ":" || s[b] == " " || s[b] == "\n" || s[b] == "\r" || s[b] == "\t") b += 1 end
       var e = b
       while e < size(s) && string.find("-0123456789.", s[e]) >= 0 e += 1 end
+      if e >= size(s) break end                    # Zahl evtl. am Blockende abgeschnitten
       var val = real(s[b..e-1])
       var t = tasmota.strptime(ts, "%Y-%m-%dT%H:%M:%S")   # Epoche UTC
       if t != nil
@@ -278,8 +304,9 @@ class SpotApp
         n += 1
       end
       pos = e
+      done = e
     end
-    return n
+    return [n, done]
   end
 
   # ---------------------------------------------------------------- F2

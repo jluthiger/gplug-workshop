@@ -20,6 +20,7 @@ infomaniak-secure.txt
 app/spot_20*.csv
 app/spot_h_20*.csv
 app/sensor.html
+app/spot_dl.json
 mock/*.csv
 bkw*.json
 

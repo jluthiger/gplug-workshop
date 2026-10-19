@@ -50,7 +50,7 @@ Puffer ist knapp; Block 2 ist der kritische. Alles, was sich vorab erledigen lä
 - [ ] In der Tasmota-Konsole `Timezone 99` eingeben (Sommerzeit; ab Werk steht `+01:00`). Prüfen: `Time` zeigt die aktuelle Uhrzeit.
 - [ ] USB-Treiber installieren (CH340/CP210x, je nach gPlug-Chip) — nur Recovery-Fall.
 - [ ] Chrome oder Edge installieren (Tasmota Web Installer braucht WebSerial).
-- [ ] opencode.ai installieren (Standard, Install-Script) **oder** Docker Desktop + Image (Option, siehe §5). Test-Kommando mitliefern: `opencode --version` und eine erste Frage an den Agenten im Workshop-Repo.
+- [ ] Docker Desktop installieren und `./docker-run.sh` (Windows: `.\docker-run.ps1`) einmal starten, baut das Image (Standard, siehe §5) **oder**, falls Docker nicht geht, opencode 2.0 direkt installieren (`curl -fsSL https://opencode.ai/v2/install | bash`). Test-Kommando mitliefern: `opencode --version` (v2.0.x) und eine erste Frage an den Agenten im Workshop-Repo.
 - [ ] Workshop-Repo (ZIP oder git clone) in eigenen Ordner entpacken; Infomaniak-API-Key gemäss Anleitung eintragen.
 - [ ] Heim-SM-Konfiguration notieren: Ausgabe von `Status 10` als Text mitbringen (für eigenen Zähler-Pfad).
 - [ ] Optional: Shelly oder anderes HTTP-schaltbares Gerät mitbringen.
@@ -112,7 +112,7 @@ Hinweise:
 | 7 | `AGENTS.md` | Regeln für opencode.ai: Dateien, Upload-Befehl, Tests, „nie `tasmota.web_send` ausserhalb `web_sensor`“ usw. | Trockenlauf mit Agent |
 | 8 | `upload.sh`, `brcmd.sh`, `log.sh` (+ `.ps1`) | Agent-Werkzeuge: Upload + `BrRestart`, Berry-Ausdruck via `/cm?cmnd=Br`, Konsole lesen | Agent löst Übung A allein, Mensch prüft nur |
 | 9 | `RUNBOOK.md` | Teilnehmer-Schritte mit erwarteter Ausgabe pro Schritt (Screenshots) | von einer unbeteiligten Person durchgespielt |
-| 10 | Agent-Setup | Standard: opencode.ai nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte). Option: Docker-Image mit `--network host` | Install + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
+| 10 | Agent-Setup | Standard: Docker-Image (`Dockerfile`, `docker-run.sh`/`.ps1`, opencode 2.0.32 + berry + git, nur Repo gemountet). Fallback: opencode 2.0 nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte) — Image vorhanden, auf macOS getestet 19.10. | Install + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
 | 11 | `EXERCISES.md` | Übungen A/B/C mit Prompt-Vorlage, Ergebnis, Prüfschritt | jede Übung einmal mit Infomaniak-LLM durchgespielt, Dauer notiert |
 | 12 | Demo-Transkript | 3 Ausschnitte aus Referenz-App-Entwicklung (guter Prompt, Halluzination, Korrektur) | auf Beamer lesbar |
 | 13 | `AGENTS.md`-Ergänzung | Werkzeuge beschreiben, verbotene Kommandos (`Reset`, `Restart`, `Upgrade`), Regel „nach jedem Upload `log.sh` lesen“ | Agent hält sich daran im Trockenlauf |
@@ -121,12 +121,34 @@ Hinweise:
 
 Gehostet entfällt: der Agent muss das gPlug im Venue-WLAN erreichen (`upload.sh`, `brcmd.sh`, `log.sh`) — aus der Cloud geht das nicht. **Der Agent läuft lokal auf dem Notebook.** Optionen:
 
-- **A** Docker lokal: opencode.ai-Image, Repo gemountet, `--network host` (damit das gPlug erreichbar ist). Echte Isolation vom Notebook. Risiko: Docker-Desktop-Installation auf 20 BYOD-Notebooks (Windows/WSL, Mac Intel/ARM).
+- **A** Docker lokal: eigenes opencode-Image, nur Repo gemountet, gPlug über Standard-Netz erreichbar. Echte Isolation vom Notebook. Risiko: Docker-Desktop-Installation auf 20 BYOD-Notebooks (Windows/WSL, Mac Intel/ARM).
 - **D** opencode.ai nativ installiert (ein Binary, Install-Script), Arbeitsverzeichnis = Workshop-Repo, Agent-Berechtigungen über opencode-Konfiguration auf dieses Verzeichnis und die drei Skripte begrenzt. Keine Container-Isolation, aber kein Docker-Setup. Infomaniak-API-Key via Config-Datei im Repo-Ordner.
 
-Empfehlung: **D als Standard, A als Option** für Teilnehmende, die Docker bereits haben oder Isolation wollen. Beides in der Hausaufgaben-Mail mit Test-Kommando (`opencode --version`, erste Frage an Agent). Entscheid bis Ende Oktober.
+**Entscheid (19.10.2026): A als Standard, D als Fallback.**
 
-Zu prüfen für D: opencode-Permission-Config (welche Shell-Kommandos erlaubt, Schreibzugriff nur im Repo); Verhalten auf Windows (PowerShell-Varianten der Skripte).
+- Grund: Nur der Container setzt die Regel «kein Zugriff ausserhalb des Workshop-Ordners» technisch durch. Nativ begrenzen `opencode.json` und `AGENTS.md` nur die opencode-eigenen Werkzeuge; ein bestätigter Shell-Befehl sieht das ganze Notebook.
+- Umsetzung: `Dockerfile` (Debian slim, opencode **2.0.32** gepinnt, `berry` 1.1.0 für den Desktop-Test, `git`, `curl`), `docker-run.sh` / `docker-run.ps1` (baut beim ersten Start, mountet nur das Repo als `/work`, reicht `INFOMANIAK_*` und `GPLUG` durch, Volume `gplug-workshop-data` für Sitzungen, unter Linux mit eigener UID). `.dockerignore` hält Repo und Secrets aus dem Build-Kontext.
+- `--network host` ist nicht nötig: der Standard-Bridge-Modus erreicht gPlug (IP) und Internet, auch unter Docker Desktop. `.local`-Namen lösen im Container nicht auf → IP in `.gplug`.
+- Getestet 19.10. auf macOS (Apple Silicon, Docker 29.8): Skripte gegen 192.168.0.201, Desktop-Harness `HARNESS OK`, opencode erreicht Infomaniak. Offen: Windows (Docker Desktop + WSL 2, `docker-run.ps1`), Linux, Mac Intel, interaktive TUI-Sitzung mit echtem Key.
+- opencode-Version: Das Script `opencode.ai/install` installiert 1.x (Agent-Wechsel `Tab`); Workshop nutzt 2.0 (`Shift+Tab`), nativ via `opencode.ai/v2/install`.
+- Beides in der Hausaufgaben-Mail mit Test-Kommando (`opencode --version`, erste Frage an Agent).
+
+Zu prüfen für D (Fallback): Verhalten auf Windows ohne Docker — Geräte-Skripte sind `sh`, laufen dort nur in WSL.
+
+## 5a. Heap-Befund (19.10.)
+
+Testgerät nach einer Agent-Sitzung mit 14 Upload-Zyklen bei 64 kB Heap (statt ~130), Preisabruf lieferte nur 39 von 96 Werten, einmal `MEMORY ALLOCATION FAILED`. Gemessen, je nach `tasmota.gc()`:
+
+| Aktion | Heap-Verlust | Erholt durch |
+|---|---|---|
+| `BrRestart` (jeder `upload.sh`-Lauf) | ~1 kB, ausserhalb Berry | nur `Restart 1` |
+| `load("spot")` ohne Restart, erstes Mal | ~20 kB (zweite Klassen-Kopie), danach ~0 | `BrRestart` |
+| Abruf alt (`get_string`) | 0 kB, aber unter ~70 kB still abgeschnitten, unter ~50 kB Reboot | — |
+| Abruf neu (`write_file` + `f.read(2048)`) | **~3 kB pro Abruf, Berry-Leck in `f.read(n)`** | nur Reboot |
+| Abruf neu (`write_file` + `f.readbytes(2048)`) | 0 kB | — |
+| HTTPS klein, Datei-Upload | 0 kB | — |
+
+Massnahmen: `parse_file` liest mit `readbytes`; `upload.sh` prüft nach `BrRestart` den Heap und startet unter 80 kB (`MIN_HEAP`) das Gerät neu; Cheat-Sheet und `AGENTS.md` nennen beide Fallen. Lehrinhalt für Block 4: Agent-Sitzung zeigt, wie 14 Iterationen das Gerät leise aushungern.
 
 ## 6. Vor Ort
 
@@ -140,7 +162,7 @@ Zu prüfen für D: opencode-Permission-Config (welche Shell-Kommandos erlaubt, S
 
 1. Firmware/Partition passt nicht → Block 2 platzt. Mitigation: §3 Punkt 1, Hausaufgabe, Reserve-Geräte.
 2. Venue-WLAN blockiert oder überlastet. Mitigation: Vorab-Test, Offline-JSON, Hotspot-Fallback.
-3. Agent-Setup (opencode/Docker) frisst Zeit. Mitigation: §5 Option D als Standard, Hausaufgabe mit Test-Kommando, Helfer prüfen in Block 1 beim Einlass.
+3. Agent-Setup (opencode/Docker) frisst Zeit. Mitigation: Image als Hausaufgabe vorab bauen lassen (Download nicht im Venue-WLAN), Option D als Fallback, Hausaufgabe mit Test-Kommando, Helfer prüfen in Block 1 beim Einlass.
 4. Agent halluziniert Tasmota-API. Mitigation: Cheat-Sheet + `AGENTS.md` im Kontext — und als Demo bewusst zeigen, das ist Lehrinhalt.
 5. Zu viel Scope live. Mitigation: nur eine Übung, Referenz-App fertig.
 6. Infomaniak-LLM zu schwach für Berry → Übung scheitert, Teilnehmende schliessen „KI taugt nicht“. Mitigation: Übungen vorab mit genau diesem Modell durchspielen (Deliverable 11), Fallback-Modell konfiguriert.
