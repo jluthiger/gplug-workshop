@@ -134,21 +134,52 @@ nutzt, setzt die Variablen wie unter Linux in `~/.bashrc` innerhalb von WSL.
 | macOS / Linux / WSL | `echo "ID=$INFOMANIAK_PRODUCT_ID KEY=${INFOMANIAK_API_KEY:+gesetzt}"` | `ID=123456 KEY=gesetzt` |
 | Windows PowerShell | `"ID=$env:INFOMANIAK_PRODUCT_ID KEY=$([bool]$env:INFOMANIAK_API_KEY)"` | `ID=123456 KEY=True` |
 
-## 4. opencode installieren
+## 4. opencode bereitstellen
+
+Zwei Wege. **Option A (Docker) ist der Standard**: Der Agent läuft in einem Container und sieht nur
+den Workshop-Ordner, nichts sonst vom Notebook. Option B nur, wenn Docker nicht läuft.
+
+Beide nutzen **opencode 2.0** (Agent wechseln mit `Shift+Tab`). Achtung: das Install-Script
+`https://opencode.ai/install` ohne `/v2` installiert opencode 1.x.
+
+### Option A: Docker (Standard)
+
+1. Docker installieren: [Docker Desktop](https://www.docker.com/products/docker-desktop/) für
+   macOS und Windows (Windows: WSL 2 aktivieren, Installer fragt danach), unter Linux Docker Engine.
+   Test: `docker run --rm hello-world`.
+2. Im Workshop-Ordner das Image bauen und starten (erster Start baut das Image, ca. 2–3 min):
+
+   | System | Befehl |
+   |---|---|
+   | macOS / Linux | `./docker-run.sh` |
+   | Windows (PowerShell) | `.\docker-run.ps1` |
+
+3. Test im Container: `./docker-run.sh bash`, dann `opencode --version` (erwartet `opencode v2.0.32`)
+   und `exit`.
+
+Das Script übergibt `INFOMANIAK_PRODUCT_ID`, `INFOMANIAK_API_KEY` und `GPLUG` aus dem eigenen
+Terminal an den Container (Schritt 3 gilt also auch hier) und hängt nur den Workshop-Ordner als
+`/work` ein. Sitzungen bleiben im Docker-Volume `gplug-workshop-data` erhalten. Im Image sind
+zusätzlich `berry` (Desktop-Test) und `git`. Das gPlug ist aus dem Container über seine **IP**
+erreichbar, `.local`-Namen gehen nicht → IP in `.gplug` eintragen.
+
+### Option B: opencode direkt installieren
 
 | System | Befehl |
 |---|---|
-| macOS / Linux | `curl -fsSL https://opencode.ai/install \| bash` |
-| macOS (Homebrew) | `brew install anomalyco/tap/opencode` |
-| Windows (empfohlen: in WSL) | wie Linux, in der WSL-Shell |
-| Windows nativ | `scoop install opencode` oder `choco install opencode` |
-| Alle mit Node.js | `npm install -g opencode-ai` |
+| macOS / Linux | `curl -fsSL https://opencode.ai/v2/install \| bash` |
+| Windows (in WSL) | wie Linux, in der WSL-Shell |
+| bestehendes opencode 1.x | `opencode upgrade --major` |
 
 Test:
 
 ```sh
-opencode --version
+opencode --version     # erwartet opencode v2.0.x
 ```
+
+Ohne Container sieht der Agent grundsätzlich das ganze Notebook. Die Regeln in `opencode.json`
+(Zugriff ausserhalb des Ordners verboten, Shell-Befehle nur nach Rückfrage) und `AGENTS.md`
+begrenzen das, ersetzen die Isolation aber nicht: Shell-Befehle vor dem Bestätigen lesen.
 
 ## 5. Infomaniak als Provider konfigurieren
 
@@ -212,7 +243,8 @@ In opencode umschalten: `/models` → Modell auswählen.
 ```sh
 cd <pfad>/workshop
 echo "ID=$INFOMANIAK_PRODUCT_ID KEY=${INFOMANIAK_API_KEY:+gesetzt}"   # beide müssen Werte zeigen
-opencode
+./docker-run.sh      # Option A (Windows: .\docker-run.ps1)
+opencode             # Option B
 ```
 
 Windows (PowerShell): `"ID=$env:INFOMANIAK_PRODUCT_ID"` prüfen, dann `opencode`.
@@ -259,7 +291,10 @@ Nützliche Befehle im TUI:
 | `model not found` | Modell-ID weicht ab → Liste aus Schritt 3 prüfen, in `opencode.json` korrigieren |
 | Agent «redet» nur, ändert keine Dateien | Modell ohne gutes Tool Calling → auf Qwen3.5 oder Kimi K2.6 wechseln; `plan`-Agent aktiv? `Shift+Tab` |
 | Antworten brechen ab | Ausgabelimit; `limit.output` im Modell in `opencode.json` erhöhen |
-| Windows: Skripte laufen nicht | WSL verwenden oder PowerShell-Varianten (`.ps1`) der Skripte |
+| Windows: Skripte laufen nicht | Option A (Docker) nutzen, dort laufen sie; sonst WSL |
+| `docker: command not found` / `Cannot connect to the Docker daemon` | Docker Desktop starten, neues Terminal |
+| Agent erreicht gPlug im Container nicht | IP statt `.local`-Name in `.gplug`; Notebook und gPlug im selben WLAN |
+| Datei im Container geändert, gehört `root` (Linux) | Container mit `./docker-run.sh` starten, nicht direkt `docker run` |
 | Kosten im Blick behalten | Infomaniak-Manager → AI Tools → Verbrauch; Ausgabenlimite setzen |
 
 ## Quellen

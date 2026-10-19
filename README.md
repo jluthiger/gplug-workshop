@@ -57,6 +57,8 @@ Konfiguration am Anfang von `app/spot.be` (`spot_cfg`): `sim`, `meter_path`, `da
 - `AGENTS.md` – Regeln für den Coding-Agenten, lädt opencode automatisch.
 - `upload.sh`, `brcmd.sh`, `log.sh` – Gerät bedienen (Upload + `BrRestart`, Berry-Ausdruck,
   Konsole). Geräte-IP in `.gplug` oder `$GPLUG`.
+- `Dockerfile`, `docker-run.sh`, `docker-run.ps1` – Sandbox: opencode 2.0, `berry`, `git` im
+  Container, sichtbar nur dieser Ordner (Standard-Setup, siehe `SETUP_OPENCODE.md`).
 - `TASMOTA_BERRY_API.md` – Spickzettel der verwendeten Tasmota-Berry-API, als Kontext für
   den Coding-Agenten gedacht.
 
