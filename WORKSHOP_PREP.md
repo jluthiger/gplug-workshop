@@ -52,6 +52,7 @@ Puffer ist knapp; Block 2 ist der kritische. Alles, was sich vorab erledigen lä
 - [ ] Chrome oder Edge installieren (Tasmota Web Installer braucht WebSerial).
 - [ ] Docker Desktop installieren und `./docker-run.sh` (Windows: `.\docker-run.ps1`) einmal starten, baut das Image (Standard, siehe §5) **oder**, falls Docker nicht geht, opencode 2.0 direkt installieren (`curl -fsSL https://opencode.ai/v2/install | bash`). Test-Kommando mitliefern: `opencode --version` (v2.0.x) und eine erste Frage an den Agenten im Workshop-Repo.
 - [ ] Workshop-Repo (ZIP oder git clone) in eigenen Ordner entpacken; Infomaniak-API-Key gemäss Anleitung eintragen.
+- [ ] Code-Editor installieren, z.B. Visual Studio Code (<https://code.visualstudio.com>), und den Workshop-Ordner damit einmal öffnen. Braucht es am Workshop, um `app/spot.be` und die Änderungen des Agenten zu lesen.
 - [ ] Heim-SM-Konfiguration notieren: Ausgabe von `Status 10` als Text mitbringen (für eigenen Zähler-Pfad).
 - [ ] Optional: Shelly oder anderes HTTP-schaltbares Gerät mitbringen.
 - [ ] Hinweis: gPlug wird am Workshop ins Venue-WLAN umkonfiguriert, Anleitung zurück ins Heim-WLAN liegt bei.
