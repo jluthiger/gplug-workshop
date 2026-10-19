@@ -26,16 +26,17 @@ die eingespeiste Energie pro Viertelstunde (kWh) als Linie.**
 Vorgaben:
 
 - Datenquelle `self.store.energy_at(key, slot)` (Einheit 0.01 kWh, `nil` = Lücke).
-- Eigene Skala von 0 bis zum Tagesmaximum. **Keine zusätzliche Achsenbeschriftung** – der
-  Cursor (Maus über dem Chart) zeigt den kWh-Wert jedes Slots schon exakt an.
+- Kurzbuchstabe `e` (SVG-Gruppe `se`). Daran erkennt der Cursor die Kurve.
+- Eigene Skala von 0 bis zum Tagesmaximum. **Keine zusätzliche Achsenbeschriftung** – sobald die
+  Kurve da ist, zeigt der Cursor (Maus über dem Chart) den kWh-Wert jedes Slots exakt an.
 - Eintrag «Energie» in der Legende, der die Kurve per Klick ein- und ausblendet wie die anderen.
 - Cursor-Script unverändert, kein JavaScript, keine neue Schleife, nichts anderes ändern.
 
 ### Was schon da ist (nicht neu bauen lassen)
 
 In `app/spot.be`, Abschnitt `F3  Chart`, steht ein Kommentar `ERWEITERUNGSPUNKT Übung A` mit dem
-Rezept. Vorhanden sind: Legende mit Toggle (aus der Tabelle `chart_curves()`), Cursor mit kWh-Wert,
-die Helfer `day_range(...)`, `y_scale(...)` und `send_polyline(...)`, Farbkonstanten `COL_...`.
+Rezept. Vorhanden sind: Legende mit Toggle (aus der Tabelle `chart_curves()`), Cursor, der den
+kWh-Wert in der Linienfarbe einblendet, sobald es eine sichtbare Gruppe `se` gibt, die Helfer `day_range(...)`, `y_scale(...)` und `send_polyline(...)`, Farbkonstanten `COL_...`.
 Die Lösung berührt **drei Stellen** und ist etwa fünf Zeilen lang.
 
 ### Zeitplan (65 min)
@@ -58,9 +59,9 @@ Kommentar "ERWEITERUNGSPUNKT Übung A".
 Aufgabe: Im Tageschart soll eine dritte Kurve die eingespeiste Energie pro Viertelstunde (kWh)
 als Linie zeigen.
 
-Vorgaben: Datenquelle self.store.energy_at(key, slot) (0.01 kWh, nil = Lücke). Eigene Skala von
-0 bis zum Tagesmaximum, keine zusätzliche Achsenbeschriftung (der Cursor zeigt den kWh-Wert
-schon). Eintrag "Energie" in der Legende, der die Kurve wie die anderen ein- und ausblendet.
+Vorgaben: Datenquelle self.store.energy_at(key, slot) (0.01 kWh, nil = Lücke). Kurzbuchstabe e.
+Eigene Skala von 0 bis zum Tagesmaximum, keine zusätzliche Achsenbeschriftung (der Cursor zeigt
+den kWh-Wert, sobald die Gruppe se existiert). Eintrag "Energie" in der Legende, der die Kurve wie die anderen ein- und ausblendet.
 Bestehende Helfer verwenden: chart_curves, day_range, y_scale, send_polyline. Keine neue
 Schleife, kein JavaScript, keine Änderung am Cursor-Script, nichts anderes ändern.
 
@@ -93,8 +94,8 @@ Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
 
 - Legende hat einen vierten Eintrag «Energie»; Klick blendet die Linie aus und ein.
 - Die Linie hat ihr Maximum oben am Chart (eigene Skala) und Lücken, wo Energie fehlt.
-- Maus über dem Chart: Cursor zeigt unverändert Zeit, Rp/kWh, kWh, Rp; der kWh-Wert passt zur
-  Höhe der Linie.
+- Maus über dem Chart: Cursor zeigt neu zusätzlich den kWh-Wert, in der Farbe der Linie; er passt
+  zur Höhe der Linie. Linie per Legende ausgeblendet → kWh verschwindet aus dem Cursor.
 - `./log.sh`: `SPOT: v0.2 geladen` nach dem Upload, keine Zeile mit `BRY:`.
 - `SpotStatus` unverändert bis auf `HeapFree` (höchstens ~1 kB tiefer pro Upload).
 - `git diff --stat app/spot.be`: eine Datei, etwa 5 Zeilen an 3 Stellen.
@@ -116,7 +117,8 @@ git diff --stat app/spot.be
 ```
 
 Im Browser: Seite neu laden, «Vergütung/¼h» ausblenden, Linie allein betrachten, mit der Maus
-einen Slot anfahren und den kWh-Wert mit der Linienhöhe vergleichen.
+einen Slot anfahren und den kWh-Wert mit der Linienhöhe vergleichen; «Energie» ausblenden → kWh
+weg aus dem Cursor. Fehlt kWh trotz Linie: Gruppe heisst nicht `se`.
 
 ### Stolpersteine (aus dem Probelauf, 30 min, 14 Uploads)
 

@@ -533,6 +533,8 @@ class SpotApp
   #      send_polyline(kurzbuchstabe, farbe, wert_pro_slot, y_skala). Der Helfer übernimmt
   #      Häppchen-Versand, Lücken bei nil und die Gruppen-Id. Keine eigene Schleife nötig.
   #   Keine dritte Achse: der Platz fehlt, der Cursor zeigt den exakten Wert pro Slot.
+  #   Energiekurve mit Kurzbuchstabe 'e': das Cursor-Script zeigt den kWh-Wert nur, wenn die Gruppe
+  #   #se existiert und sichtbar ist, in der Farbe ihrer Linie. Ohne Kurve kein kWh im Cursor.
 
   # Geometrie des SVG (viewBox 0 0 340 158): Zeichenfläche x0..x0+w, y von y_top bis y_base.
   static CH_X0 = 30.0
@@ -679,7 +681,8 @@ class SpotApp
   # Öffnendes <svg>. Vertrag mit dem Cursor-Script (web_add_main_button): #spotsvg trägt
   # data-x0, data-bw (SVG-Einheiten), data-p (96 Preise, 1/10000 CHF/kWh oder '-') und data-e
   # (96 Energien, 0.01 kWh oder '-'). Das Script rechnet Mausposition -> Slot und zeigt Zeit,
-  # Rp/kWh, kWh und Rp. Neue Kurven aus Preis oder Energie brauchen keine Änderung am Script.
+  # Rp/kWh und Rp, dazu kWh, sobald es eine sichtbare Energiekurve #se gibt (Farbe = deren stroke).
+  # Neue Kurven aus Preis oder Energie brauchen keine Änderung am Script.
   # Einzige Stelle, die 96 Werte in einen String packt (2 x ca. 300 Byte, einmal pro Render).
   def send_svg_open(key)
     var dp = ""
@@ -798,7 +801,8 @@ class SpotApp
   #   1. bei jeder Mausbewegung das aktuelle #spotsvg suchen (nach jedem Refresh ein neues Element)
   #   2. einmal eine Gruppe <g id='cur'> mit Linie und Text anhängen
   #   3. Mausposition -> SVG-x -> Slot (data-x0, data-bw)
-  #   4. Werte aus data-p / data-e lesen, Text mit Zeit, Rp/kWh, kWh, Rp in Legendenfarben setzen
+  #   4. Werte aus data-p / data-e lesen, Text mit Zeit, Rp/kWh, Rp in Legendenfarben setzen;
+  #      kWh nur, wenn die Energiekurve <g id='se'> da und sichtbar ist, in der Farbe ihrer Linie
   #   5. MutationObserver auf #l1: nach jedem AJAX-Refresh letzte Mausposition erneut anwenden
   # Der String ist absichtlich kompakt; Änderungen hier nur mit Test im Browser.
   def web_add_main_button()
@@ -814,8 +818,10 @@ class SpotApp
       "var xc=x0+(i+.5)*bw,l=g.firstChild,tx=g.lastChild;l.setAttribute('x1',xc);l.setAttribute('x2',xc);tx.setAttribute('x',Math.min(Math.max(xc,100),240));"
       "var p=s.dataset.p.split(',')[i],e=s.dataset.e.split(',')[i];"
       "var h=('0'+Math.floor(i/4)).slice(-2)+':'+('0'+i%4*15).slice(-2);"
-      "var v=p*e/1e4;tx.innerHTML=h+'  <tspan fill=\"#f5a623\">'+(p=='-'?'–':(p/100).toFixed(1)+' Rp/kWh')+'</tspan> · '"
-      "+(e=='-'?'–':(e/100).toFixed(2)+' kWh')+(p=='-'||e=='-'?'':' · <tspan fill=\"'+(v<0?'#ff5661':'#47c266')+'\">'+v.toFixed(1)+' Rp</tspan>');}"
+      "var v=p*e/1e4,se=s.getElementById('se'),k=se&&getComputedStyle(se).display!='none'?se.querySelector('polyline'):null;"
+      "tx.innerHTML=h+'  <tspan fill=\"#f5a623\">'+(p=='-'?'–':(p/100).toFixed(1)+' Rp/kWh')+'</tspan>'"
+      "+(p=='-'||e=='-'?'':' · <tspan fill=\"'+(v<0?'#ff5661':'#47c266')+'\">'+v.toFixed(1)+' Rp</tspan>')"
+      "+(k?' · <tspan fill=\"'+k.getAttribute('stroke')+'\">'+(e=='-'?'–':(e/100).toFixed(2)+' kWh')+'</tspan>':'');}"
       "document.addEventListener('mousemove',f);document.addEventListener('touchstart',f,{passive:true});document.addEventListener('touchmove',f,{passive:true});"
       "var l1=document.getElementById('l1');if(l1)new MutationObserver(function(){if(L)f(L);}).observe(l1,{childList:true});})();</script>")
   end

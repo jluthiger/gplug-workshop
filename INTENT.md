@@ -161,7 +161,7 @@ Beispiele, die auf F5 bzw. `webclient` aufsetzen und in ≤ 30 min mit Agent-Hil
 Budget (ca. 20 h) reicht nicht für alle fünf Features plus Workshop-Material in gleicher Tiefe. Reihenfolge:
 
 1. **Kern (Referenz-App, fertig vor dem Workshop):** F1 Preise, F2 Zähler + Simulator, F5 Command. Damit ist die App als Datenlieferant nutzbar und testbar.
-2. **F3 SVG-Grafik:** Balken (Vergütung), Preislinie, Jetzt-Marke, Legende mit Toggle und Hover-Cursor in der Referenz-App; dritte Kurve (Energie, eigene Skala, keine dritte Achse) ist **Übung A**, siehe `EXERCISES.md`.
+2. **F3 SVG-Grafik:** Balken (Vergütung), Preislinie, Jetzt-Marke, Legende mit Toggle und Hover-Cursor (Zeit, Rp/kWh, Rp; kWh erst mit Energiekurve `#se`) in der Referenz-App; dritte Kurve (Energie, eigene Skala, keine dritte Achse) ist **Übung A**, siehe `EXERCISES.md`.
 3. **F4 CSV:** Tageszeile in der Referenz-App; Stundenwerte und Aufbewahrungsregel als Teilnehmer-Übung.
 
 Die Übungen sind so gewählt, dass sie den Datenfluss nicht verändern (nur Darstellung und Ablage) und bei Fehlern den Kern nicht beschädigen. Jede Übung wird **mit dem Coding-Agenten** gelöst; geübt wird der Arbeitszyklus Kontext geben → Aufgabe formulieren → Code auf Gerät laden → Konsole prüfen → Fehler an den Agenten zurückgeben. Der Code der Referenz-App ist daher so strukturiert, dass der Agent die Erweiterungspunkte (`web_sensor`, CSV-Funktion, Command) ohne Lesen des ganzen Files findet: eine Klasse pro Zuständigkeit, Kommentarblock `# ERWEITERUNGSPUNKT:` an den vorgesehenen Stellen. Der Chart-Code ist so gebaut (Kurventabelle `chart_curves()`, Helfer `send_polyline`/`day_range`/`y_scale`), dass eine neue Kurve drei Stellen berührt (refaktoriert 19.10., Ausgabe byte-identisch).
