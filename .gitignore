@@ -18,7 +18,6 @@ app/spot_20*.csv
 app/spot_h_20*.csv
 mock/*.csv
 bkw*.json
-!reference/bkw_sample.json
 
 # Device dumps / logs
 *.log

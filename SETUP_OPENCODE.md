@@ -79,10 +79,60 @@ curl -s https://api.infomaniak.com/2/ai/$INFOMANIAK_PRODUCT_ID/openai/v1/chat/co
 
 ### Variablen dauerhaft setzen
 
-- macOS/Linux: die beiden `export`-Zeilen ans Ende von `~/.zshrc` (macOS) bzw. `~/.bashrc`
-  anhängen, neues Terminal öffnen.
-- Windows: einmalig `setx INFOMANIAK_PRODUCT_ID 123456` und `setx INFOMANIAK_API_KEY xxxx`,
-  danach neues Terminal öffnen.
+> **Wichtig — Umgebungsvariablen**
+>
+> - `export …` (macOS/Linux) bzw. `$env:… = …` (PowerShell) gilt **nur im aktuellen
+>   Terminal-Fenster** und ist nach dem Schliessen weg.
+> - opencode sieht nur die Variablen des Terminals, **aus dem es gestartet wird**. Fehlt
+>   `INFOMANIAK_PRODUCT_ID`, ruft opencode `…/2/ai//openai/v1` auf und meldet
+>   `method_not_found` (siehe Fehlerbehebung).
+> - Dauerhaft gesetzte Variablen gelten erst in **neu geöffneten** Terminals. Bereits offene
+>   Fenster (auch das Terminal in VS Code — dort VS Code ganz neu starten) kennen sie nicht.
+> - Der Token steht danach im Klartext in einer Datei im Home-Verzeichnis. Nur auf dem eigenen
+>   Notebook so machen, Datei nie committen oder teilen. Nach dem Workshop Token widerrufen.
+
+**macOS** (Standard-Shell zsh):
+
+```sh
+open -e ~/.zshrc      # Datei im TextEdit öffnen (wird angelegt, falls nicht vorhanden)
+```
+
+Am Ende einfügen, speichern, neues Terminal öffnen:
+
+```sh
+export INFOMANIAK_PRODUCT_ID=123456
+export INFOMANIAK_API_KEY=xxxxxxxxxxxxxxxx
+```
+
+Wer bash nutzt (`echo $SHELL` zeigt `/bin/bash`): `~/.bash_profile` statt `~/.zshrc`.
+Aus dem Dock oder Finder gestartete Programme lesen `~/.zshrc` nicht — opencode daher immer
+aus dem Terminal starten.
+
+**Linux**: Shell prüfen mit `echo $SHELL`, dann dieselben zwei Zeilen ans Ende von
+`~/.bashrc` (bash) bzw. `~/.zshrc` (zsh) anhängen, z.B. mit `nano ~/.bashrc`. Neues Terminal
+öffnen.
+
+**Windows** (PowerShell, dauerhaft für den eigenen Benutzer):
+
+```powershell
+[Environment]::SetEnvironmentVariable("INFOMANIAK_PRODUCT_ID", "123456", "User")
+[Environment]::SetEnvironmentVariable("INFOMANIAK_API_KEY", "xxxxxxxxxxxxxxxx", "User")
+```
+
+Gleichwertig: `setx INFOMANIAK_PRODUCT_ID 123456` bzw. per GUI *Einstellungen → System →
+Info → Erweiterte Systemeinstellungen → Umgebungsvariablen → Benutzervariablen*. Danach
+**alle** Terminal-Fenster schliessen und neu öffnen. In der Eingabeaufforderung (cmd) heissen
+die Variablen `%INFOMANIAK_PRODUCT_ID%`, in PowerShell `$env:INFOMANIAK_PRODUCT_ID`.
+
+**Windows mit WSL**: Windows-Variablen sind in WSL **nicht** sichtbar. Wer opencode in WSL
+nutzt, setzt die Variablen wie unter Linux in `~/.bashrc` innerhalb von WSL.
+
+**Prüfen** (in einem neuen Terminal, zeigt den Token nicht an):
+
+| System | Befehl | Erwartet |
+|---|---|---|
+| macOS / Linux / WSL | `echo "ID=$INFOMANIAK_PRODUCT_ID KEY=${INFOMANIAK_API_KEY:+gesetzt}"` | `ID=123456 KEY=gesetzt` |
+| Windows PowerShell | `"ID=$env:INFOMANIAK_PRODUCT_ID KEY=$([bool]$env:INFOMANIAK_API_KEY)"` | `ID=123456 KEY=True` |
 
 ## 4. opencode installieren
 
@@ -102,9 +152,8 @@ opencode --version
 
 ## 5. Infomaniak als Provider konfigurieren
 
-Das Workshop-Repo enthält bereits [`opencode/opencode.json`](opencode.json). Weil die Datei
-nicht im Repo-Root liegt, muss opencode sie über `OPENCODE_CONFIG` finden (siehe Schritt 7).
-Kern davon:
+Das Workshop-Repo enthält bereits [`opencode.json`](opencode.json). opencode liest die Datei
+automatisch, wenn es im Repo-Ordner gestartet wird. Kern davon:
 
 ```json
 {
@@ -162,11 +211,14 @@ In opencode umschalten: `/models` → Modell auswählen.
 
 ```sh
 cd <pfad>/workshop
-OPENCODE_CONFIG=opencode/opencode.json opencode
+echo "ID=$INFOMANIAK_PRODUCT_ID KEY=${INFOMANIAK_API_KEY:+gesetzt}"   # beide müssen Werte zeigen
+opencode
 ```
 
-Windows (PowerShell): `$env:OPENCODE_CONFIG = "opencode\opencode.json"; opencode`.
-Dauerhaft: `OPENCODE_CONFIG` wie in Schritt 3 mit absolutem Pfad setzen.
+Windows (PowerShell): `"ID=$env:INFOMANIAK_PRODUCT_ID"` prüfen, dann `opencode`.
+
+opencode übernimmt die Variablen nur aus dem Terminal, in dem es gestartet wird. Leer →
+Schritt 3 («Variablen dauerhaft setzen») nachholen, neues Terminal öffnen.
 
 1. Unten im TUI prüfen: Modell `Qwen3.5 122B-A10B (Infomaniak AI (Schweiz))`.
 2. Erste Frage stellen:
@@ -201,8 +253,8 @@ Nützliche Befehle im TUI:
 | Symptom | Ursache / Lösung |
 |---|---|
 | `Invalid Authentication` (401) | Token falsch/abgelaufen, Product-ID falsch, Kreditkarte fehlt |
-| Provider `infomaniak` fehlt in `/models` | `OPENCODE_CONFIG` nicht gesetzt oder Pfad falsch, oder JSON-Syntaxfehler in `opencode/opencode.json` |
-| URL enthält leere Product-ID (`/ai//openai`) | `INFOMANIAK_PRODUCT_ID` im aktuellen Terminal nicht gesetzt (`echo $INFOMANIAK_PRODUCT_ID`) |
+| Provider `infomaniak` fehlt in `/models` | opencode nicht im Repo-Ordner gestartet, oder JSON-Syntaxfehler in `opencode.json` |
+| `Not Found: {"result":"error","error":{"code":"method_not_found",…}}` | `INFOMANIAK_PRODUCT_ID` im aktuellen Terminal nicht gesetzt (`echo $INFOMANIAK_PRODUCT_ID`) |
 | `model not found` | Modell-ID weicht ab → Liste aus Schritt 3 prüfen, in `opencode.json` korrigieren |
 | Agent «redet» nur, ändert keine Dateien | Modell ohne gutes Tool Calling → auf Qwen3.5 oder Kimi K2.6 wechseln; `plan`-Agent aktiv? `Tab` |
 | Antworten brechen ab | Ausgabelimit; `limit.output` im Modell in `opencode.json` erhöhen |
