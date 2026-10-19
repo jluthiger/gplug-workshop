@@ -553,11 +553,18 @@ class SpotApp
       sums[1] >= 0 ? "#47c266" : "#ff5661", sums[1]))
     tasmota.web_send("</table>")
     self.send_svg(key, slot, pmin, pmax, vmin, vmax)
-    tasmota.web_send("<div style='font-size:.9em;color:#aaa;text-align:center;margin:2px 0 8px'>"
+    # Legende: Klick blendet Kurve aus/ein. Zustand als Klasse auf <body>, weil Tasmota den
+    # Sensorbereich alle paar Sekunden per AJAX neu einsetzt (Scripts darin laufen nicht).
+    tasmota.web_send("<style>body.hb #sb,body.hp #sp,body.hn #sn{display:none}"
+      "body.hb #lb,body.hp #lp,body.hn #ln{opacity:.35}</style>"
+      "<div style='font-size:.9em;color:#aaa;text-align:center;margin:2px 0 8px;cursor:pointer;user-select:none'>"
+      "<span id='lb' onclick=\"document.body.classList.toggle('hb')\">"
       "<span style='color:#47c266'>&#9632;</span> Vergütung/&#188;h &nbsp; "
-      "<span style='color:#ff5661'>&#9632;</span> Kosten &nbsp; "
-      "<span style='color:#f5a623'>&#8212;</span> Spotpreis &nbsp; "
-      "<span style='color:#1fa3ec'>&#9478;</span> jetzt</div>")
+      "<span style='color:#ff5661'>&#9632;</span> Kosten</span> &nbsp; "
+      "<span id='lp' onclick=\"document.body.classList.toggle('hp')\">"
+      "<span style='color:#f5a623'>&#8212;</span> Spotpreis</span> &nbsp; "
+      "<span id='ln' onclick=\"document.body.classList.toggle('hn')\">"
+      "<span style='color:#1fa3ec'>&#9478;</span> jetzt</span></div>")
     tasmota.web_send("{t}")
     var pnext = self.store.price(spot_day(now + 3600), spot_slot(now + 3600))
     tasmota.web_send(string.format("{s}Nächste Stunde{m}%s{e}", pnext == nil ? "–" : string.format("%.1f Rp/kWh", pnext / 100.0)))
@@ -577,7 +584,19 @@ class SpotApp
     var vy = / v -> 130.0 - (v - vmin) * 120.0 / (vmax - vmin)
     var py = / p -> 130.0 - (p - pmin) * 120.0 / (pmax - pmin)
 
-    var s = "<svg viewBox='0 0 340 158' style='width:100%;display:block;margin:6px 0' xmlns='http://www.w3.org/2000/svg'>"
+    # Slot-Werte als data-Attribute: das Cursor-Script (web_add_main_button) liest sie im Browser.
+    var dp = ""
+    var de = ""
+    for i:0..95
+      var p = self.store.price(key, i)
+      var e = self.store.energy_at(key, i)
+      dp += (p == nil ? "-" : str(p)) + (i < 95 ? "," : "")
+      de += (e == nil ? "-" : str(e)) + (i < 95 ? "," : "")
+    end
+    var s = string.format("<svg id='spotsvg' viewBox='0 0 340 158' style='width:100%%;display:block;margin:16px 0 6px' "
+      "xmlns='http://www.w3.org/2000/svg' data-x0='%.0f' data-bw='%.4f' data-p='%s' data-e='%s'>", x0, bw, dp, de)
+    dp = nil
+    de = nil
     for i:0..3                                # Gitter + linke Achse (Rp pro 1/4h)
       var v = vmin + (vmax - vmin) * i / 3
       s += string.format("<line x1='%.0f' y1='%.1f' x2='%.0f' y2='%.1f' stroke='#444' stroke-width='0.5'/>", x0, vy(v), x0 + pw, vy(v))
@@ -594,7 +613,7 @@ class SpotApp
     s += string.format("<text x='%.0f' y='20' fill='#f5a623' font-size='8' text-anchor='end'>Rp/kWh</text>", x0 + pw - 4)
     tasmota.web_send(s)
 
-    s = ""                                    # Balken Vergütung
+    s = "<g id='sb'>"                         # Balken Vergütung (id: Legende blendet aus)
     for i:0..95
       var p = self.store.price(key, i)
       var e = self.store.energy_at(key, i)
@@ -609,9 +628,9 @@ class SpotApp
         s = ""
       end
     end
-    tasmota.web_send(s)
+    tasmota.web_send(s + "</g>")
 
-    s = ""                                    # Preislinie, Lücken bei fehlenden Werten
+    s = "<g id='sp'>"                         # Preislinie, Lücken bei fehlenden Werten
     var open_line = false
     for i:0..95
       var p = self.store.price(key, i)
@@ -633,9 +652,10 @@ class SpotApp
       end
     end
     if open_line s += "'/>" end
+    s += "</g>"
 
     var xn = x0 + slot * bw                   # Jetzt-Marke, x-Achse, Stunden
-    s += string.format("<line x1='%.1f' y1='10' x2='%.1f' y2='130' stroke='#1fa3ec' stroke-dasharray='3,2'/>", xn, xn)
+    s += string.format("<g id='sn'><line x1='%.1f' y1='10' x2='%.1f' y2='130' stroke='#1fa3ec' stroke-dasharray='3,2'/></g>", xn, xn)
     s += string.format("<line x1='%.0f' y1='130' x2='%.0f' y2='130' stroke='#aaa'/>", x0, x0 + pw)
     for h: [0, 6, 12, 18, 24]
       var x = x0 + pw * h / 24
@@ -644,6 +664,28 @@ class SpotApp
     end
     s += "</svg>"
     tasmota.web_send(s)
+  end
+
+  # Cursor-Linie mit Werten beim Überfahren des Charts. Das Script steht ausserhalb des
+  # Sensorbereichs (der wird per AJAX ersetzt, Scripts darin laufen nicht) und wird einmal pro
+  # Seitenaufruf ausgeführt; es sucht das SVG bei jeder Mausbewegung neu.
+  def web_add_main_button()
+    import webserver
+    webserver.content_send("<script>(function(){var N='http://www.w3.org/2000/svg',L=null;"
+      "function f(ev){var s=document.getElementById('spotsvg');if(!s)return;"
+      "var g=s.getElementById('cur');if(!g){g=document.createElementNS(N,'g');g.id='cur';"
+      "g.innerHTML=\"<line y1='10' y2='130' stroke='#fff' stroke-width='.7'/><text y='8' font-size='9' fill='#fff' text-anchor='middle'></text>\";s.appendChild(g);}"
+      "var t=ev.touches?ev.touches[0]:ev;L={clientX:t.clientX,clientY:t.clientY};"
+      "var el=document.elementFromPoint(t.clientX,t.clientY);if(!el||!el.closest('#spotsvg')){g.style.display='none';return;}"
+      "var r=s.getBoundingClientRect(),x=(t.clientX-r.left)*340/r.width,x0=+s.dataset.x0,bw=+s.dataset.bw,i=Math.floor((x-x0)/bw);"
+      "if(i<0||i>95){g.style.display='none';return;}g.style.display='';"
+      "var xc=x0+(i+.5)*bw,l=g.firstChild,tx=g.lastChild;l.setAttribute('x1',xc);l.setAttribute('x2',xc);tx.setAttribute('x',Math.min(Math.max(xc,100),240));"
+      "var p=s.dataset.p.split(',')[i],e=s.dataset.e.split(',')[i];"
+      "var h=('0'+Math.floor(i/4)).slice(-2)+':'+('0'+i%4*15).slice(-2);"
+      "var v=p*e/1e4;tx.innerHTML=h+'  <tspan fill=\"#f5a623\">'+(p=='-'?'\u2013':(p/100).toFixed(1)+' Rp/kWh')+'</tspan> \u00b7 '"
+      "+(e=='-'?'\u2013':(e/100).toFixed(2)+' kWh')+(p=='-'||e=='-'?'':' \u00b7 <tspan fill=\"'+(v<0?'#ff5661':'#47c266')+'\">'+v.toFixed(1)+' Rp</tspan>');}"
+      "document.addEventListener('mousemove',f);document.addEventListener('touchstart',f,{passive:true});document.addEventListener('touchmove',f,{passive:true});"
+      "var l1=document.getElementById('l1');if(l1)new MutationObserver(function(){if(L)f(L);}).observe(l1,{childList:true});})();</script>")
   end
 
   # Telemetrie (tele/SENSOR, Status 10): ERWEITERUNGSPUNKT Übung C (MQTT/Drittsysteme)
