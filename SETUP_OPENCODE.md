@@ -236,7 +236,7 @@ Nützliche Befehle im TUI:
 | `/new` | neue Sitzung (frischer Kontext) |
 | `/undo`, `/redo` | letzte Änderung des Agenten zurücknehmen / wiederholen |
 | `/share` | Sitzung teilen (nicht mit Geheimnissen!) |
-| `Tab` | Agent wechseln: **build** (ändert Dateien) ↔ **plan** (nur lesen/planen) |
+| `Shift+Tab` | Agent wechseln: **build** (ändert Dateien) ↔ **plan** (nur lesen/planen) |
 | `@datei` | Datei gezielt in den Kontext geben, z.B. `@TASMOTA_BERRY_API.md` |
 
 ## 8. Vibe-Coding-Arbeitsweise
@@ -256,7 +256,7 @@ Nützliche Befehle im TUI:
 | Provider `infomaniak` fehlt in `/models` | opencode nicht im Repo-Ordner gestartet, oder JSON-Syntaxfehler in `opencode.json` |
 | `Not Found: {"result":"error","error":{"code":"method_not_found",…}}` | `INFOMANIAK_PRODUCT_ID` im aktuellen Terminal nicht gesetzt (`echo $INFOMANIAK_PRODUCT_ID`) |
 | `model not found` | Modell-ID weicht ab → Liste aus Schritt 3 prüfen, in `opencode.json` korrigieren |
-| Agent «redet» nur, ändert keine Dateien | Modell ohne gutes Tool Calling → auf Qwen3.5 oder Kimi K2.6 wechseln; `plan`-Agent aktiv? `Tab` |
+| Agent «redet» nur, ändert keine Dateien | Modell ohne gutes Tool Calling → auf Qwen3.5 oder Kimi K2.6 wechseln; `plan`-Agent aktiv? `Shift+Tab` |
 | Antworten brechen ab | Ausgabelimit; `limit.output` im Modell in `opencode.json` erhöhen |
 | Windows: Skripte laufen nicht | WSL verwenden oder PowerShell-Varianten (`.ps1`) der Skripte |
 | Kosten im Blick behalten | Infomaniak-Manager → AI Tools → Verbrauch; Ausgabenlimite setzen |
