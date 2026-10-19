@@ -226,7 +226,8 @@ Schritt 3 («Variablen dauerhaft setzen») nachholen, neues Terminal öffnen.
    Lies README.md und INTENT.md. Erkläre in 5 Sätzen, was app/spot.be tut.
    ```
    Der Agent sollte Dateien lesen (Tool-Aufrufe sichtbar) und korrekt antworten.
-3. Optional `/init`: erzeugt/ergänzt `AGENTS.md` mit Projektregeln für den Agenten.
+3. `AGENTS.md` (Regeln und Geräte-Werkzeuge für den Agenten) liegt bei und wird automatisch geladen;
+   `/init` ist nicht nötig. IP des eigenen gPlug einmal eintragen: `echo 192.168.x.y > .gplug`.
 
 Nützliche Befehle im TUI:
 

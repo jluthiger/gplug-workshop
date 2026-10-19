@@ -54,6 +54,9 @@ Konfiguration am Anfang von `app/spot.be` (`spot_cfg`): `sim`, `meter_path`, `da
 - `app/persist.be`, `app/path.be` – Stubs nur für den Harness, nie aufs Gerät laden.
 - `mock/` – UI-Mock mit synthetischen Daten, `ui-drafts/` – die drei UI-Entwürfe.
 - `reference/` – gPlug-Scripts (L+G E450, Kamstrup) und `read_sensors`-Samples.
+- `AGENTS.md` – Regeln für den Coding-Agenten, lädt opencode automatisch.
+- `upload.sh`, `brcmd.sh`, `log.sh` – Gerät bedienen (Upload + `BrRestart`, Berry-Ausdruck,
+  Konsole). Geräte-IP in `.gplug` oder `$GPLUG`.
 - `TASMOTA_BERRY_API.md` – Spickzettel der verwendeten Tasmota-Berry-API, als Kontext für
   den Coding-Agenten gedacht.
 

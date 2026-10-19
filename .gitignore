@@ -13,9 +13,13 @@ secrets*.json
 opencode.json.local
 infomaniak-secure.txt
 
-# Desktop harness run artefacts (run from a scratch dir, never commit)
+# Device address for upload.sh / brcmd.sh / log.sh (per participant)
+.gplug
+
+# Desktop harness run artefacts (never commit)
 app/spot_20*.csv
 app/spot_h_20*.csv
+app/sensor.html
 mock/*.csv
 bkw*.json
 
