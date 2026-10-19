@@ -30,7 +30,7 @@ Puffer ist knapp; Block 2 ist der kritische. Alles, was sich vorab erledigen lä
 
 **Übungsvorlagen** (je mit Prompt-Vorlage, erwartetem Ergebnis, Prüfschritt):
 
-- **Übung A — Grafik**: dritte Kurve (Energie) oder 3-Tage-Seite. Prüfschritt: Seite lädt, Werte entsprechen `SpotPrices` + Simulator. Lehrt: Kontext aus bestehendem Code, `web_sensor`-Regeln aus Cheat-Sheet.
+- **Übung A — Grafik** (festgelegt 19.10.): dritte Kurve Energie mit eigener Skala, keine dritte Achse. Vorlage, Prompts, Prüfschritte und Stolpersteine in `EXERCISES.md`. Probelauf 19.10. (Qwen3.5-122B): 30 min, 14 Uploads, dritte Achse/Checkboxen/doppelte Schleife → Chart-Code refaktoriert (`send_polyline`, `chart_curves()`, Ausgabe byte-identisch); Ziel ≤ 4 Uploads. 3-Tage-Seite bleibt Reserve für Schnelle.
 - **Übung B — CSV**: Stunden-Datei + Aufbewahrung zwei Monate. Prüfschritt: Dateimanager zeigt Dateien, `Br`-Konsole kann Tageswechsel simulieren. Lehrt: Testbarkeit einfordern (Agent soll Funktion mit Datum-Parameter bauen).
 - **Übung C — Shelly/MQTT** (für Schnelle): Schwellwert-Schaltung. Lehrt: Agent Drittsystem-API geben (Shelly-Doku-Auszug), sonst rät er.
 
@@ -102,7 +102,7 @@ Hinweise:
 
 | # | Datei | Inhalt | Test |
 |---|---|---|---|
-| 1 | `app/spot.be` | Referenz-App Kern (F1, F2, F5), Stufe-1-Grafik, Tages-CSV — **v0.2 vorhanden**, Desktop-Harness grün, auf 192.168.0.201 live getestet (18.10.) | ≥ 3 Tage auf gplugk (Meter) — offen |
+| 1 | `app/spot.be` | Referenz-App Kern (F1, F2, F5), Stufe-1-Grafik, Tages-CSV — **v0.2 vorhanden**, Desktop-Harness grün, auf 192.168.0.201 live getestet (18.10.); Chart refaktoriert 19.10. (Harness-HTML identisch) | ≥ 3 Tage auf gplugk (Meter) — offen |
 | 2 | Simulator | in `spot.be` integriert (`sim: true`): Zähler-Tageskurve, Backfill des laufenden Tages, Preis-Fallback aus Folgetag | erledigt |
 | 3 | `autoexec.be` | `load("spot")`, Kommentar | vorhanden (`app/autoexec.be`), auf .201 installiert 18.10., BrRestart lädt App, 1 UI-Block, Fetch OK |
 | 4 | `bkw.json` auf dem Gerät | gecachte API-Antwort, `SpotFetch file` **vorhanden** in `spot.be` | am Workshop-Tag morgens frische Antwort speichern und mit ausliefern |
@@ -113,7 +113,7 @@ Hinweise:
 | 8 | `upload.sh`, `brcmd.sh`, `log.sh` (+ `.ps1`) | Agent-Werkzeuge: Upload + `BrRestart`, Berry-Ausdruck via `/cm?cmnd=Br`, Konsole lesen | Agent löst Übung A allein, Mensch prüft nur |
 | 9 | `RUNBOOK.md` | Teilnehmer-Schritte mit erwarteter Ausgabe pro Schritt (Screenshots) | von einer unbeteiligten Person durchgespielt |
 | 10 | Agent-Setup | Standard: Docker-Image (`Dockerfile`, `docker-run.sh`/`.ps1`, opencode 2.0.32 + berry + git, nur Repo gemountet). Fallback: opencode 2.0 nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte) — Image vorhanden, auf macOS getestet 19.10. | Install + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
-| 11 | `EXERCISES.md` | Übungen A/B/C mit Prompt-Vorlage, Ergebnis, Prüfschritt | jede Übung einmal mit Infomaniak-LLM durchgespielt, Dauer notiert |
+| 11 | `EXERCISES.md` | Übungen A/B/C mit Prompt-Vorlage, Ergebnis, Prüfschritt — **Übung A vorhanden** (19.10.), B/C Entwurf | Übung A nach Refactor erneut mit Infomaniak-LLM durchspielen (Ziel ≤ 4 Uploads), B/C offen |
 | 12 | Demo-Transkript | 3 Ausschnitte aus Referenz-App-Entwicklung (guter Prompt, Halluzination, Korrektur) | auf Beamer lesbar |
 | 13 | `AGENTS.md`-Ergänzung | Werkzeuge beschreiben, verbotene Kommandos (`Reset`, `Restart`, `Upgrade`), Regel „nach jedem Upload `log.sh` lesen“ | Agent hält sich daran im Trockenlauf |
 

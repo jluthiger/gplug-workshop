@@ -274,7 +274,7 @@ Nützliche Befehle im TUI:
 
 ## 8. Vibe-Coding-Arbeitsweise
 
-1. **Planen** im `plan`-Agent: «Plane Übung A, frag mich, wenn etwas unklar ist.»
+1. **Planen** im `plan`-Agent mit der Prompt-Vorlage aus `EXERCISES.md` (nicht nur «Plane Übung A»).
 2. **Kontext geben**: `@INTENT.md @TASMOTA_BERRY_API.md @app/spot.be` — ohne Cheat-Sheet
    erfinden Modelle Tasmota-API.
 3. **Umsetzen** im `build`-Agent, kleine Schritte.

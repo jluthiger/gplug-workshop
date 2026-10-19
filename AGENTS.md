@@ -14,6 +14,7 @@ Vor der ersten Änderung lesen, nicht raten:
   (<https://tasmota.github.io/docs/_media/BERRY_LANGUAGE_REFERENCE.txt>) stehen. Fehlt etwas: sagen,
   nicht erfinden.
 - `app/spot.be` – bestehender Code. Ergänzungen an den Kommentaren `# ERWEITERUNGSPUNKT` einhängen.
+- `EXERCISES.md` – Aufgabe, Vorgaben und Prüfschritte der Übung.
 
 ## 2. Dateien
 
@@ -87,6 +88,9 @@ einhalten. Unklar, ob ein Kommando harmlos ist: Mensch fragen.
 - Jeder Callback-Body in `try ... except .. as e, m ... end`, Fehler mit `log("SPOT: ...", 2)`.
 - Neue Commands mit `tasmota.add_cmd`, Crons mit fester Id, damit `load("spot")` nichts doppelt
   registriert.
+- Chart: neue Kurven nur über `chart_curves()` + `send_polyline` (Abschnitt `F3  Chart`), keine eigene
+  Zeichenschleife, kein `<script>` und keine Checkboxen im Sensorbereich (Tasmota ersetzt ihn per
+  AJAX, Scripts darin laufen nicht), keine zusätzliche Achse ohne Rückfrage.
 - Stil von `spot.be` übernehmen: deutsche Kommentare, kurze Methoden, keine Tricks.
 
 ## 7. Git

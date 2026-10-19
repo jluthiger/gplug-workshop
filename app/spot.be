@@ -131,6 +131,8 @@ class SpotApp
   var tz_warn              # Zeitzonen-Warnung (String) oder nil, stündlich geprüft
   var busy
   var time_tries          # Wartezyklen auf gültige Uhrzeit nach Kaltstart
+  var legend_html         # Legende + CSS, aus chart_curves() gebaut
+  var bw                  # Breite eines Slots in SVG-Einheiten (CH_W / CH_SLOTS)
 
   def init(cfg)
     self.cfg = cfg
@@ -139,6 +141,8 @@ class SpotApp
     self.last_fetch = "noch kein Abruf"
     self.busy = false
     self.time_tries = 0
+    self.bw = self.CH_W / self.CH_SLOTS
+    self.legend_html = self.build_legend()
     self.cnt = persist.find("spot_cnt", nil)
     self.cnt_t = persist.find("spot_cnt_t", 0)
     if tasmota.version() < 0x0F030000
@@ -513,58 +517,135 @@ class SpotApp
       self.tz_warn == nil ? "null" : '"' + self.tz_warn + '"', tasmota.memory("heap_free"), days))
   end
 
-  # ---------------------------------------------------------------- F3
-  # Kopfzeilen + SVG des heutigen Tages. Wird bei jedem WebRefresh (2.3 s) gerufen,
-  # daher: ein Durchlauf über die Slots, Ausgabe in Häppchen via tasmota.web_send.
+  # ---------------------------------------------------------------- F3  Chart
+  # Sensorbereich = Kopfzeilen -> SVG -> Legende -> Fusszeilen. Tasmota ruft web_sensor() bei
+  # jedem WebRefresh (2.3 s). Darum: ein Durchlauf pro Kurve und Versand in Häppchen
+  # (tasmota.web_send), nie das ganze SVG als ein String. web_send nur aus web_sensor() und den
+  # send_*-Helfern, nirgends sonst.
+  # Einheiten aus dem Ringpuffer: Preis 1/10000 CHF/kWh (Rp/kWh = p/100), Energie 0.01 kWh,
+  # Vergütung pro Slot v = e*p in 1e-6 CHF (Rp = v/10000). nil = kein Wert = Lücke im Chart.
+  #
+  # ERWEITERUNGSPUNKT Übung A: weitere Kurve ergänzen. Drei Stellen, sonst nichts:
+  #   1. Farbkonstante COL_... unten bei den Farben.
+  #   2. Zeile in chart_curves(): Kurzbuchstabe + Legendentext. SVG-Gruppe id='s<k>', Legenden-
+  #      Eintrag id='l<k>', Ausblenden per Klick und das CSS dazu ergeben sich daraus automatisch.
+  #   3. In send_svg(): Wertebereich mit day_range(...), y-Skala mit y_scale(...), Kurve mit
+  #      send_polyline(kurzbuchstabe, farbe, wert_pro_slot, y_skala). Der Helfer übernimmt
+  #      Häppchen-Versand, Lücken bei nil und die Gruppen-Id. Keine eigene Schleife nötig.
+  #   Keine dritte Achse: der Platz fehlt, der Cursor zeigt den exakten Wert pro Slot.
+
+  # Geometrie des SVG (viewBox 0 0 340 158): Zeichenfläche x0..x0+w, y von y_top bis y_base.
+  static CH_X0 = 30.0
+  static CH_W = 270.0
+  static CH_Y_TOP = 10.0
+  static CH_Y_BASE = 130.0
+  static CH_H = 120.0           # CH_Y_BASE - CH_Y_TOP
+  static CH_SLOTS = 96          # Viertelstunden eines Tages im Chart (DST-Tage: 92/100, Rest fällt weg)
+  static CH_SEND_EVERY = 24     # nach so vielen Slots wird der Teilstring gesendet
+
+  # Farben (Legende, Kurven, Kopfzeilen, Cursor-Script)
+  static COL_REVENUE = "#47c266"
+  static COL_COST = "#ff5661"
+  static COL_PRICE = "#f5a623"
+  static COL_NOW = "#1fa3ec"
+  static COL_AXIS = "#aaa"
+  static COL_GRID = "#444"
+  static COL_ZERO = "#888"
+
+  # Kurven des Charts, eine Zeile pro Kurve: [Kurzbuchstabe k, Legenden-HTML].
+  # Daraus folgen: SVG-Gruppe id='s<k>', Legenden-Span id='l<k>', Body-Klasse 'h<k>' = ausgeblendet.
+  def chart_curves()
+    return [
+      ["b", string.format("<span style='color:%s'>&#9632;</span> Vergütung/&#188;h &nbsp; "
+                          "<span style='color:%s'>&#9632;</span> Kosten", self.COL_REVENUE, self.COL_COST)],
+      ["p", string.format("<span style='color:%s'>&#8212;</span> Spotpreis", self.COL_PRICE)],
+      ["n", string.format("<span style='color:%s'>&#9478;</span> jetzt", self.COL_NOW)]
+    ]
+  end
+
+  # Legende + CSS aus chart_curves(), einmal in init() gebaut (self.legend_html).
+  # Klick auf einen Eintrag schaltet die Body-Klasse 'h<k>' um; das CSS blendet dann die SVG-Gruppe
+  # aus und dimmt den Eintrag. Zustand auf <body>, weil Tasmota den Sensorbereich alle paar
+  # Sekunden per AJAX ersetzt; Scripts darin laufen nicht, Klassen auf <body> überleben.
+  def build_legend()
+    var hide = []
+    var dim = []
+    var spans = []
+    for c: self.chart_curves()
+      hide.push(string.format("body.h%s #s%s", c[0], c[0]))
+      dim.push(string.format("body.h%s #l%s", c[0], c[0]))
+      spans.push(string.format("<span id='l%s' onclick=\"document.body.classList.toggle('h%s')\">%s</span>", c[0], c[0], c[1]))
+    end
+    return "<style>" + hide.concat(",") + "{display:none}" + dim.concat(",") + "{opacity:.35}</style>"
+      "<div style='font-size:.9em;color:#aaa;text-align:center;margin:2px 0 8px;cursor:pointer;user-select:none'>"
+      + spans.concat(" &nbsp; ") + "</div>"
+  end
+
+  # ---- Werte und Skalen
+  # Vergütung eines Slots in 1e-6 CHF oder nil, wenn Preis oder Energie fehlt.
+  def revenue_at(key, i)
+    var p = self.store.price(key, i)
+    var e = self.store.energy_at(key, i)
+    if p == nil || e == nil return nil end
+    return e * p
+  end
+
+  # Wertebereich [lo, hi] eines Tages: lo <= 0, hi >= floor, damit die Achse nie entartet.
+  # value_at(slot) liefert den Rohwert (int) oder nil.
+  def day_range(value_at, floor)
+    var lo = 0
+    var hi = floor
+    for i:0..self.CH_SLOTS-1
+      var v = value_at(i)
+      if v == nil continue end
+      if v < lo lo = v end
+      if v > hi hi = v end
+    end
+    return [lo, hi]
+  end
+
+  # Lineare y-Skala: Wert lo -> CH_Y_BASE (unten), hi -> CH_Y_TOP (oben). Liefert eine Funktion.
+  # x-Position eines Slots i: linker Rand CH_X0 + i * bw, Mitte CH_X0 + (i + 0.5) * bw.
+  def y_scale(lo, hi)
+    var base = self.CH_Y_BASE
+    var h = self.CH_H
+    return / v -> base - (v - lo) * h / (hi - lo)
+  end
+
+  # ---- Sensorbereich
   def web_sensor()
     if !spot_time_ok() return end
-    var now = spot_now()
-    var key = spot_day(now)
-    var slot = spot_slot(now)
-    var sums = self.day_sums(key)
-    var pnow = self.store.price(key, slot)
-
-    # Wertebereiche für die Achsen
-    var pmin = 0
-    var pmax = 100            # 1/10000 CHF/kWh, mind. 0.01
-    var vmin = 0
-    var vmax = 100            # 1e-6 CHF pro Slot, mind. 0.0001
-    for s:0..95
-      var p = self.store.price(key, s)
-      if p != nil
-        if p < pmin pmin = p end
-        if p > pmax pmax = p end
-        var e = self.store.energy_at(key, s)
-        if e != nil
-          var v = e * p
-          if v < vmin vmin = v end
-          if v > vmax vmax = v end
-        end
-      end
+    try
+      var now = spot_now()
+      var key = spot_day(now)
+      var slot = spot_slot(now)
+      var sums = self.day_sums(key)
+      self.send_header(key, slot, sums)
+      self.send_svg(key, slot)
+      tasmota.web_send(self.legend_html)
+      self.send_footer(now)
+    except .. as e, m
+      log("SPOT: web_sensor " + str(e) + " " + str(m), 2)
     end
+  end
 
-    # ERWEITERUNGSPUNKT Übung A: hier weitere Kurven ergänzen (z.B. Energie kWh pro Slot)
+  # Kopfzeilen oberhalb des Tasmota-Hauptmenüs. Tasmota rendert web_sensor() in der Tabelle #l1;
+  # wir schliessen sie, machen #l1 zur Flex-Spalte und setzen unseren Block mit order:-1 davor.
+  # send_footer() öffnet mit {t} wieder eine Tabelle für die restlichen Sensoren.
+  def send_header(key, slot, sums)
+    var pnow = self.store.price(key, slot)
     tasmota.web_send("</table><style>#l1{display:flex;flex-direction:column}</style><div style='order:-1;width:100%'>")
     tasmota.web_send("<table style='width:100%;font-size:1.25em;margin:4px 0 2px'>")
-    tasmota.web_send(string.format("<tr><th>Spotpreis jetzt</th><td style='color:#f5a623'>%s</td></tr>",
-      pnow == nil ? "–" : string.format("%.1f Rp/kWh", pnow / 100.0)))
+    tasmota.web_send(string.format("<tr><th>Spotpreis jetzt</th><td style='color:%s'>%s</td></tr>",
+      self.COL_PRICE, pnow == nil ? "–" : string.format("%.1f Rp/kWh", pnow / 100.0)))
     tasmota.web_send(string.format("<tr><th>Einspeisung heute</th><td>%.2f kWh</td></tr>", sums[0]))
     tasmota.web_send(string.format("<tr><th>Vergütung heute</th><td style='color:%s'>%.2f CHF</td></tr>",
-      sums[1] >= 0 ? "#47c266" : "#ff5661", sums[1]))
+      sums[1] >= 0 ? self.COL_REVENUE : self.COL_COST, sums[1]))
     tasmota.web_send("</table>")
-    self.send_svg(key, slot, pmin, pmax, vmin, vmax)
-    # Legende: Klick blendet Kurve aus/ein. Zustand als Klasse auf <body>, weil Tasmota den
-    # Sensorbereich alle paar Sekunden per AJAX neu einsetzt (Scripts darin laufen nicht).
-    tasmota.web_send("<style>body.hb #sb,body.hp #sp,body.hn #sn{display:none}"
-      "body.hb #lb,body.hp #lp,body.hn #ln{opacity:.35}</style>"
-      "<div style='font-size:.9em;color:#aaa;text-align:center;margin:2px 0 8px;cursor:pointer;user-select:none'>"
-      "<span id='lb' onclick=\"document.body.classList.toggle('hb')\">"
-      "<span style='color:#47c266'>&#9632;</span> Vergütung/&#188;h &nbsp; "
-      "<span style='color:#ff5661'>&#9632;</span> Kosten</span> &nbsp; "
-      "<span id='lp' onclick=\"document.body.classList.toggle('hp')\">"
-      "<span style='color:#f5a623'>&#8212;</span> Spotpreis</span> &nbsp; "
-      "<span id='ln' onclick=\"document.body.classList.toggle('hn')\">"
-      "<span style='color:#1fa3ec'>&#9478;</span> jetzt</span></div>")
+  end
+
+  # Fusszeilen im Tasmota-Tabellenformat ({s} Name {m} Wert {e}), dann Trennlinie.
+  def send_footer(now)
     tasmota.web_send("{t}")
     var pnext = self.store.price(spot_day(now + 3600), spot_slot(now + 3600))
     tasmota.web_send(string.format("{s}Nächste Stunde{m}%s{e}", pnext == nil ? "–" : string.format("%.1f Rp/kWh", pnext / 100.0)))
@@ -572,69 +653,104 @@ class SpotApp
     tasmota.web_send(string.format("{s}Zähler %s{m}%s{e}", self.cfg["sim"] ? "(Simulator)" : "Einspeisung",
       self.cnt == nil ? "–" : string.format("%.3f kWh", self.cnt)))
     if self.tz_warn != nil
-      tasmota.web_send(string.format("{s}<span style='color:#ff5661'>&#9888; Zeitzone</span>{m}<span style='color:#ff5661'>%s</span>{e}", self.tz_warn))
+      tasmota.web_send(string.format("{s}<span style='color:%s'>&#9888; Zeitzone</span>{m}<span style='color:%s'>%s</span>{e}",
+        self.COL_COST, self.COL_COST, self.tz_warn))
     end
-    tasmota.web_send("</table><hr style='border:0;border-top:1px solid #aaa;margin:8px 0'></div>{t}")
+    tasmota.web_send(string.format("</table><hr style='border:0;border-top:1px solid %s;margin:8px 0'></div>{t}", self.COL_AXIS))
   end
 
-  def send_svg(key, slot, pmin, pmax, vmin, vmax)
-    var x0 = 30.0
-    var pw = 270.0
-    var bw = pw / 96
-    var vy = / v -> 130.0 - (v - vmin) * 120.0 / (vmax - vmin)
-    var py = / p -> 130.0 - (p - pmin) * 120.0 / (pmax - pmin)
+  # ---- SVG
+  # Das Chart des Tages key: Balken Vergütung (linke Achse Rp/¼h), Preislinie (rechte Achse Rp/kWh),
+  # Jetzt-Marke, Stundenachse. Jede Kurve ist eine SVG-Gruppe id='s<k>' (siehe chart_curves).
+  def send_svg(key, slot)
+    var vr = self.day_range(/ i -> self.revenue_at(key, i), 100)      # 1e-6 CHF, mind. 0.0001
+    var pr = self.day_range(/ i -> self.store.price(key, i), 100)     # 1/10000 CHF/kWh, mind. 0.01
+    var vy = self.y_scale(vr[0], vr[1])
+    var py = self.y_scale(pr[0], pr[1])
+    self.send_svg_open(key)
+    self.send_axes(vy, py, vr, pr)
+    self.send_bars("b", key, vy)
+    self.send_polyline("p", self.COL_PRICE, / i -> self.store.price(key, i), py)
+    self.send_now_marker("n", slot)
+    self.send_x_axis()
+    tasmota.web_send("</svg>")
+  end
 
-    # Slot-Werte als data-Attribute: das Cursor-Script (web_add_main_button) liest sie im Browser.
+  # Öffnendes <svg>. Vertrag mit dem Cursor-Script (web_add_main_button): #spotsvg trägt
+  # data-x0, data-bw (SVG-Einheiten), data-p (96 Preise, 1/10000 CHF/kWh oder '-') und data-e
+  # (96 Energien, 0.01 kWh oder '-'). Das Script rechnet Mausposition -> Slot und zeigt Zeit,
+  # Rp/kWh, kWh und Rp. Neue Kurven aus Preis oder Energie brauchen keine Änderung am Script.
+  # Einzige Stelle, die 96 Werte in einen String packt (2 x ca. 300 Byte, einmal pro Render).
+  def send_svg_open(key)
     var dp = ""
     var de = ""
-    for i:0..95
+    for i:0..self.CH_SLOTS-1
       var p = self.store.price(key, i)
       var e = self.store.energy_at(key, i)
-      dp += (p == nil ? "-" : str(p)) + (i < 95 ? "," : "")
-      de += (e == nil ? "-" : str(e)) + (i < 95 ? "," : "")
+      var sep = i < self.CH_SLOTS-1 ? "," : ""
+      dp += (p == nil ? "-" : str(p)) + sep
+      de += (e == nil ? "-" : str(e)) + sep
     end
-    var s = string.format("<svg id='spotsvg' viewBox='0 0 340 158' style='width:100%%;display:block;margin:16px 0 6px' "
-      "xmlns='http://www.w3.org/2000/svg' data-x0='%.0f' data-bw='%.4f' data-p='%s' data-e='%s'>", x0, bw, dp, de)
-    dp = nil
-    de = nil
-    for i:0..3                                # Gitter + linke Achse (Rp pro 1/4h)
-      var v = vmin + (vmax - vmin) * i / 3
-      s += string.format("<line x1='%.0f' y1='%.1f' x2='%.0f' y2='%.1f' stroke='#444' stroke-width='0.5'/>", x0, vy(v), x0 + pw, vy(v))
-      s += string.format("<text x='%.0f' y='%.1f' fill='#47c266' font-size='10' text-anchor='end'>%.1f</text>", x0 - 4, vy(v) + 3.5, v / 10000.0)
-    end
-    if vmin < 0
-      s += string.format("<line x1='%.0f' y1='%.1f' x2='%.0f' y2='%.1f' stroke='#888' stroke-width='0.7'/>", x0, vy(0), x0 + pw, vy(0))
-    end
-    for i:0..3                                # rechte Achse (Rp/kWh)
-      var p = pmin + (pmax - pmin) * i / 3
-      s += string.format("<text x='%.0f' y='%.1f' fill='#f5a623' font-size='10'>%.0f</text>", x0 + pw + 4, py(p) + 3.5, p / 100.0)
-    end
-    s += string.format("<text x='%.0f' y='20' fill='#47c266' font-size='8'>Rp/&#188;h</text>", x0 + 4)
-    s += string.format("<text x='%.0f' y='20' fill='#f5a623' font-size='8' text-anchor='end'>Rp/kWh</text>", x0 + pw - 4)
-    tasmota.web_send(s)
+    tasmota.web_send(string.format("<svg id='spotsvg' viewBox='0 0 340 158' style='width:100%%;display:block;margin:16px 0 6px' "
+      "xmlns='http://www.w3.org/2000/svg' data-x0='%.0f' data-bw='%.4f' data-p='%s' data-e='%s'>",
+      self.CH_X0, self.bw, dp, de))
+  end
 
-    s = "<g id='sb'>"                         # Balken Vergütung (id: Legende blendet aus)
-    for i:0..95
-      var p = self.store.price(key, i)
-      var e = self.store.energy_at(key, i)
-      if p == nil || e == nil continue end
-      var v = e * p
+  # Gitterlinien mit linker Achse (Rp/¼h, Vergütung), Nulllinie bei negativen Werten,
+  # rechte Achse (Rp/kWh, Preis), Einheiten oben. Achsenwerte in 4 Stufen, ganzzahlig gerechnet.
+  def send_axes(vy, py, vr, pr)
+    var x0 = self.CH_X0
+    var x1 = self.CH_X0 + self.CH_W
+    var s = ""
+    for i:0..3
+      var v = vr[0] + (vr[1] - vr[0]) * i / 3
+      s += string.format("<line x1='%.0f' y1='%.1f' x2='%.0f' y2='%.1f' stroke='%s' stroke-width='0.5'/>", x0, vy(v), x1, vy(v), self.COL_GRID)
+      s += string.format("<text x='%.0f' y='%.1f' fill='%s' font-size='10' text-anchor='end'>%.1f</text>", x0 - 4, vy(v) + 3.5, self.COL_REVENUE, v / 10000.0)
+    end
+    if vr[0] < 0
+      s += string.format("<line x1='%.0f' y1='%.1f' x2='%.0f' y2='%.1f' stroke='%s' stroke-width='0.7'/>", x0, vy(0), x1, vy(0), self.COL_ZERO)
+    end
+    for i:0..3
+      var p = pr[0] + (pr[1] - pr[0]) * i / 3
+      s += string.format("<text x='%.0f' y='%.1f' fill='%s' font-size='10'>%.0f</text>", x1 + 4, py(p) + 3.5, self.COL_PRICE, p / 100.0)
+    end
+    s += string.format("<text x='%.0f' y='20' fill='%s' font-size='8'>Rp/&#188;h</text>", x0 + 4, self.COL_REVENUE)
+    s += string.format("<text x='%.0f' y='20' fill='%s' font-size='8' text-anchor='end'>Rp/kWh</text>", x1 - 4, self.COL_PRICE)
+    tasmota.web_send(s)
+  end
+
+  # Balken Vergütung pro Slot: grün nach oben, rot (Kosten) nach unten ab der Nulllinie.
+  def send_bars(cid, key, vy)
+    var s = string.format("<g id='s%s'>", cid)
+    var bw = self.bw
+    for i:0..self.CH_SLOTS-1
+      var v = self.revenue_at(key, i)
+      if v == nil continue end
       var top = v >= 0 ? vy(v) : vy(0)
       var h = v >= 0 ? vy(0) - top : vy(v) - top
       if h < 0.3 h = 0.3 end
-      s += string.format("<rect x='%.1f' y='%.1f' width='%.1f' height='%.1f' fill='%s'/>", x0 + i * bw, top, bw * 0.8, h, v >= 0 ? "#47c266" : "#ff5661")
-      if i % 16 == 15
+      s += string.format("<rect x='%.1f' y='%.1f' width='%.1f' height='%.1f' fill='%s'/>",
+        self.CH_X0 + i * bw, top, bw * 0.8, h, v >= 0 ? self.COL_REVENUE : self.COL_COST)
+      if i % self.CH_SEND_EVERY == self.CH_SEND_EVERY - 1
         tasmota.web_send(s)
         s = ""
       end
     end
     tasmota.web_send(s + "</g>")
+  end
 
-    s = "<g id='sp'>"                         # Preislinie, Lücken bei fehlenden Werten
+  # Eine Kurve als Linie in der Gruppe id='s<cid>'. value_at(slot) -> Rohwert oder nil, y_of(wert)
+  # -> SVG-y. Bei nil endet die Polyline, die nächste beginnt beim nächsten Wert (Lücke). Nach je
+  # CH_SEND_EVERY Slots wird gesendet, der String bleibt klein. attrs: weitere SVG-Attribute als
+  # String, z.B. "stroke-dasharray='4,2'" (weglassen oder nil = keine).
+  def send_polyline(cid, color, value_at, y_of, attrs)
+    if attrs == nil attrs = "" end
+    var s = string.format("<g id='s%s'>", cid)
+    var bw = self.bw
     var open_line = false
-    for i:0..95
-      var p = self.store.price(key, i)
-      if p == nil
+    for i:0..self.CH_SLOTS-1
+      var v = value_at(i)
+      if v == nil
         if open_line
           s += "'/>"
           open_line = false
@@ -642,33 +758,49 @@ class SpotApp
         continue
       end
       if !open_line
-        s += "<polyline fill='none' stroke='#f5a623' stroke-width='1.5' points='"
+        s += string.format("<polyline fill='none' stroke='%s' stroke-width='1.5'%s points='", color, attrs)
         open_line = true
       end
-      s += string.format("%.1f,%.1f ", x0 + (i + 0.5) * bw, py(p))
-      if i % 24 == 23
+      s += string.format("%.1f,%.1f ", self.CH_X0 + (i + 0.5) * bw, y_of(v))
+      if i % self.CH_SEND_EVERY == self.CH_SEND_EVERY - 1
         tasmota.web_send(s)
         s = ""
       end
     end
     if open_line s += "'/>" end
-    s += "</g>"
+    tasmota.web_send(s + "</g>")
+  end
 
-    var xn = x0 + slot * bw                   # Jetzt-Marke, x-Achse, Stunden
-    s += string.format("<g id='sn'><line x1='%.1f' y1='10' x2='%.1f' y2='130' stroke='#1fa3ec' stroke-dasharray='3,2'/></g>", xn, xn)
-    s += string.format("<line x1='%.0f' y1='130' x2='%.0f' y2='130' stroke='#aaa'/>", x0, x0 + pw)
+  # Gestrichelte Marke am aktuellen Slot.
+  def send_now_marker(cid, slot)
+    var xn = self.CH_X0 + slot * self.bw
+    tasmota.web_send(string.format("<g id='s%s'><line x1='%.1f' y1='%.0f' x2='%.1f' y2='%.0f' stroke='%s' stroke-dasharray='3,2'/></g>",
+      cid, xn, self.CH_Y_TOP, xn, self.CH_Y_BASE, self.COL_NOW))
+  end
+
+  # Grundlinie und Stundenmarken 00..24.
+  def send_x_axis()
+    var x0 = self.CH_X0
+    var y = self.CH_Y_BASE
+    var s = string.format("<line x1='%.0f' y1='%.0f' x2='%.0f' y2='%.0f' stroke='%s'/>", x0, y, x0 + self.CH_W, y, self.COL_AXIS)
     for h: [0, 6, 12, 18, 24]
-      var x = x0 + pw * h / 24
-      s += string.format("<line x1='%.1f' y1='130' x2='%.1f' y2='133' stroke='#aaa'/>", x, x)
-      s += string.format("<text x='%.1f' y='148' fill='#aaa' font-size='11' text-anchor='middle'>%02d</text>", x, h)
+      var x = x0 + self.CH_W * h / 24
+      s += string.format("<line x1='%.1f' y1='%.0f' x2='%.1f' y2='%.0f' stroke='%s'/>", x, y, x, y + 3, self.COL_AXIS)
+      s += string.format("<text x='%.1f' y='%.0f' fill='%s' font-size='11' text-anchor='middle'>%02d</text>", x, y + 18, self.COL_AXIS, h)
     end
-    s += "</svg>"
     tasmota.web_send(s)
   end
 
-  # Cursor-Linie mit Werten beim Überfahren des Charts. Das Script steht ausserhalb des
-  # Sensorbereichs (der wird per AJAX ersetzt, Scripts darin laufen nicht) und wird einmal pro
-  # Seitenaufruf ausgeführt; es sucht das SVG bei jeder Mausbewegung neu.
+  # ---- Cursor-Script
+  # Cursor-Linie mit Werten beim Überfahren/Antippen des Charts. Das Script steht ausserhalb des
+  # Sensorbereichs (web_add_main_button rendert unterhalb der Sensoren) und läuft einmal pro
+  # Seitenaufruf; im Sensorbereich liefe es nie, weil Tasmota den per AJAX ersetzt. Ablauf:
+  #   1. bei jeder Mausbewegung das aktuelle #spotsvg suchen (nach jedem Refresh ein neues Element)
+  #   2. einmal eine Gruppe <g id='cur'> mit Linie und Text anhängen
+  #   3. Mausposition -> SVG-x -> Slot (data-x0, data-bw)
+  #   4. Werte aus data-p / data-e lesen, Text mit Zeit, Rp/kWh, kWh, Rp in Legendenfarben setzen
+  #   5. MutationObserver auf #l1: nach jedem AJAX-Refresh letzte Mausposition erneut anwenden
+  # Der String ist absichtlich kompakt; Änderungen hier nur mit Test im Browser.
   def web_add_main_button()
     import webserver
     webserver.content_send("<script>(function(){var N='http://www.w3.org/2000/svg',L=null;"
@@ -682,8 +814,8 @@ class SpotApp
       "var xc=x0+(i+.5)*bw,l=g.firstChild,tx=g.lastChild;l.setAttribute('x1',xc);l.setAttribute('x2',xc);tx.setAttribute('x',Math.min(Math.max(xc,100),240));"
       "var p=s.dataset.p.split(',')[i],e=s.dataset.e.split(',')[i];"
       "var h=('0'+Math.floor(i/4)).slice(-2)+':'+('0'+i%4*15).slice(-2);"
-      "var v=p*e/1e4;tx.innerHTML=h+'  <tspan fill=\"#f5a623\">'+(p=='-'?'\u2013':(p/100).toFixed(1)+' Rp/kWh')+'</tspan> \u00b7 '"
-      "+(e=='-'?'\u2013':(e/100).toFixed(2)+' kWh')+(p=='-'||e=='-'?'':' \u00b7 <tspan fill=\"'+(v<0?'#ff5661':'#47c266')+'\">'+v.toFixed(1)+' Rp</tspan>');}"
+      "var v=p*e/1e4;tx.innerHTML=h+'  <tspan fill=\"#f5a623\">'+(p=='-'?'–':(p/100).toFixed(1)+' Rp/kWh')+'</tspan> · '"
+      "+(e=='-'?'–':(e/100).toFixed(2)+' kWh')+(p=='-'||e=='-'?'':' · <tspan fill=\"'+(v<0?'#ff5661':'#47c266')+'\">'+v.toFixed(1)+' Rp</tspan>');}"
       "document.addEventListener('mousemove',f);document.addEventListener('touchstart',f,{passive:true});document.addEventListener('touchmove',f,{passive:true});"
       "var l1=document.getElementById('l1');if(l1)new MutationObserver(function(){if(L)f(L);}).observe(l1,{childList:true});})();</script>")
   end

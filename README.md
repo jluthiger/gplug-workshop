@@ -47,7 +47,8 @@ Konfiguration am Anfang von `app/spot.be` (`spot_cfg`): `sim`, `meter_path`, `da
 
 ## Entwicklung
 
-- `app/spot.be` – die App. Kommentare `# ERWEITERUNGSPUNKT` markieren die Übungen.
+- `app/spot.be` – die App. Kommentare `# ERWEITERUNGSPUNKT` markieren die Übungen; neue Chart-Kurven
+  über `send_polyline` und `chart_curves()` (Abschnitt `F3  Chart`).
 - `app/desktop_harness.be` – simuliert einen Tag auf dem PC (Berry-Interpreter nötig,
   `brew install berry` oder aus den Tasmota-Quellen). Braucht eine gespeicherte BKW-Antwort
   `bkw.json` im Arbeitsverzeichnis. Ausgabe endet mit `HARNESS OK`.
@@ -67,6 +68,7 @@ abgemeldet).
 
 ## Workshop-Unterlagen
 
+- `EXERCISES.md` – Übungen mit Prompt-Vorlagen, erwartetem Resultat, Prüfschritten und Stolpersteinen.
 - `INTENT.md` – Anforderungen F1–F6, BKW-API-Fakten, Entscheide, offene Fragen, Abkürzungen.
 - `WORKSHOP_PREP.md` – Zeitplan, KI-Didaktik, Hausaufgaben, Deliverables, Risiken.
 - `REPLY_HERMANN.md` – Antwort auf das RFC des Veranstalters.
