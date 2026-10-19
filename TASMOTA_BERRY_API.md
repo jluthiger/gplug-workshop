@@ -11,7 +11,7 @@ condensed to what a data/telemetry app needs. Verified against docs on 2026-10-1
 - `load("file.be")` loads and runs a script; `BrRestart` (console command) restarts the Berry VM and re-runs `autoexec.be` — use this to iterate without reboot.
 - Berry **blocks Tasmota while it runs**. Never block > 50 ms. Long work → split with `tasmota.set_timer`. Never busy-wait.
 - Network calls before Wi-Fi is up crash. Wrap first network use in `tasmota.when_network_up(f)`.
-- Wall-clock is invalid until NTP sync. Gate time-based logic on `tasmota.rtc("utc") > 1700000000` or rule `Time#Initialized`.
+- Wall-clock is invalid until NTP sync. Gate time-based logic on `tasmota.rtc("utc") > 1700000000`. Don't rely on the rule `Time#Initialized` after boot: it fires as soon as NTP syncs, often **before** your `when_network_up` callback registers it (seen 19.10. on 15.3.0; app fetched nothing until the next cron). Poll with `tasmota.set_timer(2000, …)` until the clock is valid instead.
 - Uncaught exceptions kill the current callback, not Tasmota. Still wrap every callback body in `try ... except .. as e, m  log("X: " + e + " " + m, 2) end`.
 - Console: `print(x)` → Berry console; `log(msg, level)` → Tasmota log (level 2 = info, 3 = debug, default 3). Use `log` for anything the user should see.
 - Heap: ESP32 without PSRAM has ~100–200 kB free. `tasmota.memory("heap_free")` → kB. `tasmota.gc()` forces collection, returns Berry-allocated bytes.

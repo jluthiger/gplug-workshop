@@ -81,6 +81,7 @@ class Tas
   def add_cron(p, f, id) self.crons[id] = f end
   def add_rule(t, f, id) self.rules[t] = f end
   def set_timer(ms, f, id) f() end
+  def remove_timer(id) end
   def when_network_up(f) self.net_up = f end     # Harness ruft es nach der Pfad-Konfiguration
   def read_sensors() return '{"Time":"2026-10-18T17:04:11","z":{"SMid":"","Eo":0.0}}' end
 end

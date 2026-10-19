@@ -130,6 +130,7 @@ class SpotApp
   var last_fetch           # Text für UI / SpotStatus
   var tz_warn              # Zeitzonen-Warnung (String) oder nil, stündlich geprüft
   var busy
+  var time_tries          # Wartezyklen auf gültige Uhrzeit nach Kaltstart
 
   def init(cfg)
     self.cfg = cfg
@@ -137,6 +138,7 @@ class SpotApp
     self.sim_cnt = 1000.0
     self.last_fetch = "noch kein Abruf"
     self.busy = false
+    self.time_tries = 0
     self.cnt = persist.find("spot_cnt", nil)
     self.cnt_t = persist.find("spot_cnt_t", 0)
     if tasmota.version() < 0x0F030000
@@ -151,12 +153,25 @@ class SpotApp
   end
 
   # ---------------------------------------------------------------- F1
+  # Nach Kaltstart/Restart ist die Uhr beim Laden noch nicht gestellt (NTP kommt erst nach
+  # dem WLAN). Die Regel Time#Initialized feuert oft, bevor sie registriert ist (Race, 19.10.
+  # auf 15.3.0 beobachtet: kein Abruf bis zum nächsten Stunden-Cron). Darum pollen.
   def on_net()
-    if spot_time_ok()
-      tasmota.set_timer(3000, /-> self.fetch_if_needed())
-    else
-      tasmota.add_rule("Time#Initialized", /-> tasmota.set_timer(3000, /-> self.fetch_if_needed()), "spot_t")
+    tasmota.set_timer(2000, /-> self.on_time(), "spot_t")
+  end
+
+  def on_time()
+    if !spot_time_ok()
+      self.time_tries += 1
+      if self.time_tries < 150                     # max. 5 min, danach übernimmt on_hour
+        tasmota.set_timer(2000, /-> self.on_time(), "spot_t")
+      end
+      return
     end
+    if self.cfg["sim"] && self.store.count(self.store.energy, spot_day(spot_now())) == 0
+      self.sim_backfill()                          # beim init war die Zeit noch ungültig
+    end
+    self.fetch_if_needed()
   end
 
   def on_hour()
@@ -654,7 +669,7 @@ if global.contains("spot") && global.spot != nil   # strict: kein direkter Zugri
   tasmota.remove_driver(global.spot)
   tasmota.remove_cron("spot_q")
   tasmota.remove_cron("spot_h")
-  tasmota.remove_rule("spot_t")
+  tasmota.remove_timer("spot_t")
 end
 spot = SpotApp(spot_cfg)
 tasmota.add_driver(spot)
