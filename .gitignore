@@ -11,6 +11,7 @@ Thumbs.db
 *.key
 secrets*.json
 opencode.json.local
+infomaniak-secure.txt
 
 # Desktop harness run artefacts (run from a scratch dir, never commit)
 app/spot_20*.csv

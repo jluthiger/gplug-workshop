@@ -65,6 +65,7 @@ abgemeldet).
 - `INTENT.md` – Anforderungen F1–F6, BKW-API-Fakten, Entscheide, offene Fragen, Abkürzungen.
 - `WORKSHOP_PREP.md` – Zeitplan, KI-Didaktik, Hausaufgaben, Deliverables, Risiken.
 - `REPLY_HERMANN.md` – Antwort auf das RFC des Veranstalters.
+- `opencode/SETUP_OPENCODE.md` – Setup opencode + Infomaniak-LLM (Schritt für Schritt), Konfiguration in `opencode.json`.
 
 ## Lizenz
 
