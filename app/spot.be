@@ -536,7 +536,8 @@ class SpotApp
   #   Energiekurve mit Kurzbuchstabe 'e': das Cursor-Script zeigt den kWh-Wert nur, wenn die Gruppe
   #   #se existiert und sichtbar ist, in der Farbe ihrer Linie. Ohne Kurve kein kWh im Cursor.
 
-  # Geometrie des SVG (viewBox 0 0 340 158): Zeichenfläche x0..x0+w, y von y_top bis y_base.
+  # Geometrie des SVG (viewBox 0 -8 340 166; y < 0 ist Platz für die Cursor-Werte):
+  # Zeichenfläche x0..x0+w, y von y_top bis y_base.
   static CH_X0 = 30.0
   static CH_W = 270.0
   static CH_Y_TOP = 10.0
@@ -694,7 +695,7 @@ class SpotApp
       dp += (p == nil ? "-" : str(p)) + sep
       de += (e == nil ? "-" : str(e)) + sep
     end
-    tasmota.web_send(string.format("<svg id='spotsvg' viewBox='0 0 340 158' style='width:100%%;display:block;margin:16px 0 6px' "
+    tasmota.web_send(string.format("<svg id='spotsvg' viewBox='0 -8 340 166' style='width:100%%;display:block;margin:24px 0 6px' "
       "xmlns='http://www.w3.org/2000/svg' data-x0='%.0f' data-bw='%.4f' data-p='%s' data-e='%s'>",
       self.CH_X0, self.bw, dp, de))
   end
@@ -810,7 +811,7 @@ class SpotApp
     webserver.content_send("<script>(function(){var N='http://www.w3.org/2000/svg',L=null;"
       "function f(ev){var s=document.getElementById('spotsvg');if(!s)return;"
       "var g=s.getElementById('cur');if(!g){g=document.createElementNS(N,'g');g.id='cur';"
-      "g.innerHTML=\"<line y1='10' y2='130' stroke='#fff' stroke-width='.7'/><text y='8' font-size='9' fill='#fff' text-anchor='middle'></text>\";s.appendChild(g);}"
+      "g.innerHTML=\"<line y1='10' y2='130' stroke='#fff' stroke-width='.7'/><text y='-1' font-size='9' fill='#fff' text-anchor='middle'></text>\";s.appendChild(g);}"
       "var t=ev.touches?ev.touches[0]:ev;L={clientX:t.clientX,clientY:t.clientY};"
       "var el=document.elementFromPoint(t.clientX,t.clientY);if(!el||!el.closest('#spotsvg')){g.style.display='none';return;}"
       "var r=s.getBoundingClientRect(),x=(t.clientX-r.left)*340/r.width,x0=+s.dataset.x0,bw=+s.dataset.bw,i=Math.floor((x-x0)/bw);"
