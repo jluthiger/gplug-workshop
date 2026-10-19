@@ -14,9 +14,7 @@ Grundlagen: `AGENTS.md` (Regeln und Werkzeuge, liest der Agent automatisch), `TA
 2. Gerät antwortet: `./brcmd.sh 'tasmota.cmd("SpotStatus")'` → JSON mit `"Sim":true`, `"prices":96`.
    **`HeapFree` notieren** (Ausgangswert, z.B. 125).
 3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
-4. Optional Desktop-Test: `cd app && berry desktop_harness.be` → endet mit `HARNESS OK`
-   (braucht `app/bkw.json`, siehe `AGENTS.md` §4).
-5. opencode starten: `./docker-run.sh` (Windows: `.\docker-run.ps1`) bzw. `opencode` im Repo-Ordner.
+4. opencode starten: `./docker-run.sh` (Windows: `.\docker-run.ps1`) bzw. `opencode` im Repo-Ordner.
 
 ## Übung A – Energiekurve im Tageschart
 
@@ -32,7 +30,6 @@ Vorgaben:
   Cursor (Maus über dem Chart) zeigt den kWh-Wert jedes Slots schon exakt an.
 - Eintrag «Energie» in der Legende, der die Kurve per Klick ein- und ausblendet wie die anderen.
 - Cursor-Script unverändert, kein JavaScript, keine neue Schleife, nichts anderes ändern.
-- Optional: Linie gestrichelt, damit sie sich von der Preislinie unterscheidet.
 
 ### Was schon da ist (nicht neu bauen lassen)
 
@@ -49,7 +46,7 @@ Die Lösung berührt **drei Stellen** und ist etwa fünf Zeilen lang.
 | 5–15 | **Plan-Agent** (`Shift+Tab` bis `plan`): Prompt 1. Plan lesen. Schlägt er eine dritte Achse, Checkboxen oder eine eigene Zeichenschleife vor: ablehnen, auf die Vorgaben verweisen |
 | 15–40 | **Build-Agent** (`Shift+Tab` bis `build`): Prompt 2. Shell-Befehle einzeln freigeben (nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `berry`, `git`). Fehler mit Prompt 3 zurückgeben |
 | 40–50 | Prüfschritte unten selbst durchgehen |
-| 50–60 | Vertiefung: Linie gestrichelt; in `/new` denselben Auftrag als Einzeiler («mach eine Energiekurve») stellen und vergleichen; funktionierenden Stand mit `git commit` sichern |
+| 50–60 | Vertiefung: in `/new` denselben Auftrag als Einzeiler («mach eine Energiekurve») stellen und vergleichen; funktionierenden Stand mit `git commit` sichern |
 | 60–65 | Drei Zeilen Notizen für die Zeigerunde (siehe Checkliste unten) |
 
 ### Prompt 1 – planen (Plan-Agent)
