@@ -148,7 +148,7 @@ Testgerät nach einer Agent-Sitzung mit 14 Upload-Zyklen bei 64 kB Heap (statt ~
 | Abruf neu (`write_file` + `f.readbytes(2048)`) | 0 kB | — |
 | HTTPS klein, Datei-Upload | 0 kB | — |
 
-Massnahmen: `parse_file` liest mit `readbytes`; `upload.sh` prüft nach `BrRestart` den Heap und startet unter 80 kB (`MIN_HEAP`) das Gerät neu; Cheat-Sheet und `AGENTS.md` nennen beide Fallen. Lehrinhalt für Block 4: Agent-Sitzung zeigt, wie 14 Iterationen das Gerät leise aushungern.
+Massnahmen: `parse_file` liest mit `readbytes`; `upload.sh` prüft nach `BrRestart` den Heap und startet unter 100 kB (`MIN_HEAP`, bis 19.10. 80 kB) das Gerät neu; Cheat-Sheet und `AGENTS.md` nennen beide Fallen. Lehrinhalt für Block 4: Agent-Sitzung zeigt, wie 14 Iterationen das Gerät leise aushungern.
 
 ## 6. Vor Ort
 

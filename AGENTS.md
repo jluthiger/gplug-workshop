@@ -78,7 +78,7 @@ einhalten. Unklar, ob ein Kommando harmlos ist: Mensch fragen.
 - Strict Mode: keine undeklarierten Globals lesen; Klassen-Member mit `var` deklarieren.
 - RAM ist knapp (~120 kB frei): keine grossen Strings oder Listen aufbauen, HTML/SVG stückweise
   senden, BKW-Antwort nie mit `json.load` parsen.
-- Heap im Blick behalten: nach jedem Upload meldet `upload.sh` `heap_free`; unter 80 kB startet es
+- Heap im Blick behalten: nach jedem Upload meldet `upload.sh` `heap_free`; unter 100 kB startet es
   das Gerät selbst neu (jeder `BrRestart` kostet ~1 kB, nur ein Neustart gibt das zurück). Fällt der
   Heap nach einer Änderung dauerhaft (gleiche Aktion mehrmals, `tasmota.gc()` davor), ist die
   Änderung schuld: Ursache suchen, nicht weiterbauen.

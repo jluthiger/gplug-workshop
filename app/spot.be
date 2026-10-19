@@ -526,7 +526,7 @@ class SpotApp
   # Vergütung pro Slot v = e*p in 1e-6 CHF (Rp = v/10000). nil = kein Wert = Lücke im Chart.
   #
   # ERWEITERUNGSPUNKT Übung A: weitere Kurve ergänzen. Drei Stellen, sonst nichts:
-  #   1. Farbkonstante COL_... unten bei den Farben.
+  #   1. Farbkonstante COL_... unten bei den Farben, eine noch freie Farbe (nicht COL_NOW-blau).
   #   2. Zeile in chart_curves(): Kurzbuchstabe + Legendentext. SVG-Gruppe id='s<k>', Legenden-
   #      Eintrag id='l<k>', Ausblenden per Klick und das CSS dazu ergeben sich daraus automatisch.
   #   3. In send_svg(): Wertebereich mit day_range(...), y-Skala mit y_scale(...), Kurve mit
@@ -702,6 +702,8 @@ class SpotApp
 
   # Gitterlinien mit linker Achse (Rp/¼h, Vergütung), Nulllinie bei negativen Werten,
   # rechte Achse (Rp/kWh, Preis), Einheiten oben. Achsenwerte in 4 Stufen, ganzzahlig gerechnet.
+  # Achsen fix: für weitere Kurven NICHT ändern, keine dritte Achse, Beschriftung nicht verschieben.
+  # Links und rechts ist kein Platz (viewBox 340 breit); den Wert einer Kurve zeigt der Cursor.
   def send_axes(vy, py, vr, pr)
     var x0 = self.CH_X0
     var x1 = self.CH_X0 + self.CH_W

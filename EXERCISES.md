@@ -29,7 +29,10 @@ Vorgaben:
 - Kurzbuchstabe `e` (SVG-Gruppe `se`). Daran erkennt der Cursor die Kurve.
 - Eigene Skala von 0 bis zum Tagesmaximum. **Keine zusätzliche Achsenbeschriftung** – sobald die
   Kurve da ist, zeigt der Cursor (Maus über dem Chart) den kWh-Wert jedes Slots exakt an.
-- Eintrag «Energie» in der Legende, der die Kurve per Klick ein- und ausblendet wie die anderen.
+- Farbe `COL_ENERGY = "#c77dff"` (violett). Nicht blau: Blau ist die «jetzt»-Linie.
+- Eintrag «Energie» in der Legende mit Liniensymbol `&#8212;` wie «Spotpreis», der die Kurve per
+  Klick ein- und ausblendet wie die anderen.
+- Achsen, Kopf- und Fusszeilen und bestehende Legendentexte bleiben, wie sie sind.
 - Cursor-Script unverändert, kein JavaScript, keine neue Schleife, nichts anderes ändern.
 
 ### Was schon da ist (nicht neu bauen lassen)
@@ -60,8 +63,11 @@ Aufgabe: Im Tageschart soll eine dritte Kurve die eingespeiste Energie pro Viert
 als Linie zeigen.
 
 Vorgaben: Datenquelle self.store.energy_at(key, slot) (0.01 kWh, nil = Lücke). Kurzbuchstabe e.
-Eigene Skala von 0 bis zum Tagesmaximum, keine zusätzliche Achsenbeschriftung (der Cursor zeigt
-den kWh-Wert, sobald die Gruppe se existiert). Eintrag "Energie" in der Legende, der die Kurve wie die anderen ein- und ausblendet.
+Farbe COL_ENERGY = "#c77dff" (nicht blau, das ist "jetzt"). Eigene Skala von 0 bis zum
+Tagesmaximum, keine zusätzliche Achsenbeschriftung (der Cursor zeigt den kWh-Wert, sobald die
+Gruppe se existiert). Eintrag "Energie" in der Legende mit Liniensymbol &#8212; wie Spotpreis,
+der die Kurve wie die anderen ein- und ausblendet. Achsen, Kopf- und Fusszeilen und bestehende
+Legendentexte nicht ändern.
 Bestehende Helfer verwenden: chart_curves, day_range, y_scale, send_polyline. Keine neue
 Schleife, kein JavaScript, keine Änderung am Cursor-Script, nichts anderes ändern.
 
@@ -90,9 +96,26 @@ Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe 
 Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
 ```
 
+### Prompt 4 – zurück auf Kurs
+
+Wenn der Agent eine Achse für kWh baut, Achsenwerte verschiebt, Texte umbenennt oder eine eigene
+Farbe wählt (Stolpersteine 2 und 9):
+
+```
+Halte dich an EXERCISES.md, Übung A, Vorgaben. Mach rückgängig:
+- die kWh-Achsenbeschriftung (keine dritte Achse, der Cursor zeigt kWh),
+- alle Änderungen an send_axes, send_header, send_footer und an den bestehenden
+  Legendentexten.
+Die Energiekurve bleibt: Kurzbuchstabe e, Farbe COL_ENERGY = "#c77dff", Legendeneintrag
+"Energie" mit Linie &#8212; wie Spotpreis. Danach git diff --stat app/spot.be zeigen:
+erwartet ca. 5 Zeilen an 3 Stellen.
+```
+
 ### Erwartetes Resultat
 
-- Legende hat einen vierten Eintrag «Energie»; Klick blendet die Linie aus und ein.
+- Legende hat einen vierten Eintrag «— Energie» in Violett; Klick blendet die Linie aus und ein.
+- Achsen, Kopfzeilen («Spotpreis jetzt», «Einspeisung heute», «Vergütung heute») und übrige
+  Legende unverändert.
 - Die Linie hat ihr Maximum oben am Chart (eigene Skala) und Lücken, wo Energie fehlt.
 - Maus über dem Chart: Cursor zeigt neu zusätzlich den kWh-Wert, in der Farbe der Linie; er passt
   zur Höhe der Linie. Linie per Legende ausgeblendet → kWh verschwindet aus dem Cursor.
@@ -124,13 +147,14 @@ weg aus dem Cursor. Fehlt kWh trotz Linie: Gruppe heisst nicht `se`.
 
 1. **«Die Kurve fehlt»** – sie liegt auf den Balkenspitzen (siehe Kasten oben). Balken ausblenden.
 2. **Dritte Achse.** Der Agent will Achsenwerte für kWh beschriften; sie überlappen die Preisachse
-   oder werden am Rand abgeschnitten, und es kostet vier Prompts Layout. Nein sagen, Vorgabe zitieren.
+   oder werden am Rand abgeschnitten, die grünen Werte rutschen ins Chart, und es kostet vier
+   Prompts Layout. Nein sagen, Vorgabe zitieren, sonst Prompt 4.
 3. **Checkboxen / `onchange` im Chart** funktionieren nie: Tasmota ersetzt den Sensorbereich alle
    paar Sekunden per AJAX, Scripts darin laufen nicht. Legende über `chart_curves()` erweitern.
 4. **Eigene Zeichenschleife.** Der Agent kopiert die Polyline-Logik (gern zweimal, Kontur + Linie).
    `send_polyline` einfordern; eine Kurve ist ein Aufruf.
 5. **Heap.** Jeder Upload kostet ~1 kB, der erst ein Neustart zurückgibt; `upload.sh` startet das
-   Gerät unter 80 kB selbst neu. Scheitert der Agent zweimal gleich: anhalten, Log selbst lesen.
+   Gerät unter 100 kB selbst neu. Scheitert der Agent zweimal gleich: anhalten, Log selbst lesen.
 6. **Erfundene API** (`webserver.content_send` in `web_sensor`, nicht existierende `tasmota.*`-
    Funktionen). Auf `TASMOTA_BERRY_API.md` verweisen; nur dort Genanntes gilt.
 7. **`BrRestart` / `Restart` über `brcmd.sh`** sind gesperrt (Absturz bzw. Reboot). App neu laden

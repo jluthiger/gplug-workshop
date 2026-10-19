@@ -196,7 +196,7 @@ Rounding: no `math.round` — use `int(x + 0.5)` for x ≥ 0, `int(x - 0.5)` for
 ## 7. Gotchas
 
 - **`f.read(n)` leaks** (Tasmota 15.3.0, measured 19.10.): each pass over a file with `f.read(2048)` loses ~3 kB of Berry heap for good, `gc()` does not get it back. Read files in blocks with `f.readbytes(n).asstring()` or line by line with `f.readline()`; both are leak-free. `f.read()` without size is fine but needs the whole file in RAM.
-- **`BrRestart` is not free**: each VM restart costs ~1 kB of heap outside Berry, and only a real `Restart 1` returns it. 20 upload cycles ≈ 20 kB. `upload.sh` reboots the device by itself when the heap drops below 80 kB.
+- **`BrRestart` is not free**: each VM restart costs ~1 kB of heap outside Berry, and only a real `Restart 1` returns it. 20 upload cycles ≈ 20 kB. `upload.sh` reboots the device by itself when the heap drops below 100 kB.
 - Memory floor: HTTPS needs ~40 kB free for the TLS handshake. Below ~50 kB a 21 kB `get_string()` reboots the device ("MEMORY ALLOCATION FAILED"); between ~50 and ~70 kB it returns a silently truncated string. Check `tasmota.memory("heap_free")` after `tasmota.gc()`, aim to stay above 90 kB.
 - Cron pattern has **6 fields** (seconds first) and runs in **local** time, DST included.
 - `tasmota.add_rule/add_cron/add_cmd` with the same id replace the previous registration — use ids so `BrRestart` doesn't double-register.
