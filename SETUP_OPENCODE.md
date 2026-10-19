@@ -238,6 +238,30 @@ ergänzen (ID exakt wie in der Modellliste aus Schritt 3).
 
 In opencode umschalten: `/models` → Modell auswählen.
 
+### Alternative: Claude-Modelle von Anthropic
+
+opencode kennt Anthropic als eingebauten Provider, `opencode.json` muss dafür nicht geändert werden.
+Daten werden dann bei Anthropic (USA) verarbeitet, nicht in der Schweiz.
+
+> **Wichtig:** Ein claude.ai-Abo (Pro/Max) gilt **nicht** für opencode. Anthropic verbietet die
+> Nutzung des Abos in Fremd-Tools, opencode bietet das Login seit Version 1.3.0 nicht mehr an.
+> Nötig ist ein **API-Key** mit eigener, nutzungsabhängiger Abrechnung.
+
+1. Konto auf <https://console.anthropic.com> anlegen (gleiches Login wie claude.ai möglich),
+   unter **Billing** Guthaben laden und eine Ausgabenlimite setzen.
+2. **API Keys** → **Create Key**, Key sofort kopieren (wird nur einmal angezeigt).
+3. In opencode: `/connect` → **Anthropic** → **Manually enter API Key** → Key einfügen.
+   Gespeichert in `~/.local/share/opencode/auth.json`, bei Option A im Docker-Volume
+   `gplug-workshop-data` (bleibt erhalten).
+4. `/models` → z.B. `claude-sonnet-5-5` (Standard) oder `claude-haiku-5-5` (günstig) wählen.
+
+Option B ohne `/connect`: `export ANTHROPIC_API_KEY=…` im Terminal setzen (wie Schritt 3).
+Der Docker-Container übernimmt diese Variable nicht, dort `/connect` verwenden.
+Als Standardmodell fest einstellen: in `opencode.json` `"model": "anthropic/claude-sonnet-5-5"`.
+
+Gleiche Sicherheitsregeln wie beim Infomaniak-Token: nie committen, nach dem Workshop in der
+Console widerrufen.
+
 ## 7. Erster Start im Workshop-Repo
 
 ```sh
@@ -306,3 +330,5 @@ Nützliche Befehle im TUI:
 - opencode Doku: <https://opencode.ai/docs/> · Provider: <https://opencode.ai/docs/providers/> ·
   Berechtigungen: <https://opencode.ai/docs/permissions/>
 - Modellkatalog (Preise, Limits): <https://models.dev>
+- Anthropic Console (API-Key): <https://console.anthropic.com> · Modelle:
+  <https://docs.anthropic.com/en/docs/about-claude/models>
