@@ -88,9 +88,11 @@ einhalten. Unklar, ob ein Kommando harmlos ist: Mensch fragen.
 - Jeder Callback-Body in `try ... except .. as e, m ... end`, Fehler mit `log("SPOT: ...", 2)`.
 - Neue Commands mit `tasmota.add_cmd`, Crons mit fester Id, damit `load("spot")` nichts doppelt
   registriert.
-- Chart: neue Kurven nur über `chart_curves()` + `send_polyline` (Abschnitt `F3  Chart`), keine eigene
-  Zeichenschleife, kein `<script>` und keine Checkboxen im Sensorbereich (Tasmota ersetzt ihn per
-  AJAX, Scripts darin laufen nicht), keine zusätzliche Achse ohne Rückfrage.
+- Chart: neue Kurven nur über `chart_curves()` + `send_polyline` bzw. `send_bars` (Abschnitt
+  `F3  Chart`), keine eigene Zeichenschleife, kein `<script>` und keine Checkboxen im Sensorbereich
+  (Tasmota ersetzt ihn per AJAX, Scripts darin laufen nicht).
+- Achsen: erlaubt sind Preis rechts (Rp./kWh), **eine** Achse links für kWh (Schritt 1) und im
+  Vergütungs-Chart eine Achse links für CHF (Schritt 4). Jede weitere Achse nur nach Rückfrage.
 - Stil von `spot.be` übernehmen: deutsche Kommentare, kurze Methoden, keine Tricks.
 
 ## 7. Git

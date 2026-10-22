@@ -14,12 +14,12 @@ Zweck dieses Dokuments: verbindliche Beschreibung *was* die Tasmota-Berry-App le
 - Do 12.11.2026, 17:00, max. 20 Plätze + 4 Reserve. Abendveranstaltung → ca. 3 h netto.
 - **BYOD**: Teilnehmende bringen eigenen gPlug (vorhanden oder via Webshop beschafft) und eigenes Notebook mit USB mit. Kein Pre-Flashing durch Veranstalter möglich.
 - Folgen für die App:
-  - Geräte kommen mit unterschiedlicher Firmware-**Version**, Heim-WLAN und realer SM-Konfiguration → Mindest-Firmware-Version publizieren, OTA-Upgrade als Hausaufgabe, SM-Pfad konfigurierbar, Simulator für den Abend. Berry, UFS und SML sind auf allen Webshop-gPlugs aktiv (geklärt 18.10.).
-  - Kein Smart Meter vor Ort → `sim_meter.be` ist Pflicht, nicht Option.
+  - Geräte kommen mit unterschiedlicher Firmware-**Version**, Heim-WLAN und realer SM-Konfiguration → Mindest-Firmware-Version, Upgrade **vor Ort** per Datei-Upload (keine Vorbereitung durch Teilnehmende, entschieden 22.10.), SM-Pfad konfigurierbar, Simulator für den Abend. Berry, UFS und SML sind auf allen Webshop-gPlugs aktiv (geklärt 18.10.).
+  - Kein Smart Meter vor Ort → Simulator (`sim: true` in `spot.be`) ist Pflicht, nicht Option.
   - Vor Ort entwickeln Teilnehmende **eine kleine Ergänzung** auf einer fertigen Referenz-App (siehe §4a), nicht die App selbst.
 - **Hauptthema des Workshops ist der Umgang mit KI** (Coding-Agent), die Berry-App ist das Übungsobjekt. Folgen für die App: Code muss für einen Agenten gut lesbar und erweiterbar sein (klare Modulgrenzen, Kommentare, keine Tricks), und die Referenz-App wird selbst **mit dem Agenten gebaut** — Prompts und Verlauf werden als Lehrmaterial aufbewahrt (siehe `WORKSHOP_PREP.md` §1a).
 - Optionale Teilnehmer-Erweiterungen laut Sketch: Last via Shelly schalten, Integration Drittsysteme → beides über F5 (Command) bzw. `webclient` zum Shelly machbar (§3 F6).
-- Zwei Scope-Varianten existieren (kurzer Sketch: stündlich, 1 Tag; RFC v0.2: ¼-h, 3 Tage). **Dieses Dokument folgt v0.2** für Datenhaltung, zeigt aber zuerst **1 Tag** (96 ¼-h-Werte) in der Grafik; 3-Tage-Ansicht ist Erweiterung.
+- Zwei Scope-Varianten existieren (kurzer Sketch: stündlich, 1 Tag; RFC v0.2: ¼-h, 3 Tage). **Dieses Dokument folgt v0.2**. Grafik der Referenz-App: **3 Tage mit Stundenwerten** gemäss Zielbild `261021-meeting-hermann/final-app.jpg` (entschieden 22.10., ersetzt „zuerst 1 Tag“ vom 18.10.).
 
 ## 1. Ziel
 
@@ -61,7 +61,7 @@ Antwort (geprüft am 2026-10-18): ca. **21 kB**, davon < 3 % Nutzdaten.
 - Keine Angaben zu Rate-Limits oder Auth; Abruffrequenz trotzdem auf wenige Versuche pro Tag begrenzen.
 - Aus der Swagger-Spezifikation (<https://api.bkw.ch/api/dyntariffs/swagger/v1/swagger.json>, gelesen 18.10.):
   - Endpoint akzeptiert **keine Query-Parameter** (400 bei jedem Parameter). Der Folgetag kann nicht angefordert werden; die Serie wechselt serverseitig. Gemessen am So 18.10.: Wechsel zwischen **16:33 und 17:03 lokal** (14:33–15:03 UTC). Danach liefert der Endpoint **nur noch den Folgetag** — der laufende Tag ist nicht mehr abrufbar. Eine Messung an einem Werktag steht aus.
-  - „Fehlende Werte werden weggelassen“ → die Antwort kann **weniger als 96 Einträge** enthalten. Jeder Eintrag muss über seinen eigenen `start_timestamp` dem Slot zugeordnet werden; Zählen der Einträge ist nicht zulässig.
+  - „Fehlende Werte werden weggelassen“ → die Antwort kann **weniger als 96 Einträge** enthalten. Jeder Eintrag muss über seinen eigenen `start_timestamp` dem Slot zugeordnet werden; Zählen der Einträge ist nicht zulässig. Laut Hermann (21.10.) liefert die BKW in der Praxis **alles oder nichts**; die Zuordnung per Zeitstempel bleibt als Absicherung.
   - Werte basieren auf ENTSO-E Day-Ahead; Schema folgt dem **VSE-Standard für dynamische Tarife**. Andere EVU mit dynamischem Tarif nutzen voraussichtlich dasselbe Format → Adapter-Design (§4) bestätigt.
   - `/Tariffs` und `/Tariffs/energyreturn` liefern dasselbe.
 
@@ -96,7 +96,11 @@ Antwort (geprüft am 2026-10-18): ca. **21 kB**, davon < 3 % Nutzdaten.
 - Der JSON-Pfad zum Zähler ist **konfigurierbar** als Liste von Schlüsseln. **Default `["z", "Eo"]`** (geprüft 18.10. auf gPlugM/L+G mit Tasmota 15.3.0 und gPlugK/Kamstrup mit 15.5.0, Script 6.9.26 in beiden Varianten): die gPlug-Scripts `reference/gplug_script.txt` und `reference/gplugk_script.txt` (Tasmota Script, SML-Treiber `sensor53`, Descriptor `z`) liefern den Export-Zähler OBIS 2.8.0 als `z.Eo` in kWh mit 3 Dezimalen; `read_sensors()` ergibt `{"Time":"…","z":{"Eo":…}}` (ca. 0.5 kB). Referenz-Script und Beispielausgabe liegen in `reference/`.
 - Zähler werden vom Meter nur **1× pro Minute** aktualisiert; ein Abruf zur vollen Viertelstunde ist bis 60 s alt. Akzeptiert.
 - Die JSON enthält **kein Frische-Kennzeichen**: ein abgehängter Meter liefert weiter den letzten Stand (bzw. 0.0 nach Boot). Die App markiert einen Slot als ungültig, wenn `Eo` fehlt oder nach dem Boot noch 0.0 ist; ein stehender Zähler bei angeschlossenem Meter ist nicht von „keine Einspeisung“ unterscheidbar und wird als 0 gewertet.
-- Für Entwicklung und Workshop ohne Smart Meter: **Simulator** `sim_meter.be`, der alle 15 min einen Fake-Zähler um einen zufälligen Betrag (0–0.5 kWh) erhöht und denselben Pfad bereitstellt. Umschaltung über ein Flag in der Konfiguration.
+- Für Entwicklung und Workshop ohne Smart Meter: **Simulator** (in `spot.be`, Flag `sim`), der eine Einspeiseleistung als Tageskurve rechnet und daraus den Fake-Zähler hochzählt. Anforderungen (Meeting 21./22.10.):
+  - Gibt wie der echte Meter **Leistung `Po` (kW)** und **Zählerstand `Eo` (kWh)** aus. Die App rechnet weiterhin mit `Eo`.
+  - **Zeitraffer**: Takt konfigurierbar **5, 15 oder 60 min** (Echtzeit); jeder Takt rückt die Simulation um eine ¼ h vor, damit sich die Grafik am Workshop-Abend sichtbar füllt. Takt 15 min = Echtzeit. Vorschlag: „jetzt“-Marke und Slot folgen der Simulationszeit; Zusammenspiel mit echter Uhr und Preisabruf beim Bauen klären.
+  - **Vortage auffüllen**: die 2 Tage vor heute mit Fake-Preisen (inkl. negativer Preise) und Fake-Energie, in der UI als „(Sim)“ markiert, damit die 3-Tage-Grafik vom Start weg voll ist.
+  - **Negativpreis heute**: im Sim-Modus erhält auch der heutige Tag ein Mittagstief mit negativen Preisen (z.B. 12–15 Uhr), auch wenn die BKW-Serie keine hat; als „(Sim)“ markiert. Grund: Testfall für Schritt 2 der Übung, solange das Chart nur einen Tag zeigt (entschieden 22.10.).
 - Den letzten Zählerstand im RAM halten.
 - Differenz zur vorherigen Viertelstunde, gerundet auf **0.01 kWh**, als 2-Byte int (Einheit 0.01 kWh, max. 327 kWh pro Slot) speichern. Abweichung von der RFC-Mail (0.1 kWh): gleicher Speicherbedarf, aber Anlagen unter 400 W liefern sonst nur 0/0.1-Sprünge in der Grafik.
 - Gerundet wird auf Basis der Zählerstände (Differenz der gerundeten Stände), damit sich Rundungsfehler nicht aufsummieren.
@@ -105,10 +109,18 @@ Antwort (geprüft am 2026-10-18): ca. **21 kB**, davon < 3 % Nutzdaten.
 
 ### F3 – SVG-Grafik im gPlug WebUI
 
-- **Stufe 1 (Referenz-App):** der aktuelle Tag als inline-SVG mit **96 ¼-h-Werten**, eingebunden über einen Berry-Driver (`tasmota.add_driver`, `web_sensor`):
-  - Vergütung/Kosten = Preis × Energie (CHF pro ¼-h) als Balken
-  - Spotmarktpreis (CHF/kWh) als Linie
-- **Stufe 2 (Erweiterung / Teilnehmer-Übung):** eingespeiste Energie als dritte Kurve; 3-Tage-Ansicht mit Stundenwerten (72 Stunden) auf eigener Seite via `webserver.on`.
+- **Referenz-App (Zielbild `261021-meeting-hermann/final-app.jpg`, entschieden 22.10.):** 3 Tage mit **72 Stundenwerten** als inline-SVG, eingebunden über einen Berry-Driver (`tasmota.add_driver`, `web_sensor`), zwei Diagramme untereinander mit gemeinsamer Zeitachse (Tagesnamen, 00/12-Marken):
+  - Oben: **Einspeisung** (kWh/h) als Balken, grün; orange bei Preis < 0. **Spotpreis** (Rp./kWh) als Linie mit eigener Skala rechts. Bereich unter 0 Rp. schattiert („negativer Preis“). Marke „jetzt“.
+  - Unten: **Vergütung** (CHF/h) als Balken, gelb positiv, rot negativ („Einspeisung kostet“). Summe **Σ CHF** über die 3 Tage.
+  - Abweichung vom bisherigen Stand (1 Tag, ¼-h-Werte, ein Diagramm): die Referenz-App ist der **Endstand der Übungen**, nicht der Ausgangspunkt (22.10.).
+- **Starter (an Teilnehmende im Docker-Container):** Grafik zeigt **nur die Preislinie**, 1 Tag mit 96 ¼-h-Werten, Achse Rp./kWh rechts, Nulllinie, „jetzt“-Marke, Legende. Daten (F1, F2 inkl. Simulator und Vortage, F4 Tageszeile, F5) und Textzeilen (Spotpreis jetzt, Einspeisung heute, Vergütung heute) sind vollständig. Helfer `chart_curves()`, `send_polyline`, `value_range`, `nice_range`, `y_scale`, `send_data_attr` vorhanden; Kommentare `# ERWEITERUNGSPUNKT Schritt 1`…`4`. Cursor-Script in allen Stufen identisch (zeigt vorhandene `data-p/e/v`).
+- **Vom Starter zur Referenz-App in 4 Schritten** (Details, Vorgaben und Prompts in `EXERCISES.md`):
+  1. Energie-Balken (grün) mit kWh-Achse links.
+  2. Negativpreis: Balken orange bei Preis < 0, Bereich unter 0 schattiert.
+  3. 3 Tage mit 72 Stundenwerten, Tagesnamen, 00/12-Marken.
+  4. Zweites Chart Vergütung CHF/h (gelb/rot) mit Σ.
+  - Schritte 1–2 Pflicht, 3–4 für Schnelle. Nach jedem Schritt ein geprüfter Checkpoint `app/steps/spot_N.be` (Desktop-Harness grün, auf Testgerät Heap > 100 kB); `spot_4.be` = Referenz-App.
+- Farben (Zielbild, gelten schon im Starter; Preislinie wechselt von bisher orange auf cyan, damit orange für Einspeisung bei Preis < 0 frei ist, entschieden 22.10.): Preis cyan, Einspeisung grün, Einspeisung bei Preis < 0 orange, Vergütung gelb, Kosten rot, „jetzt“ grau.
 - Stundenwert = Mittel (Preis) bzw. Summe (Energie, Vergütung) der 4 Viertelstunden.
 - SVG als String stückweise erzeugen und senden (`tasmota.web_send`), kein grosser Gesamtstring im RAM.
 - Ungültige Slots erzeugen Lücken, keine Nullwerte.
@@ -151,7 +163,7 @@ Beispiele, die auf F5 bzw. `webclient` aufsetzen und in ≤ 30 min mit Agent-Hil
 - **Zeit**: Erst arbeiten, wenn die Uhrzeit gültig ist (NTP synchronisiert).
 - **Sommer-/Winterzeit**: Tage mit 23 h bzw. 25 h haben 92 bzw. 100 Viertelstunden. Ringpuffer-Slots daher für **100 Werte pro Serie** auslegen oder Länge pro Serie mitführen.
 - **Flash**: wenige Schreibzugriffe (eine Zeile pro Tag, optional 24 Zeilen pro Tag).
-- **Persistenz über Reboot**: nur letzter Zählerstand, laufende Tagessumme und Datum via `persist` (einmal pro ¼-h `persist.save()` ist zu häufig → nur bei Tageswechsel und `save_before_restart`). Ringpuffer bleiben flüchtig; nach Reboot ist die Grafik bis zum nächsten Preisabruf leer. Begründung: Flash-Schonung, einfacher Code.
+- **Persistenz über Reboot**: laut Hermann (21.10.) **nicht notwendig**. Ringpuffer bleiben flüchtig; nach Reboot ist die Grafik bis zum nächsten Preisabruf leer. Die App hält trotzdem den letzten Zählerstand via `persist` (nur bei Tageswechsel und `save_before_restart`), damit die erste ¼ h nach Neustart nicht fehlt; darf entfallen. Begründung: Flash-Schonung, einfacher Code.
 - **Firmware**: Mindestversion Tasmota **15.3.0**. App prüft beim Start `tasmota.version() < 0x0F030000` und loggt eine Warnung, wenn älter (kein Abbruch).
 - **Erweiterbarkeit**: Tarifabruf in eigener Klasse/Funktion kapseln (Adapter), damit ein Bezugs-Tarif (Groupe-E, EKZ) ohne Änderung von Speicher, Grafik, CSV und Command ergänzt werden kann.
 - **Lesbarkeit**: Code für Workshop-Teilnehmende nachvollziehbar (eine Datei bzw. wenige Klassen, kommentiert).
@@ -161,10 +173,10 @@ Beispiele, die auf F5 bzw. `webclient` aufsetzen und in ≤ 30 min mit Agent-Hil
 Budget (ca. 20 h) reicht nicht für alle fünf Features plus Workshop-Material in gleicher Tiefe. Reihenfolge:
 
 1. **Kern (Referenz-App, fertig vor dem Workshop):** F1 Preise, F2 Zähler + Simulator, F5 Command. Damit ist die App als Datenlieferant nutzbar und testbar.
-2. **F3 SVG-Grafik:** Balken (Vergütung), Preislinie, Jetzt-Marke, Legende mit Toggle und Hover-Cursor (Zeit, Rp/kWh, Rp; kWh erst mit Energiekurve `#se`) in der Referenz-App; dritte Kurve (Energie, eigene Skala, keine dritte Achse) ist **Übung A**, siehe `EXERCISES.md`.
-3. **F4 CSV:** Tageszeile in der Referenz-App; Stundenwerte und Aufbewahrungsregel als Teilnehmer-Übung.
+2. **F3 SVG-Grafik:** zuerst Referenz-App nach Zielbild (3 Tage, zwei Diagramme) inkl. Simulator-Zeitraffer und Vortage (F2) bauen, dann daraus rückwärts die Checkpoints `spot_3` … `spot_1` und den Starter (nur Preislinie) ableiten. Generator `tools/make_steps.py`: Referenz `spot_4.be` ändern, `tools/make_steps.py --write`, alle Stände mit dem Harness prüfen. Die 4 Schritte dazwischen sind die Teilnehmer-Übung (siehe F3, `EXERCISES.md`; ersetzt Übung A, 22.10.).
+3. **F4 CSV:** Tageszeile in der Referenz-App und im Starter; Stundenwerte und Aufbewahrungsregel als Bonus-Übung.
 
-Die Übungen sind so gewählt, dass sie den Datenfluss nicht verändern (nur Darstellung und Ablage) und bei Fehlern den Kern nicht beschädigen. Jede Übung wird **mit dem Coding-Agenten** gelöst; geübt wird der Arbeitszyklus Kontext geben → Aufgabe formulieren → Code auf Gerät laden → Konsole prüfen → Fehler an den Agenten zurückgeben. Der Code der Referenz-App ist daher so strukturiert, dass der Agent die Erweiterungspunkte (`web_sensor`, CSV-Funktion, Command) ohne Lesen des ganzen Files findet: eine Klasse pro Zuständigkeit, Kommentarblock `# ERWEITERUNGSPUNKT:` an den vorgesehenen Stellen. Der Chart-Code ist so gebaut (Kurventabelle `chart_curves()`, Helfer `send_polyline`/`day_range`/`y_scale`), dass eine neue Kurve drei Stellen berührt (refaktoriert 19.10., Ausgabe byte-identisch).
+Die Übungen sind so gewählt, dass sie den Datenfluss nicht verändern (nur Darstellung und Ablage) und bei Fehlern den Kern nicht beschädigen. Jede Übung wird **mit dem Coding-Agenten** gelöst; geübt wird der Arbeitszyklus Kontext geben → Aufgabe formulieren → Code auf Gerät laden → Konsole prüfen → Fehler an den Agenten zurückgeben. Der Code der Referenz-App ist daher so strukturiert, dass der Agent die Erweiterungspunkte (`web_sensor`, CSV-Funktion, Command) ohne Lesen des ganzen Files findet: eine Klasse pro Zuständigkeit, Kommentarblock `# ERWEITERUNGSPUNKT:` an den vorgesehenen Stellen. Der Chart-Code ist so gebaut (Kurventabelle `chart_curves()`, Helfer `send_polyline`/`value_range`/`y_scale`), dass eine neue Kurve drei Stellen berührt (refaktoriert 19.10., Ausgabe byte-identisch). Für die 4 Schritte heisst das: Schritt 1–2 fügen an, Schritt 3 baut die Helfer um (Bereich als Parameter), Schritt 4 verwendet sie wieder.
 
 ## 5. Abgrenzung (nicht Teil der App)
 
@@ -174,12 +186,14 @@ Die Übungen sind so gewählt, dass sie den Datenfluss nicht verändern (nur Dar
 
 ## 6. Offene Fragen
 
-1. **„144 Werte“**: *Entschieden (18.10.):* **Stufe 1** — Grafik zeigt den aktuellen Tag mit 96 ¼-h-Werten. Stufe 2 (3 Tage, 72 Stundenwerte) bleibt optionale Teilnehmer-Übung, keine Anforderung an die Referenz-App.
+1. **„144 Werte“**: *Entschieden (22.10., ersetzt 18.10.):* Referenz-App zeigt **3 Tage mit 72 Stundenwerten** gemäss `final-app.jpg` (siehe F3).
 2. **Abrufzeitpunkt**: *Gemessen (So 18.10.):* Wechsel auf den Folgetag zwischen 16:33 und 17:03 lokal; danach nur noch Folgetag abrufbar. Cron-Zeiten in F1 entsprechend gesetzt. F5 kann ab ~17:00 die volle 10-h-Vorschau liefern. Offen: Bestätigung an einem Werktag (Messung wiederholen).
-3. **Reboot**: Vorschlag in §4 (nur Zählerstand + Tagessumme persistieren, Grafik nach Reboot leer bis zum nächsten Abruf). Einverstanden?
-7. **Firmware**: *Geklärt (18.10.):* gPlugs aus dem Webshop gplug.ch haben Berry, UFS und SML aktiviert. Mindestversion **15.3.0**; ältere Geräte machen das OTA-Upgrade als Hausaufgabe.
+3. **Reboot**: *Geklärt (21.10.):* keine Persistenz notwendig, Grafik nach Reboot leer bis zum nächsten Abruf (siehe §4).
+7. **Firmware**: *Geklärt (18.10.):* gPlugs aus dem Webshop gplug.ch haben Berry, UFS und SML aktiviert. Mindestversion **15.3.0**; ältere Geräte werden vor Ort per Datei-Upload aktualisiert (22.10.).
 8. **Preisquelle**: *Entschieden (18.10.):* BKW-Vergütung via `energyreturn`-Endpoint reicht. Kein Proxy, kein roher Spotpreis. (ENTSO-E direkt wäre auf dem ESP32 ohnehin nicht praktikabel: Token, XML, > 400 kB.)
-9. **Lückenhafte Serien**: Spec erlaubt < 96 Einträge. Wie soll die Grafik/CSV mit fehlenden Preisen umgehen — Slot leer lassen (Vorschlag) oder Vorstunden-Preis übernehmen?
+9. **Lückenhafte Serien**: *Geklärt (21.10.):* BKW liefert alles oder nichts. Slot-leer-Logik bleibt als Absicherung, kein Auffüllen mit Vorstundenwert.
+10. **Simulator**: *Entschieden (22.10.):* Zeitraffer 5/15/60 min, zusätzlich `Po` (kW), Vortage mit Fake-Daten auffüllen (siehe F2).
+11. **Vorbereitung Teilnehmende**: *Entschieden (22.10.):* keine Vorab-Mail; Firmware-Upgrade, `Timezone 99` und Agent-Setup vor Ort (siehe `WORKSHOP_PREP.md` §2).
 4. **„Kosten“**: *Geklärt (18.10.):* Es gibt eine Grösse, `Vergütung = Preis × Einspeisung` pro Slot. Negativer Preis → negativer Wert = Kosten. Bezug wird nicht erfasst. Folgen: Grafik zeigt Balken unter null, CSV-Tagessumme kann negativ sein.
 5. **Auflösung**: *Entschieden (18.10.):* 0.01 kWh pro Viertelstunde (siehe F2). Tagessumme ist bei beiden Auflösungen auf ±1 Einheit genau, da auf Zählerständen gerundet wird; der Unterschied liegt nur in der Darstellung pro Slot.
 6. **Command-Format**: *Entschieden (18.10.):* stündlich als Default, `SpotPrices 15` liefert Viertelstundenwerte, Feld `Res` kennzeichnet die Auflösung (siehe F5).
