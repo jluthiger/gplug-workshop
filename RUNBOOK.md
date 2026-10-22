@@ -19,6 +19,10 @@ Schritte 4–5 laufen parallel zu 1–3: das Gerät braucht Minuten zum Neustart
 
 - Mitgebracht: gPlug, Notebook mit Netzteil, USB-Datenkabel (nicht nur Ladekabel), Docker Desktop
   läuft (Test: `docker run --rm hello-world`), Texteditor.
+- Docker Desktop fehlt: <https://docs.docker.com/get-started/get-docker/> (macOS: Apple- oder
+  Intel-Chip wählen; Windows: Installer verlangt WSL 2 und einen Neustart). Download ca. 1 GB,
+  Installation 10 min: gleich als Erstes starten, danach Docker Desktop öffnen und warten, bis es
+  *Running* meldet. Besser schon zu Hause erledigen.
 - Vom Tisch: Zettel mit Workshop-WLAN (Name, Passwort), Product-ID und API-Key.
 
 Notebook zuerst ins Workshop-WLAN, Schritte 1–3 brauchen Internet.
