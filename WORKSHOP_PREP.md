@@ -9,9 +9,9 @@ Hauptthema: **Arbeiten mit einem Coding-Agenten** auf einem Embedded-Gerät. Die
 
 | # | Zeit | Block | Ziel |
 |---|---|---|---|
-| 1 | 0:00–0:15 | Einlass, Zahlung, WLAN-Zettel, USB-Stick verteilen | alle online |
-| 2a | 0:15–0:45 | Notebook: Repo vom USB-Stick kopieren, Docker-Image laden (`docker load`), API-Key eintragen, erste Agent-Antwort | Agent antwortet |
-| 2b | 0:15–0:45 | parallel, mit Helfern: gPlug ins Venue-WLAN, Firmware ≥ 15.3.0 per Datei-Upload, `Timezone 99` | `Information` zeigt ≥ 15.3.0, `Time` stimmt |
+| 1 | 0:00–0:15 | Einlass, Zahlung, WLAN-Zettel verteilen | alle online |
+| 2a | 0:15–0:45 | Notebook: Repo von GitHub klonen, Docker-Image bauen (`./docker-run.sh`), API-Key eintragen, erste Agent-Antwort | Agent antwortet |
+| 2b | 0:15–0:45 | parallel, mit Helfern: gPlug ins Venue-WLAN, Firmware ≥ 15.3.0 per Datei-Upload durch Helfer, `Timezone 99` | `Information` zeigt ≥ 15.3.0, `Time` stimmt |
 | 2c | 0:45–1:00 | Referenz-App hochladen (`upload.sh`) | `SpotPrices` liefert JSON auf jedem Gerät |
 | 3 | 1:00–1:10 | Demo Referenz-App: Datenfluss, Grafik (3 Tage, Simulator-Zeitraffer), CSV, Konsole | Verständnis Übungsobjekt |
 | 4 | 1:10–1:35 | **KI-Einführung**: Kontext zeigen (INTENT, Cheat-Sheet, AGENTS.md), Live-Demo guter vs. schlechter Prompt, Demo „Agent halluziniert API → Kontext fixt es“, Agent testet selbst auf Gerät via `brcmd.sh` | Arbeitszyklus verstanden |
@@ -55,11 +55,11 @@ Ausschreibung nennt nur:
 - Software installiert: Docker, Texteditor oder beliebige Entwicklungsumgebung.
 - Optional: eigener Claude-Code-Zugang.
 
-Vor Ort (Block 2, Anleitung in `RUNBOOK.md`, Dateien auf USB-Stick):
+Vor Ort (Block 2, Anleitung in `RUNBOOK.md`, Repo öffentlich auf GitHub `gplug-ch/ki-workshop`, kein USB-Stick (entschieden 22.10.)):
 
-- [ ] Workshop-Repo vom USB-Stick in eigenen Ordner kopieren; Infomaniak-API-Key vom Zettel eintragen (oder eigener Claude-Zugang, siehe `SETUP_OPENCODE.md`).
-- [ ] Docker-Image vom Stick laden (`docker load -i gplug-workshop-<arch>.tar`, amd64 und arm64), dann `./docker-run.sh` bzw. `.\docker-run.ps1`. Kein Build und kein Image-Download im Venue-WLAN. Test: `opencode --version` (v2.0.x), erste Frage an den Agenten.
-- [ ] gPlug ins Venue-WLAN (WLAN-Zettel), danach Firmware prüfen: unter 15.3.0 → `Firmware Upgrade` → **Datei-Upload** der Firmware vom Stick (kein OTA-Download aus dem Internet, 20 Geräte gleichzeitig).
+- [ ] Workshop-Repo klonen (`git clone https://github.com/gplug-ch/ki-workshop.git`, ohne git: ZIP); Infomaniak-API-Key vom Zettel eintragen (oder eigener Claude-Zugang, siehe `SETUP_OPENCODE.md`).
+- [ ] `./docker-run.sh` bzw. `.\docker-run.ps1` baut das Image beim ersten Start (2–3 min, lädt Debian-Pakete, Berry, opencode aus dem Internet). Test: `opencode --version` (v2.0.x), erste Frage an den Agenten.
+- [ ] gPlug ins Venue-WLAN (WLAN-Zettel), danach Firmware prüfen: unter 15.3.0 → Helfer spielen die **gPlug-Firmware** per Datei-Upload ein (Datei auf Helfer-Notebooks). Nicht *Update über Webserver*: die OtaUrl zeigt auf die Standard-Firmware `tasmota32c3.bin`, die vermutlich keinen Scripter hat (gPlug-Script/Zähler) – prüfen.
 - [ ] In der Tasmota-Konsole `Timezone 99` eingeben (ab Werk `+01:00`). Prüfen: `Time` zeigt die aktuelle Uhrzeit.
 - [ ] Gerät nicht erreichbar oder Upgrade misslingt: Flash-Station (esptool) oder Reserve-gPlug.
 - [ ] Hinweis: Anleitung zurück ins Heim-WLAN liegt bei.
@@ -100,6 +100,8 @@ Hinweise:
 - [x] Stock-Firmware auf Webshop-gPlugs: Berry, UFS, SML aktiv (geklärt 18.10.).
 - [x] Mindestversion Tasmota **15.3.0** (festgelegt 18.10.). Referenz-App darauf testen.
 - [ ] Firmware-Datei für das gPlug-Build ≥ 15.3.0 beschaffen und Upgrade per Datei-Upload auf einem Gerät mit älterer Version testen (Dauer messen, Einstellungen/Script bleiben erhalten?). Anleitung mit Screenshots (`Information`, `Firmware Upgrade`) für `RUNBOOK.md`.
+- [ ] **Vor dem Öffentlich-Schalten von `gplug-ch/ki-workshop`**: Verlauf enthält den echten Zählerschlüssel (`reference/gplugk_script.txt`, viele Commits ab `d9dded0`). Entweder Verlauf bereinigen (Rewrite + Force-Push) oder Repo neu mit einem einzigen Commit des aktuellen Stands anlegen; Schlüssel am Zähler ersetzen lassen. Danach Verlauf erneut scannen.
+- [ ] Prüfen, ob die Standard-Firmware `tasmota32c3.bin` (OtaUrl der gPlugs) Scripter enthält; sonst gPlug-Firmware-Datei von gplug.ch für die Helfer beschaffen.
 - [x] BKW-API: Folgetags-Serie ab 16:33–17:03 lokal (gemessen So 18.10.), danach nur noch Folgetag abrufbar.
 - [ ] BKW-API: Messung an einem Werktag wiederholen (Abrufe 15:00–18:00 lokal, alle 15 min).
 - [x] Venue-WLAN (Glue): ≥ 50 Clients, kein Captive Portal, keine Client-Isolation, HTTPS 443 frei — von Hermann bestätigt (22.10.). Trotzdem Test vor Ort am Workshop-Tag beim Aufbau (Notebook erreicht gPlug, `api.bkw.ch`, LLM-Provider).
@@ -123,12 +125,12 @@ Hinweise:
 | 6 | `TASMOTA_BERRY_API.md` | Agent-Kontext | Agent baut Übung ohne Halluzination |
 | 7 | `AGENTS.md` | Regeln für opencode.ai: Dateien, Upload-Befehl, Tests, „nie `tasmota.web_send` ausserhalb `web_sensor`“ usw. | Trockenlauf mit Agent |
 | 8 | `upload.sh`, `brcmd.sh`, `log.sh` (+ `.ps1`) | Agent-Werkzeuge: Upload + `BrRestart`, Berry-Ausdruck via `/cm?cmnd=Br`, Konsole lesen | Agent löst Schritt 1 allein, Mensch prüft nur |
-| 9 | `RUNBOOK.md` | Teilnehmer-Schritte **ab Null vor Ort** (Repo kopieren, `docker load`, API-Key, WLAN, Firmware-Upload, `Timezone 99`, App hochladen) mit erwarteter Ausgabe pro Schritt (Screenshots) — **Entwurf 22.10.** (Menünamen vom Gerät .202 übernommen, deutsche WebUI). Offen: Verhalten ohne bekanntes WLAN (AP-Name, `192.168.4.1`, Dauer bis AP) an einem gPlug prüfen; Firmware-Upload: Dateiname auf Stick, bleiben WLAN/Script erhalten (§3); Screenshots | von einer unbeteiligten Person durchgespielt, Block 2 in ≤ 45 min |
-| 10 | Agent-Setup | Standard: Docker-Image (`Dockerfile`, `docker-run.sh`/`.ps1`, opencode 2.0.32 + berry + git, nur Repo gemountet). Fallback: opencode 2.0 nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte) — Image vorhanden, auf macOS getestet 19.10. **Neu**: Image als `docker save gplug-workshop`-Tar für amd64 und arm64 auf USB-Stick. `docker-run.sh`/`.ps1` bauen nur, wenn das Image fehlt → geladenes Image mit Tag `gplug-workshop` wird direkt genutzt (geprüft 22.10.) | `docker load` + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
+| 9 | `RUNBOOK.md` | Teilnehmer-Schritte **ab Null vor Ort** (Repo klonen, Image bauen, API-Key, WLAN, Firmware-Upload durch Helfer, `Timezone 99`, App hochladen) mit erwarteter Ausgabe pro Schritt (Screenshots) — **Entwurf 22.10.** (Menünamen vom Gerät .202 übernommen, deutsche WebUI). Offen: Verhalten ohne bekanntes WLAN (AP-Name, `192.168.4.1`, Dauer bis AP) an einem gPlug prüfen; Firmware-Upload durch Helfer: Dateiname auf Stick, bleiben WLAN/Script erhalten (§3); Screenshots | von einer unbeteiligten Person durchgespielt, Block 2 in ≤ 45 min |
+| 10 | Agent-Setup | Standard: Docker-Image (`Dockerfile`, `docker-run.sh`/`.ps1`, opencode 2.0.32 + berry + git, nur Repo gemountet). Fallback: opencode 2.0 nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte) — Image vorhanden, auf macOS getestet 19.10. Image wird vor Ort gebaut (kein USB-Stick, 22.10.). `docker-run.sh`/`.ps1` bauen nur, wenn das Image fehlt → geladenes Image mit Tag `gplug-workshop` wird direkt genutzt (geprüft 22.10.) | `docker load` + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
 | 11 | `EXERCISES.md` | 4 Schritte Starter → Referenz-App mit Prompt-Vorlage, Ergebnis, Prüfschritt — geschrieben 22.10.; Bonus CSV/Shelly | Alle 4 Schritte mit Infomaniak-LLM durchspielen, Zeit pro Schritt messen (Ziel: 1–2 in 35 min) |
 | 12 | Demo-Transkript | 3 Ausschnitte aus Referenz-App-Entwicklung (guter Prompt, Halluzination, Korrektur) | auf Beamer lesbar |
 | 13 | `AGENTS.md`-Ergänzung | Werkzeuge beschreiben, verbotene Kommandos (`Reset`, `Restart`, `Upgrade`), Regel „nach jedem Upload `log.sh` lesen“ | Agent hält sich daran im Trockenlauf |
-| 14 | USB-Sticks (≥ 6 Stück) | Repo, Docker-Image-Tars (amd64, arm64), Firmware-Datei ≥ 15.3.0, frische `bkw.json` vom Workshop-Morgen | auf frischem Notebook durchgespielt |
+| 14 | ~~USB-Sticks~~ entfallen (22.10.): Repo öffentlich auf GitHub, Image wird gebaut. Bleibt: gPlug-Firmware ≥ 15.3.0 auf Helfer-Notebooks, frische `bkw.json` vom Workshop-Morgen als Offline-Fallback | Helfer-Notebooks geprüft |
 | 15 | Starter + Checkpoints | `app/spot.be` = Starter (nur Preislinie), `app/steps/spot_1.be` … `spot_4.be` (= Referenz-App v0.3); rückwärts aus der Referenz-App abgeleitet, nur F3 verschieden; Generator `tools/make_steps.py` (ohne Option nur prüfen, `--write` schreibt neu und überschreibt `app/spot.be` – nur Vorbereitung) — **vorhanden 22.10.** | alle 5 Stände Harness `HARNESS OK` (22.10.); auf .202: Referenz Heap 109–112 kB mit offener WebUI, Starter 115–119 kB; Checkpoints 1–3 auf Gerät ok (22.10., Heap 106–119 kB, Grafik geprüft); `upload.sh` misst Heap jetzt 12 s nach Restart (vorher während TLS-Fetch → Fehl-Neustarts) |
 
 ## 5. Sandbox-Entscheid
@@ -145,7 +147,7 @@ Gehostet entfällt: der Agent muss das gPlug im Venue-WLAN erreichen (`upload.sh
 - `--network host` ist nicht nötig: der Standard-Bridge-Modus erreicht gPlug (IP) und Internet, auch unter Docker Desktop. `.local`-Namen lösen im Container nicht auf → IP in `.gplug`.
 - Getestet 19.10. auf macOS (Apple Silicon, Docker 29.8): Skripte gegen 192.168.0.201, Desktop-Harness `HARNESS OK`, opencode erreicht Infomaniak. Offen: Windows (Docker Desktop + WSL 2, `docker-run.ps1`), Linux, Mac Intel, interaktive TUI-Sitzung mit echtem Key.
 - opencode-Version: Das Script `opencode.ai/install` installiert 1.x (Agent-Wechsel `Tab`); Workshop nutzt 2.0 (`Shift+Tab`), nativ via `opencode.ai/v2/install`.
-- Keine Vorab-Mail (22.10.): Docker installiert ist Kursvoraussetzung, das Image kommt vor Ort vom USB-Stick (`docker load`). Test-Kommando im Runbook (`opencode --version`, erste Frage an Agent).
+- Keine Vorab-Mail (22.10.): Docker installiert ist Kursvoraussetzung, Repo vor Ort von GitHub, Image wird mit `./docker-run.sh` gebaut. Test-Kommando im Runbook (`opencode --version`, erste Frage an Agent).
 
 Zu prüfen für D (Fallback): Verhalten auf Windows ohne Docker — Geräte-Skripte sind `sh`, laufen dort nur in WSL.
 
@@ -169,14 +171,14 @@ Massnahmen: `parse_file` liest mit `readbytes`; `upload.sh` prüft nach `BrResta
 - [ ] 4 Reserve-gPlugs mit Firmware + Referenz-App (für defekte/alte Geräte).
 - [ ] 2 Ersatz-USB-Kabel (Daten, nicht nur Laden), 1 Notebook mit esptool, Chrome und USB-Treibern (CH340/CP210x) als Flash-Station.
 - [ ] WLAN-Zettel pro Tisch (inkl. Infomaniak-API-Key), Beamer, Verlängerungskabel.
-- [ ] USB-Sticks gemäss Deliverable 14 (Repo, Docker-Images, Firmware, `bkw.json`).
+- [ ] Helfer-Notebooks gemäss Deliverable 14 (gPlug-Firmware, `bkw.json`).
 - [ ] 1 Helfer pro 6 Teilnehmende für Block 2 (Firmware-Upgrade und `Timezone 99` übernehmen Helfer, parallel zum Agent-Setup).
 
 ## 7. Risiken (Rangfolge)
 
 1. Firmware/Partition passt nicht oder Upgrade dauert → Block 2 platzt. Ohne Vorab-Mail kommen alle Geräte im Ab-Werk-Zustand. Mitigation: Upgrade per Datei-Upload vorab getestet (§3), Helfer übernehmen Geräte parallel zum Agent-Setup, Flash-Station, Reserve-Geräte.
-2. Venue-WLAN blockiert oder überlastet. Mitigation: Test beim Aufbau, alle grossen Dateien auf USB-Stick, Offline-JSON, Hotspot-Fallback.
-3. Agent-Setup (opencode/Docker) frisst Zeit. Mitigation: Image vom USB-Stick statt Build/Download, Option D als Fallback, Helfer prüfen in Block 1 beim Einlass, ob Docker läuft.
+2. Venue-WLAN blockiert oder überlastet. Mitigation: Test beim Aufbau, Hotspot-Fallback, Offline-JSON. Ohne Stick lädt jedes Notebook das Image-Material (Debian-Pakete, Berry, opencode; geschätzt einige 100 MB × 20) über das Venue-WLAN – Bandbreite beim Aufbau testen; Fallback: Image auf ghcr.io veröffentlichen oder Reserve-Stick mit `docker save`-Tar.
+3. Agent-Setup (opencode/Docker) frisst Zeit. Mitigation: Build-Dauer vorab auf Mac/Win/Linux messen, Option D als Fallback, Helfer prüfen in Block 1 beim Einlass, ob Docker läuft.
 4. Agent halluziniert Tasmota-API. Mitigation: Cheat-Sheet + `AGENTS.md` im Kontext — und als Demo bewusst zeigen, das ist Lehrinhalt.
 5. Zu viel Scope live. Mitigation: nur eine Übung, Referenz-App fertig.
 8. Grösserer Scope der Referenz-App (22.10.) sprengt Budget oder Liefertermin Ende Oktober. Mitigation: Aufwand früh schätzen (§3), Hermann rechtzeitig informieren; 3-Tage-Grafik vor Simulator-Zeitraffer priorisieren. Starter + 4 Checkpoints verfünffachen den Testaufwand der Grafik.

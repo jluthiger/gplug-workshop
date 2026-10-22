@@ -6,9 +6,9 @@ Weicht etwas ab: Hand hoch, Helfer kommen. Begriffe: [`LEGENDE.md`](LEGENDE.md).
 
 | Schritt | Was | Zeit |
 |---|---|---|
-| 1 | Ordner und Docker-Image vom USB-Stick | 10 min |
+| 1 | Workshop-Repo von GitHub holen | 5 min |
 | 2 | Zugangsdaten für das Sprachmodell | 5 min |
-| 3 | Agent testen | 5 min |
+| 3 | Docker-Image bauen, Agent testen | 10 min |
 | 4 | gPlug ins Workshop-WLAN | 10 min |
 | 5 | Firmware prüfen, Zeitzone | 5–10 min |
 | 6 | Starter aufs Gerät | 5 min |
@@ -19,27 +19,27 @@ Schritte 4–5 laufen parallel zu 1–3: das Gerät braucht Minuten zum Neustart
 
 - Mitgebracht: gPlug, Notebook mit Netzteil, USB-Datenkabel (nicht nur Ladekabel), Docker Desktop
   läuft (Test: `docker run --rm hello-world`), Texteditor.
-- Vom Tisch: USB-Stick, Zettel mit Workshop-WLAN (Name, Passwort), Product-ID und API-Key.
+- Vom Tisch: Zettel mit Workshop-WLAN (Name, Passwort), Product-ID und API-Key.
+
+Notebook zuerst ins Workshop-WLAN, Schritte 1–3 brauchen Internet.
 
 Terminal: macOS *Terminal*, Linux beliebig, Windows *PowerShell*. Alle Befehle im Workshop-Ordner.
 
-## 1. Ordner und Docker-Image vom USB-Stick
+## 1. Workshop-Repo von GitHub holen
 
-1. Ordner `workshop` vom Stick in dein Home-Verzeichnis kopieren (ganzer Ordner, inkl. versteckter
-   Ordner `.git`). Nicht vom Stick aus arbeiten.
-2. Terminal öffnen, in den Ordner wechseln:
-   ```sh
-   cd ~/workshop                   # Windows: cd $HOME\workshop
-   ```
-3. Prozessor-Typ abfragen und passendes Image laden:
-   ```sh
-   docker version --format '{{.Server.Arch}}'     # amd64 oder arm64
-   docker load -i /Volumes/<STICK>/gplug-workshop-arm64.tar
-   ```
-   Pfad zum Stick: macOS `/Volumes/<Name>`, Windows z.B. `E:\gplug-workshop-amd64.tar`, Linux
-   meist `/media/<user>/<Name>`. Apple-Chip (M1…M4) = `arm64`, die meisten Windows-Notebooks = `amd64`.
+Repo: <https://github.com/gplug-ch/ki-workshop>
 
-   Erwartet (nach ca. 1 min): `Loaded image: gplug-workshop:latest`
+**Mit git** (empfohlen):
+```sh
+cd ~                              # Windows: cd $HOME
+git clone https://github.com/gplug-ch/ki-workshop.git
+cd ki-workshop
+```
+**Ohne git**: auf GitHub *Code* → *Download ZIP*, im Home-Verzeichnis entpacken, Ordner in
+`ki-workshop` umbenennen, im Terminal `cd ~/ki-workshop`. Fehlender Versionsverlauf wird in
+Schritt 3.2 angelegt.
+
+Erwartet: `ls` zeigt u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`.
 
 ## 2. Zugangsdaten für das Sprachmodell
 
@@ -64,20 +64,23 @@ Der Key gehört dem Workshop und wird danach gesperrt: nicht weitergeben, nicht 
 speichern. Eigener Claude-Zugang statt Infomaniak: `SETUP_OPENCODE.md`, Abschnitt *Alternative:
 Claude-Modelle von Anthropic*.
 
-## 3. Agent testen
+## 3. Docker-Image bauen, Agent testen
 
-1. Shell im Container öffnen und Werkzeuge prüfen:
+1. Shell im Container öffnen. Beim ersten Mal baut das Skript das Docker-Image (lädt ca. 2–3 min
+   aus dem Internet, viele Zeilen Ausgabe), danach startet es sofort:
    ```sh
    ./docker-run.sh bash            # Windows: .\docker-run.ps1 bash
    opencode --version              # erwartet: opencode v2.0.32
    ```
 2. Im Container git deinen Namen geben (für die Commits in der Übung, gilt nur für diesen Ordner):
    ```sh
+   git init -q                     # nur nötig, wenn das Repo als ZIP geholt wurde
    git config user.name "Vorname Name"
    git config user.email "du@example.ch"
    git log -1 --oneline            # erwartet: eine Zeile mit dem letzten Stand
-   exit
    ```
+   Nur bei ZIP (`does not have any commits yet`): einmal `git add -A && git commit -qm Start`.
+   Danach `exit`.
 3. Agent starten:
    ```sh
    ./docker-run.sh                 # Windows: .\docker-run.ps1
@@ -114,10 +117,10 @@ Menünamen wie auf dem gPlug (deutsche Oberfläche), in Klammern die englischen.
 
 1. In der WebUI *Informationen* (*Information*): Zeile *Tasmota Version* (*Program Version*).
    - **15.3.0 oder höher**: weiter mit 2.
-   - **Tiefer**: *Firmwareupdate* (*Firmware Upgrade*) → *Updatedatei hochladen* (*Upgrade by file
-     upload*) → Datei aus dem Ordner `firmware/` des Sticks wählen (die `.bin`-Datei, nicht
-     `.factory.bin`) → *Starten* (*Start upgrade*). Gerät startet neu (ca. 1–2 min). Danach
-     *Informationen* erneut prüfen.
+   - **Tiefer**: Helfer rufen, nicht selbst aktualisieren. Der gPlug braucht seine eigene Firmware
+     von gplug.ch (mit gPlug-Script für den Zähler); die Standard-Firmware von Tasmota
+     (*Update über Webserver*) passt nicht. Die Helfer spielen sie über *Firmwareupdate* →
+     *Updatedatei hochladen* ein (ca. 2 min, Gerät startet neu).
 2. *Werkzeuge* (*Tools*) → *Konsole* (*Console*), eingeben:
    ```
    Timezone 99
@@ -172,7 +175,7 @@ Alles grün: weiter mit `EXERCISES.md`, Abschnitt *Vorbereitung* (`HeapFree` not
 | Symptom | Lösung |
 |---|---|
 | `docker: command not found` / `Cannot connect to the Docker daemon` | Docker Desktop starten, neues Terminal, Schritt 2 wiederholen |
-| `docker-run.sh` baut ein Image (lange Ausgabe, Download) | Abbrechen (Ctrl+C), Schritt 1.3 nachholen; im Workshop-WLAN nicht bauen |
+| Image-Bau bricht ab (Download-Fehler) | `./docker-run.sh --build` erneut; WLAN prüfen; Helfer rufen |
 | `./upload.sh: Permission denied` | `sh upload.sh app/spot.be` bzw. im Container ausführen |
 | `FEHLER: http://… nicht erreichbar` | IP in `.gplug` falsch, oder Notebook nicht im Workshop-WLAN |
 | Upload meldet `Nicht genug Speicherplatz` | Gerät neu gestartet, Upload-Modus fehlt: `./upload.sh` erneut ausführen |

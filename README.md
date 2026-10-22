@@ -23,12 +23,11 @@ Texteditor. Unbekannte Begriffe: [`LEGENDE.md`](LEGENDE.md).
 
 Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfassung:
 
-1. Repo-Ordner und Docker-Image vom USB-Stick kopieren, Image laden
-   (`docker load -i gplug-workshop-<arch>.tar`), API-Key vom Zettel eintragen
-   ([`SETUP_OPENCODE.md`](SETUP_OPENCODE.md)). `./docker-run.sh` (Windows: `.\docker-run.ps1`)
-   startet opencode.
+1. Repo klonen (`git clone https://github.com/gplug-ch/ki-workshop.git`), API-Key vom Zettel
+   eintragen ([`SETUP_OPENCODE.md`](SETUP_OPENCODE.md)). `./docker-run.sh` (Windows:
+   `.\docker-run.ps1`) baut beim ersten Mal das Image und startet opencode.
 2. gPlug ins Workshop-WLAN, IP notieren, `http://<gplug-ip>` öffnen. *Tasmota Version* unter
-   15.3.0: Firmware per Datei-Upload vom Stick aktualisieren. In der Konsole `Timezone 99`.
+   15.3.0: Helfer spielen die gPlug-Firmware ein. In der Konsole `Timezone 99`.
 3. IP eintragen und Starter laden:
    ```sh
    echo <gplug-ip> > .gplug
