@@ -1,0 +1,5 @@
+@page{size:A4;margin:18mm}
+body{font:10.5pt/1.4 -apple-system,Helvetica,Arial,sans-serif;max-width:none;margin:0}
+pre{background:#f4f4f4;padding:8px;white-space:pre-wrap;word-break:break-word;font-size:9pt;page-break-inside:avoid}
+code{font-size:9.5pt}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:3px 6px}
+h2{page-break-after:avoid;border-bottom:1px solid #ccc}h3{page-break-after:avoid}

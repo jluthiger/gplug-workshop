@@ -279,7 +279,7 @@ Schritt 3 («Variablen dauerhaft setzen») nachholen, neues Terminal öffnen.
 1. Unten im TUI prüfen: Modell `Qwen3.5 122B-A10B (Infomaniak AI (Schweiz))`.
 2. Erste Frage stellen:
    ```
-   Lies README.md und INTENT.md. Erkläre in 5 Sätzen, was app/spot.be tut.
+   Lies INTENT.md. Erkläre in 5 Sätzen, was app/spot.be tut.
    ```
    Der Agent sollte Dateien lesen (Tool-Aufrufe sichtbar) und korrekt antworten.
 3. `AGENTS.md` (Regeln und Geräte-Werkzeuge für den Agenten) liegt bei und wird automatisch geladen;

@@ -1,5 +1,7 @@
 # Übungen – Arbeiten mit dem Coding-Agenten auf dem gPlug
 
+📄 [Diese Übung als PDF (A4)](docs/EXERCISES.pdf) · [Begriffe: LEGENDE.md](LEGENDE.md)
+
 Gegenstand der Übungen ist der **Arbeitszyklus mit dem Agenten**: Kontext geben → kleine,
 prüfbare Aufgabe formulieren → Code aufs Gerät laden → Konsole lesen → Fehler wörtlich
 zurückgeben. Die Berry-App `app/spot.be` ist nur das Übungsobjekt. Die Übungen ändern nur die
@@ -300,7 +302,7 @@ Werte anfahren.
   schalten oder per `mqtt.publish` melden. Erweiterungspunkt `json_append()` / neuer Command. Lehrt:
   Drittsystem-API als Kontext geben (Shelly-Doku-Auszug), sonst rät der Agent.
 
-## Checkliste Zeigerunde
+## Checkliste Abschlussrunde
 
 - Der Prompt, der funktioniert hat (wörtlich).
 - Der Prompt, der schiefging, und was der Agent daraus gemacht hat.

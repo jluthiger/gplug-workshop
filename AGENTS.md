@@ -1,8 +1,14 @@
 # AGENTS.md – Regeln für den Coding-Agenten
 
 Projekt: Berry-App `app/spot.be` für den gPlug (Tasmota 15.3.0+, ESP32-C3). Holt BKW-Einspeisepreise,
-misst ¼-h-Energie, zeigt Chart in der Tasmota-WebUI. Am Workshop baust du **eine kleine Ergänzung**
-an dieser Referenz-App, nicht eine neue App.
+misst ¼-h-Energie, zeigt Chart in der Tasmota-WebUI. Am Workshop erweitert ihr den Starter in
+**kleinen Schritten** (`EXERCISES.md`) zur Referenz-App, keine neue App.
+
+**Nur im Projektordner arbeiten.** Dateien und Ordner ausserhalb des Projekt-Wurzelordners (der Ordner
+mit dieser `AGENTS.md`) weder lesen noch schreiben, auch nicht über Shell-Befehle: keine absoluten
+Pfade ausserhalb, kein `..` aus dem Projekt hinaus, kein `~`, keine Umgebungs- oder Konfigurationsdateien
+des Notebooks. Temporäre Dateien im Projektordner anlegen. Braucht eine Aufgabe etwas von ausserhalb:
+anhalten und den Menschen fragen.
 
 ## 1. Zuerst lesen
 
@@ -24,6 +30,8 @@ Vor der ersten Änderung lesen, nicht raten:
 | `app/autoexec.be` | lädt `spot` beim Start und bei `BrRestart` | ja, nur bei Bedarf |
 | `app/desktop_harness.be`, `app/persist.be`, `app/path.be` | Desktop-Test, Stubs | **nie** |
 | `reference/` | `read_sensors`-Beispiele (Zähler-Pfad) | nein |
+| `app/steps/spot_N.be` | fertiger Stand nach Schritt N; nicht ändern, nur der Mensch kopiert einen davon nach `app/spot.be` | nein (nur als `app/spot.be`) |
+| `tools/make_steps.py` | Vorbereitung der Kursleitung; nie mit `--write` aufrufen (überschreibt `app/spot.be`) | nein |
 
 ## 3. Werkzeuge (Gerät)
 

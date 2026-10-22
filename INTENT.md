@@ -256,3 +256,5 @@ Die Übungen sind so gewählt, dass sie den Datenfluss nicht verändern (nur Dar
 | VSE | Verband Schweizerischer Elektrizitätsunternehmen |
 | WebUI | Weboberfläche des gPlug im Browser |
 | XML | Extensible Markup Language; Format der ENTSO-E-API |
+
+Begriffe des Workshops (opencode, `plan`/`build`, Starter, Checkpoint, …): siehe `LEGENDE.md`.
