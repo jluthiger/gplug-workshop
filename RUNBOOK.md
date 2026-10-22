@@ -35,9 +35,25 @@ cd ~                              # Windows: cd $HOME
 git clone https://github.com/gplug-ch/ki-workshop.git
 cd ki-workshop
 ```
-**Ohne git**: auf GitHub *Code* → *Download ZIP*, im Home-Verzeichnis entpacken, Ordner in
-`ki-workshop` umbenennen, im Terminal `cd ~/ki-workshop`. Fehlender Versionsverlauf wird in
-Schritt 3.2 angelegt.
+**Ohne git** (Test: `git --version` gibt Fehler): ZIP herunterladen und entpacken. Direktlink:
+<https://github.com/gplug-ch/ki-workshop/archive/refs/heads/main.zip> (oder auf GitHub *Code* →
+*Download ZIP*). Der entpackte Ordner heisst `ki-workshop-main`; in `ki-workshop` umbenennen.
+
+macOS / Linux:
+```sh
+cd ~
+curl -L -o ki-workshop.zip https://github.com/gplug-ch/ki-workshop/archive/refs/heads/main.zip
+unzip -q ki-workshop.zip && mv ki-workshop-main ki-workshop && rm ki-workshop.zip
+cd ki-workshop
+```
+Windows (PowerShell):
+```powershell
+cd $HOME
+Invoke-WebRequest https://github.com/gplug-ch/ki-workshop/archive/refs/heads/main.zip -OutFile ki-workshop.zip
+Expand-Archive ki-workshop.zip -DestinationPath . ; Rename-Item ki-workshop-main ki-workshop ; Remove-Item ki-workshop.zip
+cd ki-workshop
+```
+Der Versionsverlauf fehlt im ZIP; er wird in Schritt 3.2 angelegt.
 
 Erwartet: `ls` zeigt u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`.
 
@@ -72,14 +88,16 @@ Claude-Modelle von Anthropic*.
    ./docker-run.sh bash            # Windows: .\docker-run.ps1 bash
    opencode --version              # erwartet: opencode v2.0.32
    ```
-2. Im Container git deinen Namen geben (für die Commits in der Übung, gilt nur für diesen Ordner):
+2. Im Container git deinen Namen geben (für die Commits in der Übung, gilt nur für diesen Ordner).
+   Die zwei mit *ZIP* markierten Zeilen nur, wenn das Repo ohne git geholt wurde (git ist im
+   Container dabei):
    ```sh
-   git init -q                     # nur nötig, wenn das Repo als ZIP geholt wurde
+   git init -q                                        # ZIP
    git config user.name "Vorname Name"
    git config user.email "du@example.ch"
+   git add -A && git commit -qm "Startstand Workshop"  # ZIP
    git log -1 --oneline            # erwartet: eine Zeile mit dem letzten Stand
    ```
-   Nur bei ZIP (`does not have any commits yet`): einmal `git add -A && git commit -qm Start`.
    Danach `exit`.
 3. Agent starten:
    ```sh
