@@ -6,7 +6,7 @@ Weicht etwas ab: Hand hoch, Helfer kommen. Begriffe: [`LEGENDE.md`](LEGENDE.md).
 
 | Schritt | Was | Zeit |
 |---|---|---|
-| 1 | Workshop-Repo von GitHub holen | 5 min |
+| 1 | Workshop-Ordner herunterladen | 5 min |
 | 2 | Zugangsdaten für das Sprachmodell | 5 min |
 | 3 | Docker-Image bauen, Agent testen | 10 min |
 | 4 | gPlug ins Workshop-WLAN | 10 min |
@@ -25,21 +25,16 @@ Notebook zuerst ins Workshop-WLAN, Schritte 1–3 brauchen Internet.
 
 Terminal: macOS *Terminal*, Linux beliebig, Windows *PowerShell*. Alle Befehle im Workshop-Ordner.
 
-## 1. Workshop-Repo von GitHub holen
+## 1. Workshop-Ordner herunterladen
 
-Repo: <https://github.com/gplug-ch/ki-workshop>
-
-**Mit git** (empfohlen):
+ZIP herunterladen: <https://github.com/gplug-ch/ki-workshop/archive/refs/heads/main.zip>.
+Entpacken (Doppelklick), der Ordner heisst `ki-workshop-main`: in `ki-workshop` umbenennen und ins
+Home-Verzeichnis verschieben (macOS `/Users/<name>`, Windows `C:\Users\<name>`). Dann im Terminal:
 ```sh
-cd ~                              # Windows: cd $HOME
-git clone https://github.com/gplug-ch/ki-workshop.git
-cd ki-workshop
+cd ~/ki-workshop                  # Windows: cd $HOME\ki-workshop
 ```
-**Ohne git** (Test: `git --version` gibt Fehler): ZIP herunterladen und entpacken. Direktlink:
-<https://github.com/gplug-ch/ki-workshop/archive/refs/heads/main.zip> (oder auf GitHub *Code* →
-*Download ZIP*). Der entpackte Ordner heisst `ki-workshop-main`; in `ki-workshop` umbenennen.
 
-macOS / Linux:
+Lieber alles im Terminal? macOS / Linux:
 ```sh
 cd ~
 curl -L -o ki-workshop.zip https://github.com/gplug-ch/ki-workshop/archive/refs/heads/main.zip
@@ -53,7 +48,9 @@ Invoke-WebRequest https://github.com/gplug-ch/ki-workshop/archive/refs/heads/mai
 Expand-Archive ki-workshop.zip -DestinationPath . ; Rename-Item ki-workshop-main ki-workshop ; Remove-Item ki-workshop.zip
 cd ki-workshop
 ```
-Der Versionsverlauf fehlt im ZIP; er wird in Schritt 3.2 angelegt.
+
+Wer git kennt, klont stattdessen: `git clone https://github.com/gplug-ch/ki-workshop.git` im
+Home-Verzeichnis, dann `cd ki-workshop`.
 
 Erwartet: `ls` zeigt u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`.
 
@@ -88,15 +85,12 @@ Claude-Modelle von Anthropic*.
    ./docker-run.sh bash            # Windows: .\docker-run.ps1 bash
    opencode --version              # erwartet: opencode v2.0.32
    ```
-2. Im Container git deinen Namen geben (für die Commits in der Übung, gilt nur für diesen Ordner).
-   Die zwei mit *ZIP* markierten Zeilen nur, wenn das Repo ohne git geholt wurde (git ist im
-   Container dabei):
+2. Nur wer git kennt und geklont hat: im Container Namen für Commits setzen (gilt nur für diesen
+   Ordner). Alle anderen überspringen, git braucht es im Workshop nicht; funktionierende Stände
+   sichert ihr in der Übung als Kopie von `app/spot.be`.
    ```sh
-   git init -q                                        # ZIP
    git config user.name "Vorname Name"
    git config user.email "du@example.ch"
-   git add -A && git commit -qm "Startstand Workshop"  # ZIP
-   git log -1 --oneline            # erwartet: eine Zeile mit dem letzten Stand
    ```
    Danach `exit`.
 3. Agent starten:
@@ -184,7 +178,6 @@ Windows: diese Befehle in der Container-Shell (`.\docker-run.ps1 bash`), dort la
 | `./log.sh` | `SPOT: v0.3 geladen`, keine `BRY:`-Zeile |
 | `./brcmd.sh 'tasmota.cmd("SpotStatus")'` | `"Sim":true`, Heap über 100 kB |
 | WebUI | Preislinie, Cursor zeigt Werte |
-| `git log -1` im Container | funktioniert, Name gesetzt |
 
 Alles grün: weiter mit `EXERCISES.md`, Abschnitt *Vorbereitung* (`HeapFree` notieren).
 
