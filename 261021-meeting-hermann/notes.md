@@ -56,7 +56,7 @@ Hermann siehe unten.
 heute noch Zählerstand und Zeitpunkt via `persist`, damit die erste ¼ h nach Neustart nicht fehlt.
 Das ist keine Anforderung mehr und kann bleiben oder entfallen.
 
-## Beobachtungen zum Bild `final-app.jpg`
+## Beobachtungen zum Bild `docs/zielbild.jpg`
 
 Das Bild weicht deutlich von der Referenz-App ab (heute: 1 Tag, ¼-h-Werte, Vergütungsbalken +
 Preislinie in einem Chart):
@@ -88,7 +88,7 @@ Setup-Block (≥ 1 h) wird damit sehr knapp.
 
 1. Simulator-Takt 5/15/60 min → **Zeitraffer**: Grafik soll sich am Abend schneller füllen.
 2. Simulator gibt **zusätzlich `Po` (kW)** aus, wie der echte Meter. App rechnet weiter mit `Eo`.
-3. `final-app.jpg` ist das Ziel der **Referenz-App** (vor dem Workshop fertig), nicht der Übungen.
+3. `docs/zielbild.jpg` ist das Ziel der **Referenz-App** (vor dem Workshop fertig), nicht der Übungen.
 4. Vergangene Tage im Simulator-Modus mit **Fake-Preisen und -Energie auffüllen**: ja.
 5. WLAN bei Glue: ok.
 6. **Keine Mail vorab**: Firmware-Upgrade, `Timezone 99` usw. finden vor Ort statt.
@@ -99,7 +99,7 @@ Dokumente:
 
 - [ ] `INTENT.md`: §2 „Fehlende Werte werden weggelassen“ ergänzen mit „laut Hermann: alles oder
       nichts“; §6.3 (Reboot) und §6.9 (Lücken) als entschieden markieren; F1 „Vielfaches“ präzisieren.
-- [ ] `INTENT.md` F3/§4a/§6.1: Stufe 1 neu = Bild `final-app.jpg` (3 Tage, Stundenwerte, zwei Charts:
+- [ ] `INTENT.md` F3/§4a/§6.1: Stufe 1 neu = Bild `docs/zielbild.jpg` (3 Tage, Stundenwerte, zwei Charts:
       Einspeisung kWh + Preislinie, Vergütung CHF/h mit Σ). Widerspruch zu §7 damit aufgelöst.
 - [ ] `EXERCISES.md`: Übung A (Energiekurve) und 3-Tage-Ansicht entfallen als Übung, weil in der
       Referenz-App. Neue Übungen festlegen (Kandidaten: Stunden-CSV mit Aufbewahrung, Shelly
@@ -123,7 +123,7 @@ App (`app/spot.be`):
       Bereich + „jetzt“; unteres Chart Vergütung CHF/h (positiv/negativ farbig) + Σ.
       Stückweise senden, Kurventabelle `chart_curves()` beibehalten.
 - [ ] Heap messen (Testgerät .201): Rendering ohne Einbruch > 5 kB, Heap nach Upload > 100 kB.
-- [ ] Desktop-Harness anpassen (`HARNESS OK`), Screenshot gegen `final-app.jpg` vergleichen.
+- [ ] Desktop-Harness anpassen (`HARNESS OK`), Screenshot gegen `docs/zielbild.jpg` vergleichen.
 
 Vor Ort:
 

@@ -111,7 +111,6 @@ Konfiguration am Anfang von `app/spot.be` (`spot_cfg`): `sim`, `meter_path`, `da
   `brew install berry` oder aus den Tasmota-Quellen). Braucht eine gespeicherte BKW-Antwort
   `bkw.json` im Arbeitsverzeichnis. Ausgabe endet mit `HARNESS OK`.
 - `app/persist.be`, `app/path.be` – Stubs nur für den Harness, nie aufs Gerät laden.
-- `mock/` – UI-Mock mit synthetischen Daten, `ui-drafts/` – die drei UI-Entwürfe.
 - `reference/` – `read_sensors`-Samples (gPlug L+G E450, Kamstrup). Die gPlug-Scripts selbst (gplug.ch) liegen nicht im Repo.
 - `AGENTS.md` – Regeln für den Coding-Agenten, lädt opencode automatisch.
 - `upload.sh`, `brcmd.sh`, `log.sh` – Gerät bedienen (Upload + `BrRestart`, Berry-Ausdruck,
@@ -130,9 +129,16 @@ abgemeldet).
 - `INTENT.md` – Anforderungen F1–F6, BKW-API-Fakten, Entscheide, offene Fragen, Abkürzungen.
 - `LEGENDE.md` – Begriffe und Abkürzungen für Teilnehmende.
 - `THIRD_PARTY.md` – fremde Inhalte, Lizenzen, Entscheide dazu.
-- `WORKSHOP_PREP.md` – Zeitplan, KI-Didaktik, Hausaufgaben, Deliverables, Risiken.
-- `REPLY_HERMANN.md` – Antwort auf das RFC des Veranstalters.
 - `SETUP_OPENCODE.md` – Setup opencode + Infomaniak-LLM (Schritt für Schritt), Konfiguration in `opencode.json`.
+
+<!-- kursleitung -->
+### Nur Kursleitung (nicht im Teilnehmer-Repo)
+
+- `WORKSHOP_PREP.md` – Zeitplan, KI-Didaktik, Setup vor Ort, Deliverables, Risiken.
+- `REPLY_HERMANN.md` – Antwort auf das RFC des Veranstalters; `261021-meeting-hermann/` – Meeting 21.10.
+- `mock/` – UI-Mock mit synthetischen Daten, `ui-drafts/` – die drei UI-Entwürfe.
+- `tools/sync_participant.sh` – überträgt den Stand ins Teilnehmer-Repo `gplug-ch/ki-workshop`.
+<!-- /kursleitung -->
 
 ## Lizenz
 

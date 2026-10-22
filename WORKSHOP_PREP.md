@@ -32,7 +32,7 @@ Puffer ist knapp; Block 2 ist der kritische. **Keine Vorab-Mail** (entschieden 2
 
 **Übungsvorlagen** (je mit Prompt-Vorlage, erwartetem Ergebnis, Prüfschritt):
 
-- **Übung: vom Starter zur Referenz-App in 4 Schritten** (entschieden 22.10., Details in `EXERCISES.md`). Starter im Docker-Container zeigt nur die Preislinie (1 Tag, ¼ h); Ziel ist `261021-meeting-hermann/final-app.jpg`. Schritte: 1 Energie-Balken mit kWh-Achse, 2 Negativpreis orange + Schattierung, 3 3 Tage mit Stundenwerten, 4 Vergütungs-Chart mit Σ. 1–2 Pflicht, 3–4 für Schnelle; Checkpoints `app/steps/spot_N.be` zum Aufholen. Probelauf 19.10. der alten Übung A (Qwen3.5-122B, 30 min, 14 Uploads, dritte Achse/Checkboxen/doppelte Schleife) bleibt Demo-Material für Block 4.
+- **Übung: vom Starter zur Referenz-App in 4 Schritten** (entschieden 22.10., Details in `EXERCISES.md`). Starter im Docker-Container zeigt nur die Preislinie (1 Tag, ¼ h); Ziel ist `docs/zielbild.jpg`. Schritte: 1 Energie-Balken mit kWh-Achse, 2 Negativpreis orange + Schattierung, 3 3 Tage mit Stundenwerten, 4 Vergütungs-Chart mit Σ. 1–2 Pflicht, 3–4 für Schnelle; Checkpoints `app/steps/spot_N.be` zum Aufholen. Probelauf 19.10. der alten Übung A (Qwen3.5-122B, 30 min, 14 Uploads, dritte Achse/Checkboxen/doppelte Schleife) bleibt Demo-Material für Block 4.
 - **Bonus** (wer fertig ist): Stunden-CSV mit Aufbewahrung; Schwellwert an Shelly/MQTT.
 
 **Demo-Material** (vorbereiten, nicht improvisieren):
@@ -105,7 +105,7 @@ Hinweise:
 - [x] Venue-WLAN (Glue): ≥ 50 Clients, kein Captive Portal, keine Client-Isolation, HTTPS 443 frei — von Hermann bestätigt (22.10.). Trotzdem Test vor Ort am Workshop-Tag beim Aufbau (Notebook erreicht gPlug, `api.bkw.ch`, LLM-Provider).
 - [ ] Hermanns Antworten (Meeting 21.10., `261021-meeting-hermann/notes.md`) in `INTENT.md` §6 und F1/F2/F3 übertragen.
 - [x] Hauptfokus „Arbeiten mit Coding-Agent“, Berry-App als Übungsobjekt: bestätigt (21.10.).
-- [x] Zielbild Referenz-App: `final-app.jpg` (3 Tage, Stundenwerte, Energie + Preis, Vergütung CHF/h mit Σ), entschieden 22.10.
+- [x] Zielbild Referenz-App: `docs/zielbild.jpg` (3 Tage, Stundenwerte, Energie + Preis, Vergütung CHF/h mit Σ), entschieden 22.10.
 - [ ] Infomaniak-LLM: ein Feature der Referenz-App damit bauen lassen, Qualität bewerten, Fallback-Provider festlegen.
 - [ ] opencode.ai: Permission-Konfiguration prüfen (Shell-Kommandos auf `upload.sh`/`brcmd.sh`/`log.sh` begrenzbar? Schreibzugriff nur im Repo?), Infomaniak als OpenAI-kompatibler Provider konfigurierbar? Windows-Install getestet?
 - [ ] Aufwand/Offerte (20 h) gegen neuen Scope abgleichen: grössere Grafik, Simulator-Zeitraffer, Fake-Vortage. Hermann informieren, falls es nicht reicht.
@@ -114,7 +114,7 @@ Hinweise:
 
 | # | Datei | Inhalt | Test |
 |---|---|---|---|
-| 1 | `app/spot.be` | Referenz-App Kern (F1, F2, F5), Tages-CSV — **v0.2 vorhanden**, Desktop-Harness grün, auf 192.168.0.201 live getestet (18.10.). **Grafik neu** nach Zielbild `final-app.jpg` (22.10.): 3 Tage, Stundenwerte, oben Einspeisung kWh (orange bei Preis < 0) + Preislinie + negativer Bereich schattiert + „jetzt“, unten Vergütung CHF/h + Σ — offen | ≥ 3 Tage auf gplugk (Meter) — offen; Rendering ohne Heap-Einbruch > 5 kB |
+| 1 | `app/spot.be` | Referenz-App Kern (F1, F2, F5), Tages-CSV — **v0.2 vorhanden**, Desktop-Harness grün, auf 192.168.0.201 live getestet (18.10.). **Grafik neu** nach Zielbild `docs/zielbild.jpg` (22.10.): 3 Tage, Stundenwerte, oben Einspeisung kWh (orange bei Preis < 0) + Preislinie + negativer Bereich schattiert + „jetzt“, unten Vergütung CHF/h + Σ — offen | ≥ 3 Tage auf gplugk (Meter) — offen; Rendering ohne Heap-Einbruch > 5 kB |
 | 2 | Simulator | in `spot.be` integriert (`sim: true`): Zähler-Tageskurve, Backfill des laufenden Tages, Preis-Fallback aus Folgetag — vorhanden. **Neu (22.10.)**: Zeitraffer (Takt 5/15/60 min, jeder Takt = eine ¼ h), zusätzlich Leistung `Po` (kW), 2 Vortage mit Fake-Preisen (inkl. negativ) und Fake-Energie auffüllen, als „(Sim)“ markiert — offen | Grafik füllt sich am Abend sichtbar |
 | 3 | `autoexec.be` | `load("spot")`, Kommentar | vorhanden (`app/autoexec.be`), auf .201 installiert 18.10., BrRestart lädt App, 1 UI-Block, Fetch OK |
 | 4 | `bkw.json` auf dem Gerät | gecachte API-Antwort, `SpotFetch file` **vorhanden** in `spot.be` | am Workshop-Tag morgens frische Antwort speichern und mit ausliefern |

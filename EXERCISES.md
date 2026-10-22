@@ -13,7 +13,7 @@ Grundlagen: `AGENTS.md` (Regeln und Werkzeuge, liest der Agent automatisch), `TA
 ## Überblick: vom Starter zur Referenz-App in 4 Schritten
 
 Teilnehmende erhalten im Docker-Container einen **Starter** und bauen die Grafik in vier Schritten
-bis zum Zielbild `261021-meeting-hermann/final-app.jpg` aus (entschieden 22.10.).
+bis zum Zielbild `docs/zielbild.jpg` aus (entschieden 22.10.).
 
 | Schritt | Ziel | Sichtbares Resultat | Lernziel KI |
 |---|---|---|---|
@@ -245,7 +245,7 @@ welche neu sind. Noch nichts ändern.
 
 ### Erwartetes Resultat
 
-- Zielbild `final-app.jpg` erreicht: zwei Charts, Stunden übereinander, Σ stimmt mit der Summe der
+- Zielbild `docs/zielbild.jpg` erreicht: zwei Charts, Stunden übereinander, Σ stimmt mit der Summe der
   Tageswerte überein (Kopfzeile «Vergütung heute» + Vortage).
 - Heap nach Upload und `tasmota.gc()` > 100 kB, Rendering ohne Einbruch > 5 kB.
 
