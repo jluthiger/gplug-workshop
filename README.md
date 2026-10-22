@@ -23,9 +23,9 @@ Texteditor. Unbekannte Begriffe: [`LEGENDE.md`](LEGENDE.md).
 
 Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfassung:
 
-1. Repo klonen (`git clone https://github.com/gplug-ch/ki-workshop.git`), API-Key vom Zettel
-   eintragen ([`SETUP_OPENCODE.md`](SETUP_OPENCODE.md)). `./docker-run.sh` (Windows:
-   `.\docker-run.ps1`) baut beim ersten Mal das Image und startet opencode.
+1. Workshop-Ordner als ZIP holen (oder `git clone https://github.com/gplug-ch/ki-workshop.git`),
+   API-Key vom Zettel eintragen ([`SETUP_OPENCODE.md`](SETUP_OPENCODE.md)). `./docker-run.sh`
+   (Windows: `.\docker-run.ps1`) baut beim ersten Mal das Image und startet opencode.
 2. gPlug ins Workshop-WLAN, IP notieren, `http://<gplug-ip>` öffnen. *Tasmota Version* unter
    15.3.0: Helfer spielen die gPlug-Firmware ein. In der Konsole `Timezone 99`.
 3. IP eintragen und Starter laden:
@@ -52,7 +52,7 @@ Wer hängen bleibt, kopiert den Checkpoint des vorigen Schritts (`app/steps/spot
 `app/spot.be`. Zum Schluss Abschlussrunde (Checkliste in `EXERCISES.md`).
 
 **Erfolgreich**, wenn Schritt 2 in der WebUI sichtbar ist, `./log.sh` `SPOT: v0.3 geladen` ohne
-`BRY:` zeigt, `HeapFree` über 100 kB liegt und der Stand committet ist.
+`BRY:` zeigt, `HeapFree` über 100 kB liegt und der Stand gesichert ist.
 
 ### Nach dem Workshop
 

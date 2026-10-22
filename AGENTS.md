@@ -105,5 +105,6 @@ einhalten. Unklar, ob ein Kommando harmlos ist: Mensch fragen.
 
 ## 7. Git
 
-Funktionierende Stände in kleinen Commits sichern, wenn der Mensch zustimmt. Nie `.gplug`, API-Keys
-oder `bkw.json` committen.
+Funktionierende Stände sichern, wenn der Mensch zustimmt: ist der Projektordner ein git-Repo
+(`.git` vorhanden), als kleinen Commit, sonst als Kopie `spot_schrittN.be` im Projektordner. Nie
+`.gplug`, API-Keys oder `bkw.json` committen.

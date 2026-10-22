@@ -303,7 +303,8 @@ Nützliche Befehle im TUI:
    erfinden Modelle Tasmota-API.
 3. **Umsetzen** im `build`-Agent, kleine Schritte.
 4. **Testen** auf dem Gerät, Fehlermeldung aus der Konsole **wörtlich** zurückgeben.
-5. Funktionierende Stände mit `git commit` sichern; bei Irrweg `/undo` oder `git checkout`.
+5. Funktionierende Stände sichern (Kopie von `app/spot.be`, wer git kennt: `git commit`); bei
+   Irrweg `/undo` oder die Kopie zurückspielen.
 
 ## Fehlerbehebung
 

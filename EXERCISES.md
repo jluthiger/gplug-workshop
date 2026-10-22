@@ -64,9 +64,11 @@ Daten vollständig, Darstellung minimal:
 1. **Plan-Agent** (`Shift+Tab` bis `plan`): Prompt «planen» des Schritts. Plan lesen; weicht er von
    den Vorgaben ab (eigene Zeichenschleife, Checkboxen, JavaScript): ablehnen, Vorgabe zitieren.
 2. **Build-Agent** (`Shift+Tab` bis `build`): Prompt «umsetzen» (gleich für alle Schritte, unten).
-   Shell-Befehle einzeln freigeben (nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `berry`, `git`).
+   Shell-Befehle einzeln freigeben (nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `berry`, `cp`,
+   `git`).
 3. Fehler mit Prompt «Fehler zurückgeben» melden.
-4. Prüfschritte selbst durchgehen, in der WebUI ansehen, Stand mit `git commit` sichern.
+4. Prüfschritte selbst durchgehen, in der WebUI ansehen, Stand sichern: Kopie
+   `cp app/spot.be spot_schritt1.be` (Nummer des Schritts); wer git kennt: `git commit`.
 
 ### Prompt «umsetzen» (alle Schritte)
 
@@ -207,7 +209,8 @@ und nach der Änderung (tasmota.gc(), dann heap_free). Liste im Plan jede Method
 ### Erwartetes Resultat
 
 - 3 Tage nebeneinander, Tagesnamen, 72 Balken, Preislinie in Stundenstufen.
-- `git diff --stat` zeigt Umbau in bestehenden Methoden, keine kopierten `send_..._3d`-Varianten.
+- Vergleich mit der Sicherung des vorherigen Schritts: Umbau in bestehenden Methoden, keine
+  kopierten `send_..._3d`-Varianten.
 - Heap nach Upload und `tasmota.gc()` höchstens ~2 kB unter dem Wert vor dem Schritt.
 
 ## Schritt 4 – Vergütungs-Chart (für Schnelle, ~15 min)
@@ -258,7 +261,7 @@ cd ..
 ./log.sh                                          # keine BRY:-Zeile
 ./brcmd.sh 'tasmota.cmd("SpotStatus")'            # Days vorhanden, HeapFree nahe Ausgangswert
 ./brcmd.sh 'tasmota.gc()'; ./brcmd.sh 'tasmota.memory("heap_free")'
-git diff --stat app/spot.be                       # nur app/spot.be, wenige Stellen
+diff spot_schritt2.be app/spot.be | head -40      # wenige Stellen (oder git diff --stat)
 ```
 
 Im Browser: Seite **neu laden** (Cmd+R / F5), Kurven per Legende aus- und einblenden, mit der Maus
@@ -291,7 +294,8 @@ Werte anfahren.
     (Tasmota ersetzt per AJAX nur den Sensorbereich, das Script lädt nur beim Seitenaufruf).
     Seite neu laden, kein Fehler im Code.
 12. **Shell-Freigaben.** opencode fragt vor jedem Befehl. Nur `./upload.sh`, `./log.sh`,
-    `./brcmd.sh`, `berry`, `git` freigeben; alles andere ablehnen und den Agenten fragen, wozu.
+    `./brcmd.sh`, `berry`, `cp`, `git` freigeben; alles andere ablehnen und den Agenten fragen,
+    wozu.
 
 ## Bonus (wer fertig ist)
 
