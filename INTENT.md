@@ -17,7 +17,7 @@ Zweck dieses Dokuments: verbindliche Beschreibung *was* die Tasmota-Berry-App le
   - Geräte kommen mit unterschiedlicher Firmware-**Version**, Heim-WLAN und realer SM-Konfiguration → Mindest-Firmware-Version, Upgrade **vor Ort** per Datei-Upload (keine Vorbereitung durch Teilnehmende, entschieden 22.10.), SM-Pfad konfigurierbar, Simulator für den Abend. Berry, UFS und SML sind auf allen Webshop-gPlugs aktiv (geklärt 18.10.).
   - Kein Smart Meter vor Ort → Simulator (`sim: true` in `spot.be`) ist Pflicht, nicht Option.
   - Vor Ort entwickeln Teilnehmende **eine kleine Ergänzung** auf einer fertigen Referenz-App (siehe §4a), nicht die App selbst.
-- **Hauptthema des Workshops ist der Umgang mit KI** (Coding-Agent), die Berry-App ist das Übungsobjekt. Folgen für die App: Code muss für einen Agenten gut lesbar und erweiterbar sein (klare Modulgrenzen, Kommentare, keine Tricks), und die Referenz-App wird selbst **mit dem Agenten gebaut** — Prompts und Verlauf werden als Lehrmaterial aufbewahrt (Kursleitung: `WORKSHOP_PREP.md` §1a).
+- **Hauptthema des Workshops ist der Umgang mit KI** (Coding-Agent), die Berry-App ist das Übungsobjekt. Folgen für die App: Code muss für einen Agenten gut lesbar und erweiterbar sein (klare Modulgrenzen, Kommentare, keine Tricks), und die Referenz-App wird selbst **mit dem Agenten gebaut** — Prompts und Verlauf werden als Lehrmaterial aufbewahrt (Ablage: interne Kursleitungs-Notizen).
 - Optionale Teilnehmer-Erweiterungen laut Sketch: Last via Shelly schalten, Integration Drittsysteme → beides über F5 (Command) bzw. `webclient` zum Shelly machbar (§3 F6).
 - Zwei Scope-Varianten existieren (kurzer Sketch: stündlich, 1 Tag; RFC v0.2: ¼-h, 3 Tage). **Dieses Dokument folgt v0.2**. Grafik der Referenz-App: **3 Tage mit Stundenwerten** gemäss Zielbild `docs/zielbild.jpg` (entschieden 22.10., ersetzt „zuerst 1 Tag“ vom 18.10.).
 
@@ -193,7 +193,7 @@ Die Übungen sind so gewählt, dass sie den Datenfluss nicht verändern (nur Dar
 8. **Preisquelle**: *Entschieden (18.10.):* BKW-Vergütung via `energyreturn`-Endpoint reicht. Kein Proxy, kein roher Spotpreis. (ENTSO-E direkt wäre auf dem ESP32 ohnehin nicht praktikabel: Token, XML, > 400 kB.)
 9. **Lückenhafte Serien**: *Geklärt (21.10.):* BKW liefert alles oder nichts. Slot-leer-Logik bleibt als Absicherung, kein Auffüllen mit Vorstundenwert.
 10. **Simulator**: *Entschieden (22.10.):* Zeitraffer 5/15/60 min, zusätzlich `Po` (kW), Vortage mit Fake-Daten auffüllen (siehe F2).
-11. **Vorbereitung Teilnehmende**: *Entschieden (22.10.):* keine Vorab-Mail; Firmware-Upgrade, `Timezone 99` und Agent-Setup vor Ort (Kursleitung: `WORKSHOP_PREP.md` §2).
+11. **Vorbereitung Teilnehmende**: *Entschieden (22.10.):* keine Vorab-Mail; Firmware-Upgrade, `Timezone 99` und Agent-Setup vor Ort (Ablauf: `RUNBOOK.md`).
 4. **„Kosten“**: *Geklärt (18.10.):* Es gibt eine Grösse, `Vergütung = Preis × Einspeisung` pro Slot. Negativer Preis → negativer Wert = Kosten. Bezug wird nicht erfasst. Folgen: Grafik zeigt Balken unter null, CSV-Tagessumme kann negativ sein.
 5. **Auflösung**: *Entschieden (18.10.):* 0.01 kWh pro Viertelstunde (siehe F2). Tagessumme ist bei beiden Auflösungen auf ±1 Einheit genau, da auf Zählerständen gerundet wird; der Unterschied liegt nur in der Darstellung pro Slot.
 6. **Command-Format**: *Entschieden (18.10.):* stündlich als Default, `SpotPrices 15` liefert Viertelstundenwerte, Feld `Res` kennzeichnet die Auflösung (siehe F5).
