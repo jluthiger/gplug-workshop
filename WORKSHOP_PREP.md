@@ -73,7 +73,7 @@ Zwei Geräte bei Jürg:
 - **Ohne Meter**: `http://192.168.0.201` (LAN, kein WebPassword): Tasmota 15.3.0, ESP32-C3, gPlug-Script 6.9.26 — exakt der Zustand der Teilnehmergeräte am Workshop. Simulator-Pfad, UI, Command, Preisabruf.
 - **Am Meter**: `http://gplugk.local` = `192.168.0.130`: Tasmota **15.5.0**, ESP32-C3, gPlugK-Script 6.9.26 (Kamstrup DLMS Push). Realpfad `z.Eo` (live, z.B. 42'872.724 kWh am 18.10.), 3-Tage-Soak-Test der Zählererfassung und CSV. Zweite Tasmota-Version im Test → deckt 15.3.0 und 15.5.0 ab.
 
-Beide Script-Varianten (L+G `gplug_script.txt`, Kamstrup `gplugk_script.txt`) liefern dieselben JSON-Schlüssel unter `z` — der Default-Pfad `["z","Eo"]` gilt gerätetypübergreifend.
+Beide Script-Varianten (L+G und Kamstrup, gplug.ch) liefern dieselben JSON-Schlüssel unter `z` — der Default-Pfad `["z","Eo"]` gilt gerätetypübergreifend.
 
 Reihenfolge: jede Änderung zuerst auf dem Gerät ohne Meter, dann auf dem Gerät am Meter.
 
@@ -119,7 +119,7 @@ Hinweise:
 | 3 | `autoexec.be` | `load("spot")`, Kommentar | vorhanden (`app/autoexec.be`), auf .201 installiert 18.10., BrRestart lädt App, 1 UI-Block, Fetch OK |
 | 4 | `bkw.json` auf dem Gerät | gecachte API-Antwort, `SpotFetch file` **vorhanden** in `spot.be` | am Workshop-Tag morgens frische Antwort speichern und mit ausliefern |
 | 1a | `app/desktop_harness.be` + `persist.be`/`path.be` | spot.be ohne Gerät durchspielen (Tag simulieren, CSV, Commands, HTML) | läuft: `berry desktop_harness.be` |
-| 5 | `reference/gplug_script.txt` + `reference/read_sensors_sample.json` | gPlug-Script (SML/DLMS, Descriptor `z`) und `read_sensors()`-Ausgabe — **vorhanden**, von Gerät 192.168.0.201 gezogen (18.10.) | Zähler-Pfad `["z","Eo"]` daraus abgeleitet |
+| 5 | `reference/read_sensors_sample.json` | `read_sensors()`-Ausgabe — **vorhanden**, von Gerät 192.168.0.201 gezogen (18.10.). gPlug-Scripts 22.10. entfernt (Lizenz unklar, `gplugk_script.txt` enthielt Zählerschlüssel, steht noch im Git-Verlauf: Schlüssel ersetzen lassen, Verlauf bereinigen nur nach Freigabe) | Zähler-Pfad `["z","Eo"]` daraus abgeleitet |
 | 6 | `TASMOTA_BERRY_API.md` | Agent-Kontext | Agent baut Übung ohne Halluzination |
 | 7 | `AGENTS.md` | Regeln für opencode.ai: Dateien, Upload-Befehl, Tests, „nie `tasmota.web_send` ausserhalb `web_sensor`“ usw. | Trockenlauf mit Agent |
 | 8 | `upload.sh`, `brcmd.sh`, `log.sh` (+ `.ps1`) | Agent-Werkzeuge: Upload + `BrRestart`, Berry-Ausdruck via `/cm?cmnd=Br`, Konsole lesen | Agent löst Schritt 1 allein, Mensch prüft nur |

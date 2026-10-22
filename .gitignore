@@ -37,3 +37,6 @@ __pycache__/
 .opencode/
 .claude/
 node_modules/
+
+# gPlug-Scripts (Lizenz unklar, enthalten Zählerschlüssel)
+reference/*_script.txt

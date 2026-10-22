@@ -23,7 +23,7 @@ Vor der ersten Änderung lesen, nicht raten:
 | `app/spot.be` | die App | ja |
 | `app/autoexec.be` | lädt `spot` beim Start und bei `BrRestart` | ja, nur bei Bedarf |
 | `app/desktop_harness.be`, `app/persist.be`, `app/path.be` | Desktop-Test, Stubs | **nie** |
-| `reference/` | gPlug-Scripts und `read_sensors`-Beispiele (Zähler-Pfad) | nein |
+| `reference/` | `read_sensors`-Beispiele (Zähler-Pfad) | nein |
 
 ## 3. Werkzeuge (Gerät)
 
