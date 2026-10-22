@@ -42,7 +42,8 @@ if [ $restart -eq 1 ]; then
   echo "OK  BrRestart – jetzt ./log.sh lesen"
   # Jeder BrRestart-Zyklus kostet ~1 kB Heap, der erst ein Neustart zurückgibt (Tasmota 15.3).
   # Unter MIN_HEAP kB (Standard 100) wird das Gerät neu gestartet, sonst scheitern TLS-Abrufe.
-  sleep 4
+  # Erst nach dem ersten Preis-Abruf messen (TLS belegt kurz ~20 kB)
+  sleep 12
   heap=$(curl -s -m 10 -G "$H/cm" --data-urlencode 'cmnd=Br tasmota.gc() return tasmota.memory("heap_free")' \
     | sed -n 's/.*"Br":"\([0-9]*\)".*/\1/p')
   if [ -n "$heap" ] && [ "$heap" -lt "${MIN_HEAP:-100}" ]; then
@@ -54,7 +55,7 @@ if [ $restart -eq 1 ]; then
       i=$((i + 1)); [ $i -ge 20 ] && { echo "FEHLER: Gerät nach Neustart nicht erreichbar" >&2; exit 1; }
       sleep 2
     done
-    sleep 3
+    sleep 12
     heap=$(curl -s -m 10 -G "$H/cm" --data-urlencode 'cmnd=Br tasmota.gc() return tasmota.memory("heap_free")' \
       | sed -n 's/.*"Br":"\([0-9]*\)".*/\1/p')
     echo "OK  Neustart fertig, heap_free ${heap} kB – ./log.sh lesen"
