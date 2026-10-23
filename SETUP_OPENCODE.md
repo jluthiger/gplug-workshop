@@ -147,19 +147,22 @@ Beide nutzen **opencode 2.0** (Agent wechseln mit `Shift+Tab`). Achtung: das Ins
 1. Docker installieren: [Docker Desktop](https://www.docker.com/products/docker-desktop/) für
    macOS und Windows (Windows: WSL 2 aktivieren, Installer fragt danach), unter Linux Docker Engine.
    Test: `docker run --rm hello-world`.
-2. Im Workshop-Ordner das Image bauen und starten (erster Start baut das Image, ca. 2–3 min):
+2. Im Workshop-Ordner das Image laden und starten (erster Start lädt
+   `ghcr.io/gplug-ch/ki-workshop:workshop`, ca. 300 MB):
 
    | System | Befehl |
    |---|---|
    | macOS / Linux | `./docker-run.sh` |
    | Windows (PowerShell) | `.\docker-run.ps1` |
 
+   Nach dem Workshop ist das Image gelöscht: `./docker-run.sh --build` baut es dann lokal aus
+   dem `Dockerfile` (2–3 min).
 3. Test im Container: `./docker-run.sh bash`, dann `opencode --version` (erwartet `opencode v2.0.32`)
    und `exit`.
 
-Das Script übergibt `INFOMANIAK_PRODUCT_ID`, `INFOMANIAK_API_KEY` und `GPLUG` aus dem eigenen
-Terminal an den Container (Schritt 3 gilt also auch hier) und hängt nur den Workshop-Ordner als
-`/work` ein. Sitzungen bleiben im Docker-Volume `gplug-workshop-data` erhalten. Im Image sind
+Das Workshop-Image enthält den Infomaniak-Zugang des Workshop-Tags. Sind `INFOMANIAK_PRODUCT_ID`
+und `INFOMANIAK_API_KEY` im eigenen Terminal gesetzt (Schritt 3), haben diese Vorrang; `GPLUG`
+wird ebenfalls durchgereicht. Das Script hängt nur den Workshop-Ordner als `/work` ein. Sitzungen bleiben im Docker-Volume `gplug-workshop-data` erhalten. Im Image sind
 zusätzlich `berry` (Desktop-Test) und `git`. Das gPlug ist aus dem Container über seine **IP**
 erreichbar, `.local`-Namen gehen nicht → IP in `.gplug` eintragen.
 

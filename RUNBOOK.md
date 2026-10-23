@@ -8,7 +8,7 @@ Weicht etwas ab: Hand hoch, Helfer kommen. Begriffe: [`LEGENDE.md`](LEGENDE.md).
 |---|---|---|
 | 1 | Workshop-Ordner herunterladen | 5 min |
 | 2 | Zugangsdaten für das Sprachmodell | 5 min |
-| 3 | Docker-Image bauen, Agent testen | 10 min |
+| 3 | Docker-Image laden, Agent testen | 10 min |
 | 4 | gPlug ins Workshop-WLAN | 10 min |
 | 5 | Firmware prüfen, Zeitzone | 5–10 min |
 | 6 | Starter aufs Gerät | 5 min |
@@ -31,7 +31,7 @@ Schritte 4–5 laufen parallel zu 1–3: das Gerät braucht Minuten zum Neustart
   Notebook neu starten. Test in normaler PowerShell: `wsl --status` meldet Standardversion 2.
   Ist WSL schon installiert, bringt `wsl --update` es auf den aktuellen Stand. Meldet Windows, die
   Virtualisierung sei deaktiviert: im BIOS/UEFI *Intel VT-x* bzw. *AMD-V/SVM* einschalten.
-- Vom Tisch: Zettel mit Workshop-WLAN (Name, Passwort), Product-ID und API-Key.
+- Vom Tisch: Zettel mit Workshop-WLAN (Name, Passwort).
 
 Notebook zuerst ins Workshop-WLAN, Schritte 1–3 brauchen Internet.
 
@@ -83,31 +83,14 @@ Erwartet: `ls` zeigt u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`.
 
 ## 2. Zugangsdaten für das Sprachmodell
 
-Werte vom Zettel einsetzen. Sie gelten nur in diesem Terminal-Fenster: alle weiteren Befehle hier
-ausführen, Fenster offen lassen.
+Nichts zu tun: der Workshop-Zugang zu Infomaniak steckt im Docker-Image. Er gilt nur am
+Workshop-Tag und wird danach gesperrt. Eigener Zugang (Infomaniak oder Claude) statt Workshop-Key:
+`SETUP_OPENCODE.md`, Schritt 3 bzw. Abschnitt *Alternative: Claude-Modelle von Anthropic*.
 
-macOS / Linux:
-```sh
-export INFOMANIAK_PRODUCT_ID=123456
-export INFOMANIAK_API_KEY=xxxxxxxxxxxxxxxx
-echo "ID=$INFOMANIAK_PRODUCT_ID KEY=${INFOMANIAK_API_KEY:+gesetzt}"
-```
-Windows (PowerShell):
-```powershell
-$env:INFOMANIAK_PRODUCT_ID = "123456"
-$env:INFOMANIAK_API_KEY    = "xxxxxxxxxxxxxxxx"
-"ID=$env:INFOMANIAK_PRODUCT_ID KEY=$([bool]$env:INFOMANIAK_API_KEY)"
-```
-Erwartet: `ID=123456 KEY=gesetzt` (Windows `KEY=True`).
+## 3. Docker-Image laden, Agent testen
 
-Der Key gehört dem Workshop und wird danach gesperrt: nicht weitergeben, nicht in Dateien
-speichern. Eigener Claude-Zugang statt Infomaniak: `SETUP_OPENCODE.md`, Abschnitt *Alternative:
-Claude-Modelle von Anthropic*.
-
-## 3. Docker-Image bauen, Agent testen
-
-1. Shell im Container öffnen. Beim ersten Mal baut das Skript das Docker-Image (lädt ca. 2–3 min
-   aus dem Internet, viele Zeilen Ausgabe), danach startet es sofort:
+1. Shell im Container öffnen. Beim ersten Mal lädt das Skript das fertige Docker-Image von
+   GitHub (ca. 300 MB, 1–2 min), danach startet es sofort:
    ```sh
    ./docker-run.sh bash            # Windows: .\docker-run.ps1 bash
    opencode --version              # erwartet: opencode v2.0.32

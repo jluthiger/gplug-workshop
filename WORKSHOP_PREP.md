@@ -10,7 +10,7 @@ Hauptthema: **Arbeiten mit einem Coding-Agenten** auf einem Embedded-Gerät. Die
 | # | Zeit | Block | Ziel |
 |---|---|---|---|
 | 1 | 0:00–0:15 | Einlass, Zahlung, WLAN-Zettel verteilen | alle online |
-| 2a | 0:15–0:45 | Notebook: Repo von GitHub klonen, Docker-Image bauen (`./docker-run.sh`), API-Key eintragen, erste Agent-Antwort | Agent antwortet |
+| 2a | 0:15–0:45 | Notebook: Repo von GitHub (ZIP), Docker-Image laden (`./docker-run.sh`, Key eingebaut), erste Agent-Antwort | Agent antwortet |
 | 2b | 0:15–0:45 | parallel, mit Helfern: gPlug ins Venue-WLAN, Firmware ≥ 15.3.0 per Datei-Upload durch Helfer, `Timezone 99` | `Information` zeigt ≥ 15.3.0, `Time` stimmt |
 | 2c | 0:45–1:00 | Referenz-App hochladen (`upload.sh`) | `SpotPrices` liefert JSON auf jedem Gerät |
 | 3 | 1:00–1:10 | Demo Referenz-App: Datenfluss, Grafik (3 Tage, Simulator-Zeitraffer), CSV, Konsole | Verständnis Übungsobjekt |
@@ -57,8 +57,8 @@ Ausschreibung nennt nur:
 
 Vor Ort (Block 2, Anleitung in `RUNBOOK.md`, Repo öffentlich auf GitHub `gplug-ch/ki-workshop`, kein USB-Stick (entschieden 22.10.)):
 
-- [ ] Workshop-Repo klonen (`git clone https://github.com/gplug-ch/ki-workshop.git`, ohne git: ZIP); Infomaniak-API-Key vom Zettel eintragen (oder eigener Claude-Zugang, siehe `SETUP_OPENCODE.md`).
-- [ ] `./docker-run.sh` bzw. `.\docker-run.ps1` baut das Image beim ersten Start (2–3 min, lädt Debian-Pakete, Berry, opencode aus dem Internet). Test: `opencode --version` (v2.0.x), erste Frage an den Agenten.
+- [ ] Workshop-Repo holen (ZIP, wer git kennt: `git clone https://github.com/gplug-ch/ki-workshop.git`). Kein Key eintragen: steckt im Image (eigener Claude-Zugang: `SETUP_OPENCODE.md`).
+- [ ] `./docker-run.sh` bzw. `.\docker-run.ps1` lädt das Image beim ersten Start von ghcr.io (~300 MB). Test: `opencode --version` (v2.0.x), erste Frage an den Agenten.
 - [ ] gPlug ins Venue-WLAN (WLAN-Zettel), danach Firmware prüfen: unter 15.3.0 → Helfer spielen die **gPlug-Firmware** per Datei-Upload ein (Datei auf Helfer-Notebooks). Nicht *Update über Webserver*: die OtaUrl zeigt auf die Standard-Firmware `tasmota32c3.bin`, die vermutlich keinen Scripter hat (gPlug-Script/Zähler) – prüfen.
 - [ ] In der Tasmota-Konsole `Timezone 99` eingeben (ab Werk `+01:00`). Prüfen: `Time` zeigt die aktuelle Uhrzeit.
 - [ ] Gerät nicht erreichbar oder Upgrade misslingt: Flash-Station (esptool) oder Reserve-gPlug.
@@ -126,7 +126,7 @@ Hinweise:
 | 7 | `AGENTS.md` | Regeln für opencode.ai: Dateien, Upload-Befehl, Tests, „nie `tasmota.web_send` ausserhalb `web_sensor`“ usw. | Trockenlauf mit Agent |
 | 8 | `upload.sh`, `brcmd.sh`, `log.sh` (+ `.ps1`) | Agent-Werkzeuge: Upload + `BrRestart`, Berry-Ausdruck via `/cm?cmnd=Br`, Konsole lesen | Agent löst Schritt 1 allein, Mensch prüft nur |
 | 9 | `RUNBOOK.md` | Teilnehmer-Schritte **ab Null vor Ort** (Repo klonen, Image bauen, API-Key, WLAN, Firmware-Upload durch Helfer, `Timezone 99`, App hochladen) mit erwarteter Ausgabe pro Schritt (Screenshots) — **Entwurf 22.10.** (Menünamen vom Gerät .202 übernommen, deutsche WebUI). Offen: Verhalten ohne bekanntes WLAN (AP-Name, `192.168.4.1`, Dauer bis AP) an einem gPlug prüfen; Firmware-Upload durch Helfer: Dateiname auf Stick, bleiben WLAN/Script erhalten (§3); Screenshots | von einer unbeteiligten Person durchgespielt, Block 2 in ≤ 45 min |
-| 10 | Agent-Setup | Standard: Docker-Image (`Dockerfile`, `docker-run.sh`/`.ps1`, opencode 2.0.32 + berry + git, nur Repo gemountet). Fallback: opencode 2.0 nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte) — Image vorhanden, auf macOS getestet 19.10. Image wird vor Ort gebaut (kein USB-Stick, 22.10.). `docker-run.sh`/`.ps1` bauen nur, wenn das Image fehlt → geladenes Image mit Tag `gplug-workshop` wird direkt genutzt (geprüft 22.10.) | `docker load` + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
+| 10 | Agent-Setup | Standard: Docker-Image (`Dockerfile`, `docker-run.sh`/`.ps1`, opencode 2.0.32 + berry + git, nur Repo gemountet). Fallback: opencode 2.0 nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte) — Image vorhanden, auf macOS getestet 19.10. Image kommt fertig von `ghcr.io/gplug-ch/ki-workshop:workshop` mit eingebautem Key (23.10., siehe Ablauf unten); `docker-run.sh`/`.ps1` laden nur, wenn das Image fehlt, `--build` baut lokal | `docker pull` + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
 | 11 | `EXERCISES.md` | 4 Schritte Starter → Referenz-App mit Prompt-Vorlage, Ergebnis, Prüfschritt — geschrieben 22.10.; Bonus CSV/Shelly | Alle 4 Schritte mit Infomaniak-LLM durchspielen, Zeit pro Schritt messen (Ziel: 1–2 in 35 min) |
 | 12 | Demo-Transkript | 3 Ausschnitte aus Referenz-App-Entwicklung (guter Prompt, Halluzination, Korrektur) | auf Beamer lesbar |
 | 13 | `AGENTS.md`-Ergänzung | Werkzeuge beschreiben, verbotene Kommandos (`Reset`, `Restart`, `Upgrade`), Regel „nach jedem Upload `log.sh` lesen“ | Agent hält sich daran im Trockenlauf |
@@ -147,7 +147,13 @@ Gehostet entfällt: der Agent muss das gPlug im Venue-WLAN erreichen (`upload.sh
 - `--network host` ist nicht nötig: der Standard-Bridge-Modus erreicht gPlug (IP) und Internet, auch unter Docker Desktop. `.local`-Namen lösen im Container nicht auf → IP in `.gplug`.
 - Getestet 19.10. auf macOS (Apple Silicon, Docker 29.8): Skripte gegen 192.168.0.201, Desktop-Harness `HARNESS OK`, opencode erreicht Infomaniak. Offen: Windows (Docker Desktop + WSL 2, `docker-run.ps1`), Linux, Mac Intel, interaktive TUI-Sitzung mit echtem Key.
 - opencode-Version: Das Script `opencode.ai/install` installiert 1.x (Agent-Wechsel `Tab`); Workshop nutzt 2.0 (`Shift+Tab`), nativ via `opencode.ai/v2/install`.
-- Keine Vorab-Mail (22.10.): Docker installiert ist Kursvoraussetzung, Repo vor Ort von GitHub, Image wird mit `./docker-run.sh` gebaut. Test-Kommando im Runbook (`opencode --version`, erste Frage an Agent).
+- Keine Vorab-Mail (22.10.): Docker installiert ist Kursvoraussetzung, Repo vor Ort von GitHub, Image wird mit `./docker-run.sh` geladen. Test-Kommando im Runbook (`opencode --version`, erste Frage an Agent).
+- Fertiges Image mit eingebautem Key (entschieden 23.10.): `ghcr.io/gplug-ch/ki-workshop:base` (ohne Secrets, bleibt) und `:workshop` (`Dockerfile.workshop`, `ENV INFOMANIAK_*`, nur am Workshop-Tag). Öffentlich, damit kein `docker login` nötig ist → Key ist für jeden sichtbar, der das Image findet (`docker history`). Risiko begrenzt durch: Token-Ablauf = Workshop-Tag + 1, Ausgabenlimite im Infomaniak-Manager, Image danach löschen. Ablauf Kursleitung:
+  - [ ] einmalig: `gh auth refresh -s write:packages,delete:packages`, `gh auth token | docker login ghcr.io -u <github-user> --password-stdin`, `docker buildx create --use`.
+  - [ ] jetzt: `tools/publish-image.sh base`; Package auf GitHub auf *public* stellen (Org-Packages sind privat); Repo `gplug-ch/ki-workshop` public; Pull-Test auf Windows (`docker pull ghcr.io/gplug-ch/ki-workshop:base`).
+  - [ ] Vortag: Infomaniak-Manager: Ausgabenlimite setzen, Token mit Scope `ai-tools` und Ablauf Workshop-Tag + 1 erstellen.
+  - [ ] Workshop-Morgen: `INFOMANIAK_PRODUCT_ID=… INFOMANIAK_API_KEY=… tools/publish-image.sh workshop`; Test `./docker-run.sh` (lokales Image vorher mit `docker rmi` entfernen).
+  - [ ] danach: `tools/delete-image.sh`, Token im Manager widerrufen.
 
 Zu prüfen für D (Fallback): Verhalten auf Windows ohne Docker — Geräte-Skripte sind `sh`, laufen dort nur in WSL.
 
@@ -170,7 +176,7 @@ Massnahmen: `parse_file` liest mit `readbytes`; `upload.sh` prüft nach `BrResta
 
 - [ ] 4 Reserve-gPlugs mit Firmware + Referenz-App (für defekte/alte Geräte).
 - [ ] 2 Ersatz-USB-Kabel (Daten, nicht nur Laden), 1 Notebook mit esptool, Chrome und USB-Treibern (CH340/CP210x) als Flash-Station.
-- [ ] WLAN-Zettel pro Tisch (inkl. Infomaniak-API-Key), Beamer, Verlängerungskabel.
+- [ ] WLAN-Zettel pro Tisch (nur WLAN, Key steckt im Image), Beamer, Verlängerungskabel.
 - [ ] Helfer-Notebooks gemäss Deliverable 14 (gPlug-Firmware, `bkw.json`).
 - [ ] 1 Helfer pro 6 Teilnehmende für Block 2 (Firmware-Upgrade und `Timezone 99` übernehmen Helfer, parallel zum Agent-Setup).
 

@@ -23,9 +23,10 @@ Texteditor. Unbekannte Begriffe: [`LEGENDE.md`](LEGENDE.md).
 
 Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfassung:
 
-1. Workshop-Ordner als ZIP holen (oder `git clone https://github.com/gplug-ch/ki-workshop.git`),
-   API-Key vom Zettel eintragen ([`SETUP_OPENCODE.md`](SETUP_OPENCODE.md)). `./docker-run.sh`
-   (Windows: `.\docker-run.ps1`) baut beim ersten Mal das Image und startet opencode.
+1. Workshop-Ordner als ZIP holen (oder `git clone https://github.com/gplug-ch/ki-workshop.git`).
+   `./docker-run.sh` (Windows: `.\docker-run.ps1`) lädt beim ersten Mal das fertige Image von
+   `ghcr.io/gplug-ch/ki-workshop` (Infomaniak-Zugang für den Workshop-Tag eingebaut) und startet
+   opencode. Nach dem Workshop oder mit eigenem Zugang: [`SETUP_OPENCODE.md`](SETUP_OPENCODE.md).
 2. gPlug ins Workshop-WLAN, IP notieren, `http://<gplug-ip>` öffnen. *Tasmota Version* unter
    15.3.0: Helfer spielen die gPlug-Firmware ein. In der Konsole `Timezone 99`.
 3. IP eintragen und Starter laden:
@@ -118,6 +119,8 @@ Konfiguration am Anfang von `app/spot.be` (`spot_cfg`): `sim`, `meter_path`, `da
   Konsole). Geräte-IP in `.gplug` oder `$GPLUG`.
 - `Dockerfile`, `docker-run.sh`, `docker-run.ps1` – Sandbox: opencode 2.0, `berry`, `git` im
   Container, sichtbar nur dieser Ordner (Standard-Setup, siehe `SETUP_OPENCODE.md`).
+  `Dockerfile.workshop`, `tools/publish-image.sh`, `tools/delete-image.sh` – Kursleitung:
+  Image mit Workshop-Zugang auf ghcr.io veröffentlichen und danach löschen.
 - `TASMOTA_BERRY_API.md` – Spickzettel der verwendeten Tasmota-Berry-API, als Kontext für
   den Coding-Agenten gedacht.
 

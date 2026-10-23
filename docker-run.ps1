@@ -1,30 +1,34 @@
-# docker-run.ps1 – Workshop-Sandbox bauen (beim ersten Mal) und opencode darin starten (Windows).
+# docker-run.ps1 – Workshop-Sandbox holen (beim ersten Mal) und opencode darin starten (Windows).
 #   .\docker-run.ps1            opencode im Container
 #   .\docker-run.ps1 bash       Shell im Container (zum Prüfen)
-#   .\docker-run.ps1 --build    Image neu bauen
-# Sichtbar ist nur dieser Ordner (/work). Infomaniak-Werte aus den Umgebungsvariablen.
+#   .\docker-run.ps1 --build    Image lokal aus dem Dockerfile bauen statt von ghcr.io laden
+# Sichtbar ist nur dieser Ordner (/work). Infomaniak-Zugang steckt im Workshop-Image;
+# INFOMANIAK_PRODUCT_ID / INFOMANIAK_API_KEY aus der eigenen Shell haben Vorrang (eigener Zugang).
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
-$Image = "gplug-workshop"
+$Image = "ghcr.io/gplug-ch/ki-workshop:workshop"
 
 $rest = @($args)
-# docker images -q statt image inspect: kein stderr, sonst bricht PowerShell 5.1 mit "Stop" ab
-$missing = -not (docker images -q $Image)
 if ($rest.Count -gt 0 -and $rest[0] -eq "--build") {
   $rest = @($rest | Select-Object -Skip 1)
-  $missing = $true
-}
-if ($missing) {
   docker build -t $Image .
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+} elseif (-not (docker images -q $Image)) {
+  # docker images -q statt image inspect: kein stderr, sonst bricht PowerShell 5.1 mit "Stop" ab
+  docker pull $Image
+  if ($LASTEXITCODE -ne 0) {
+    Write-Error "Image nicht ladbar (Workshop vorbei?): .\docker-run.ps1 --build baut es lokal"
+    exit $LASTEXITCODE
+  }
 }
 
-if (-not $env:INFOMANIAK_PRODUCT_ID -or -not $env:INFOMANIAK_API_KEY) {
-  Write-Warning "INFOMANIAK_PRODUCT_ID oder INFOMANIAK_API_KEY nicht gesetzt (SETUP_OPENCODE.md Schritt 3)"
+# Eigene Werte nur durchreichen, wenn gesetzt: leeres -e würde die Werte aus dem Image löschen
+$envArgs = @()
+foreach ($name in "INFOMANIAK_PRODUCT_ID", "INFOMANIAK_API_KEY", "GPLUG") {
+  if ([Environment]::GetEnvironmentVariable($name)) { $envArgs += "-e", $name }
 }
 
-docker run -it --rm `
+docker run -it --rm @envArgs `
   -v "${PWD}:/work" -w /work `
   -v gplug-workshop-data:/home/agent/.local/share/opencode `
-  -e INFOMANIAK_PRODUCT_ID -e INFOMANIAK_API_KEY -e GPLUG `
   $Image @rest
