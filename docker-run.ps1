@@ -8,8 +8,8 @@ Set-Location $PSScriptRoot
 $Image = "gplug-workshop"
 
 $rest = @($args)
-docker image inspect $Image *> $null
-$missing = $LASTEXITCODE -ne 0
+# docker images -q statt image inspect: kein stderr, sonst bricht PowerShell 5.1 mit "Stop" ab
+$missing = -not (docker images -q $Image)
 if ($rest.Count -gt 0 -and $rest[0] -eq "--build") {
   $rest = @($rest | Select-Object -Skip 1)
   $missing = $true
