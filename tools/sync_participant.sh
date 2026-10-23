@@ -6,7 +6,7 @@
 # Ergebnis mit git diff im Ziel prüfen, dann dort committen und pushen.
 set -eu
 
-INTERN='^(WORKSHOP_PREP\.md|REPLY_HERMANN\.md|261021-meeting-hermann/|mock/|ui-drafts/|tools/sync_participant\.sh)'
+INTERN='^(WORKSHOP_PREP\.md|REPLY_HERMANN\.md|261021-meeting-hermann/|mock/|ui-drafts/|tools/sync_participant\.sh|DOCKER_ADMIN\.md|Dockerfile\.workshop|tools/publish-image\.sh|tools/delete-image\.sh)'
 
 src=$(cd "$(dirname "$0")/.." && pwd)
 [ $# -eq 1 ] || { echo "Aufruf: $0 <ziel-repo>" >&2; exit 2; }
