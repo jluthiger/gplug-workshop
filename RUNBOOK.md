@@ -37,6 +37,21 @@ Notebook zuerst ins Workshop-WLAN, Schritte 1–3 brauchen Internet.
 
 Terminal: macOS *Terminal*, Linux beliebig, Windows *PowerShell*. Alle Befehle im Workshop-Ordner.
 
+Windows-Alternative zu PowerShell: Ubuntu in WSL. Dann gelten überall die Befehle für
+macOS / Linux (`export`, `./docker-run.sh`), PowerShell-Sperren fallen weg.
+1. Ubuntu installieren (PowerShell): `wsl --install -d Ubuntu`. Beim ersten Start Linux-Namen und
+   -Passwort festlegen.
+2. Docker Desktop → *Settings* → *Resources* → *WSL integration* → *Ubuntu* einschalten →
+   *Apply & restart*.
+3. Ubuntu öffnen (Startmenü → *Ubuntu*), Test: `docker run --rm hello-world`.
+4. Workshop-Ordner (Schritt 1) unter Windows herunterladen, dann ins Linux-Home kopieren, dort
+   laufen Dateizugriffe viel schneller als über `/mnt/c`:
+   ```sh
+   cp -r /mnt/c/Users/<name>/ki-workshop ~/
+   cd ~/ki-workshop
+   chmod +x *.sh                  # nötig, falls ./docker-run.sh "Permission denied" meldet
+   ```
+
 ## 1. Workshop-Ordner herunterladen
 
 ZIP herunterladen: <https://github.com/gplug-ch/ki-workshop/archive/refs/heads/main.zip>.
