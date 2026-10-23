@@ -120,7 +120,8 @@ Konfiguration am Anfang von `app/spot.be` (`spot_cfg`): `sim`, `meter_path`, `da
 - `Dockerfile`, `docker-run.sh`, `docker-run.ps1` – Sandbox: opencode 2.0, `berry`, `git` im
   Container, sichtbar nur dieser Ordner (Standard-Setup, siehe `SETUP_OPENCODE.md`).
   `Dockerfile.workshop`, `tools/publish-image.sh`, `tools/delete-image.sh` – Kursleitung:
-  Image mit Workshop-Zugang auf ghcr.io veröffentlichen und danach löschen.
+  Image mit Workshop-Zugang auf ghcr.io veröffentlichen und danach löschen, Anleitung in
+  [`DOCKER_ADMIN.md`](DOCKER_ADMIN.md).
 - `TASMOTA_BERRY_API.md` – Spickzettel der verwendeten Tasmota-Berry-API, als Kontext für
   den Coding-Agenten gedacht.
 
