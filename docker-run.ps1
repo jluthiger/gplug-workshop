@@ -11,7 +11,7 @@ $Image = "ghcr.io/gplug-ch/ki-workshop:workshop"
 $rest = @($args)
 if ($rest.Count -gt 0 -and $rest[0] -eq "--build") {
   $rest = @($rest | Select-Object -Skip 1)
-  docker build -t $Image .
+  docker build -t $Image --build-arg WORKSHOP_VERSION="$((Get-Content VERSION).Trim())" .
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 } elseif (-not (docker images -q $Image)) {
   # docker images -q statt image inspect: kein stderr, sonst bricht PowerShell 5.1 mit "Stop" ab

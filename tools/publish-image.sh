@@ -1,6 +1,6 @@
 #!/bin/sh
 # publish-image.sh – Workshop-Image bauen und auf ghcr.io veröffentlichen (nur Kursleitung).
-#   tools/publish-image.sh base       Basis-Image ohne Secrets (einmalig, bleibt)
+#   tools/publish-image.sh base       Basis-Image ohne Secrets (bleibt), Tags :base und :base-<VERSION>
 #   tools/publish-image.sh workshop   Basis + Infomaniak-Zugang aus INFOMANIAK_* der Shell (Workshop-Tag)
 # Voraussetzungen: gh auth refresh -s write:packages,delete:packages
 #                  gh auth token | docker login ghcr.io -u <github-user> --password-stdin
@@ -10,10 +10,12 @@ set -eu
 cd "$(dirname "$0")/.."
 IMAGE=ghcr.io/gplug-ch/ki-workshop
 PLATFORMS=linux/amd64,linux/arm64
+VERSION=$(cat VERSION)
 
 case "${1:-}" in
   base)
-    docker buildx build --platform "$PLATFORMS" --push -t "$IMAGE:base" .
+    docker buildx build --platform "$PLATFORMS" --push -t "$IMAGE:base" -t "$IMAGE:base-$VERSION" \
+      --build-arg WORKSHOP_VERSION="$VERSION" .
     ;;
   workshop)
     [ -n "${INFOMANIAK_PRODUCT_ID:-}" ] && [ -n "${INFOMANIAK_API_KEY:-}" ] \

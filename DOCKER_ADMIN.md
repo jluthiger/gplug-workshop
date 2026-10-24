@@ -47,6 +47,7 @@ tools/publish-image.sh base
 ```
 
 Baut `Dockerfile` für `linux/amd64` und `linux/arm64` und pusht `ghcr.io/gplug-ch/ki-workshop:base`
+und `:base-<VERSION>` (Inhalt der Datei `VERSION`)
 (erster Lauf ca. 5–10 min, Berry wird für beide Architekturen kompiliert).
 
 Das neue Package ist **privat**. Auf *public* stellen:
@@ -94,7 +95,7 @@ Test auf dem Mac, als wäre man Teilnehmer:
 ```sh
 docker rmi -f ghcr.io/gplug-ch/ki-workshop:workshop   # lokale Kopie weg, erzwingt Pull
 unset INFOMANIAK_PRODUCT_ID INFOMANIAK_API_KEY
-./docker-run.sh bash -c 'env | grep INFOMANIAK; opencode --version'
+./docker-run.sh bash -c 'env | grep -E 'INFOMANIAK|WORKSHOP_VERSION'; opencode --version'
 ./docker-run.sh                                        # Modell-Liste lädt, erste Frage antwortet
 ```
 

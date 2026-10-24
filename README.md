@@ -6,7 +6,7 @@
 Vergütung. Am Workshop baust du diese Schritte mit dem Coding-Agenten.*
 
 Unterlagen für den DIY-Workshop **«Arbeiten mit einem Coding-Agenten auf einem Embedded-Gerät»**
-(12. November 2026, Glue, Bern). Die Berry-App für den [gPlug](https://gplug.ch) holt die
+(12. November 2026, Glue, Bern). Stand der Unterlagen: Datei `VERSION`. Die Berry-App für den [gPlug](https://gplug.ch) holt die
 dynamischen BKW-Einspeisetarife, misst die eingespeiste Energie und zeigt beides als Chart in der
 Tasmota-WebUI.
 
@@ -126,6 +126,8 @@ Neuladen ohne Neustart: `Br load("spot")` (idempotent).
 - `REPLY_HERMANN.md` – Antwort auf das RFC des Veranstalters; `261021-meeting-hermann/` – Meeting 21.10.
 - `mock/` – UI-Mock mit synthetischen Daten, `ui-drafts/` – die drei UI-Entwürfe.
 - `tools/sync_participant.sh` – überträgt den Stand ins Teilnehmer-Repo `gplug-ch/ki-workshop`.
+- `VERSION` – Version der Unterlagen (SemVer). Vor jedem Sync oder Image-Push anheben, als
+  `git tag v$(cat VERSION)` markieren; landet im Image als Label und `$WORKSHOP_VERSION`.
 <!-- /kursleitung -->
 
 ## Lizenz

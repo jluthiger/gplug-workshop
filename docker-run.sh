@@ -11,7 +11,7 @@ IMAGE=ghcr.io/gplug-ch/ki-workshop:workshop
 
 if [ "${1:-}" = "--build" ]; then
   shift
-  docker build -t "$IMAGE" .
+  docker build -t "$IMAGE" --build-arg WORKSHOP_VERSION="$(cat VERSION)" .
 elif ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
   docker pull "$IMAGE" \
     || { echo "Image nicht ladbar (Workshop vorbei?): ./docker-run.sh --build baut es lokal" >&2; exit 1; }
