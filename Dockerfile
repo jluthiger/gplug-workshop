@@ -29,7 +29,7 @@ USER root
 RUN chmod -R a+rwX /home/agent
 USER agent
 
-# Workshop-Version aus VERSION (publish-image.sh, docker-run.sh --build), im Container als $WORKSHOP_VERSION.
+# Workshop-Version aus der Datei VERSION (Build-Arg), im Container als $WORKSHOP_VERSION.
 # Zuletzt, damit ein neuer Stand den Cache der Schichten oben nicht ungültig macht.
 ARG WORKSHOP_VERSION=dev
 LABEL org.opencontainers.image.version=${WORKSHOP_VERSION}
