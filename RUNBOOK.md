@@ -44,13 +44,7 @@ macOS / Linux (`export`, `./docker-run.sh`), PowerShell-Sperren fallen weg.
 2. Docker Desktop → *Settings* → *Resources* → *WSL integration* → *Ubuntu* einschalten →
    *Apply & restart*.
 3. Ubuntu öffnen (Startmenü → *Ubuntu*), Test: `docker run --rm hello-world`.
-4. Workshop-Ordner (Schritt 1) unter Windows herunterladen, dann ins Linux-Home kopieren, dort
-   laufen Dateizugriffe viel schneller als über `/mnt/c`:
-   ```sh
-   cp -r /mnt/c/Users/<name>/ki-workshop ~/
-   cd ~/ki-workshop
-   chmod +x *.sh                  # nötig, falls ./docker-run.sh "Permission denied" meldet
-   ```
+4. Workshop-Ordner herunterladen und ins Linux-Home kopieren: Ende von Schritt 1.
 
 ## 1. Workshop-Ordner herunterladen
 
@@ -78,6 +72,14 @@ cd ki-workshop
 
 Wer git kennt, klont stattdessen: `git clone https://github.com/gplug-ch/ki-workshop.git` im
 Home-Verzeichnis, dann `cd ki-workshop`.
+
+Ubuntu in WSL: Ordner wie oben unter Windows herunterladen, dann in Ubuntu ins Linux-Home kopieren,
+dort laufen Dateizugriffe viel schneller als über `/mnt/c`:
+```sh
+cp -r /mnt/c/Users/<name>/ki-workshop ~/
+cd ~/ki-workshop
+chmod +x *.sh                  # nötig, falls ./docker-run.sh "Permission denied" meldet
+```
 
 Erwartet: `ls` zeigt u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`.
 
