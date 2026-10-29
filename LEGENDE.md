@@ -44,6 +44,7 @@ Begriffe und Abkürzungen aus dem Workshop. Weitere Fachbegriffe (BKW-API, Tarif
 | **Infomaniak AI Tools** | Schweizer Dienst, der das LLM bereitstellt; Zugang per Product-ID und API-Token. |
 | **API-Token** | Geheimer Schlüssel für den Zugang zu einem Dienst. Nie committen. |
 | **Docker / Container** | Isolierte Laufumgebung; der Agent sieht darin nur den Projektordner. |
+| **WSL / Ubuntu** | Windows-Subsystem für Linux: Ubuntu-Terminal unter Windows, darin gelten die Linux-Befehle der Unterlagen. |
 | **Sandbox** | Abgeschirmte Umgebung, die den Agenten auf den Projektordner beschränkt. |
 | **`AGENTS.md`** | Regeldatei, die der Coding-Agent automatisch liest. |
 | **Desktop-Harness** | Test auf dem PC mit dem Berry-Interpreter, ohne Gerät (`HARNESS OK`). |

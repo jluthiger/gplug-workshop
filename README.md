@@ -12,7 +12,7 @@ Tasmota-WebUI.
 
 ## Mitbringen
 
-Eigener gPlug ([gplug.ch](https://gplug.ch)), Notebook (macOS, Linux, Windows) mit Netzteil,
+Eigener gPlug ([gplug.ch](https://gplug.ch)), Notebook (macOS, Linux, Windows mit Ubuntu in WSL) mit Netzteil,
 USB-Datenkabel. Installiert: [Docker Desktop](https://docs.docker.com/get-started/get-docker/)
 und ein Texteditor. Sonst keine Vorbereitung nötig.
 
@@ -20,17 +20,20 @@ und ein Texteditor. Sonst keine Vorbereitung nötig.
 
 Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfassung:
 
-1. Workshop-Ordner als ZIP holen, `./docker-run.sh` (Windows: `.\docker-run.ps1`) starten. Lädt
+1. Workshop-Ordner als ZIP holen, `./docker-run.sh` starten. Lädt
    beim ersten Mal das fertige Image und startet den Agenten opencode. Zugang zum Sprachmodell
    ist eingebaut.
 2. gPlug ins Workshop-WLAN, `http://<gplug-ip>` öffnen. Helfer prüfen Firmware und Zeitzone.
 3. IP eintragen und Starter laden:
    ```sh
    echo <gplug-ip> > .gplug
-   ./upload.sh app/spot.be app/autoexec.be   # Windows: zuerst .\docker-run.ps1 bash
+   ./upload.sh app/spot.be app/autoexec.be
    ./log.sh                                  # erwartet: SPOT: v0.3 geladen, keine BRY:-Zeile
    ```
    Die WebUI zeigt jetzt die Preislinie (Simulator, kein Smart Meter nötig).
+
+Befehle für Linux, macOS und Ubuntu in WSL. Windows nur mit PowerShell:
+[`WINDOWS_POWERSHELL.md`](WINDOWS_POWERSHELL.md).
 
 ## Übung (60 min)
 
@@ -57,6 +60,7 @@ kopieren.
 - `upload.sh`, `brcmd.sh`, `log.sh` – Gerät bedienen (hochladen, Berry-Befehl, Konsole).
 - `AGENTS.md` – Regeln für den Coding-Agenten (liest opencode automatisch).
 - `LEGENDE.md` – Begriffe und Abkürzungen.
+- `WINDOWS_POWERSHELL.md` – Abweichungen für Windows ohne Ubuntu.
 
 <!-- kursleitung -->
 ## Nur Kursleitung (nicht im Teilnehmer-Repo)

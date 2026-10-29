@@ -8,7 +8,7 @@ zurückgeben. Die Berry-App `app/spot.be` ist nur das Übungsobjekt. Die Übunge
 Darstellung, nie den Datenfluss; bei Fehlern bleibt der Kern der App intakt.
 
 Grundlagen: `AGENTS.md` (Regeln und Werkzeuge, liest der Agent automatisch), `TASMOTA_BERRY_API.md`
-(die Tasmota-API, ohne die der Agent rät), `SETUP_OPENCODE.md` §8 (Arbeitsweise im Agenten).
+(die Tasmota-API, ohne die der Agent rät), `SETUP_OPENCODE.md` §7 (Arbeitsweise im Agenten).
 
 ## Überblick: vom Starter zur Referenz-App in 4 Schritten
 
@@ -57,7 +57,7 @@ Daten vollständig, Darstellung minimal:
 2. Gerät antwortet: `./brcmd.sh 'tasmota.cmd("SpotStatus")'` → JSON mit `"Sim":true`.
    **`HeapFree` notieren** (Ausgangswert, z.B. 125).
 3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
-4. opencode starten: `./docker-run.sh` (Windows: `.\docker-run.ps1`) bzw. `opencode` im Repo-Ordner.
+4. opencode starten: `./docker-run.sh` bzw. `opencode` im Repo-Ordner.
 
 ## Ablauf pro Schritt
 
