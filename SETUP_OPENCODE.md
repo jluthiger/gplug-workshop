@@ -58,8 +58,11 @@ echo "ID=$INFOMANIAK_PRODUCT_ID KEY=${INFOMANIAK_API_KEY:+gesetzt}"
 ```sh
 ./docker-run.sh             # opencode im Container
 ./docker-run.sh bash        # Shell im Container, Test: opencode --version → v2.0.32
-./docker-run.sh --build     # Image lokal aus dem Dockerfile bauen (nach dem Workshop, 2–3 min)
+./docker-run.sh --build     # Image lokal aus dem Dockerfile bauen (2–3 min)
 ```
+
+Ausserhalb des Workshop-Tags lädt das Skript das Basis-Image ohne Zugang: Variablen aus Schritt 3
+müssen gesetzt sein.
 
 Gesetzte `INFOMANIAK_*`-Variablen haben Vorrang vor dem Zugang im Image, `GPLUG` wird
 durchgereicht. Sitzungen bleiben im Docker-Volume `gplug-workshop-data`. Im Image sind auch

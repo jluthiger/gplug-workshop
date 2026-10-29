@@ -7,6 +7,7 @@
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 $Image = "ghcr.io/gplug-ch/ki-workshop:workshop"
+$Base = "ghcr.io/gplug-ch/ki-workshop:base"
 
 $rest = @($args)
 if ($rest.Count -gt 0 -and $rest[0] -eq "--build") {
@@ -15,10 +16,21 @@ if ($rest.Count -gt 0 -and $rest[0] -eq "--build") {
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 } elseif (-not (docker images -q $Image)) {
   # docker images -q statt image inspect: kein stderr, sonst bricht PowerShell 5.1 mit "Stop" ab
-  docker pull $Image
+  # stderr von docker pull über cmd verwerfen, aus demselben Grund
+  cmd /c "docker pull $Image 2>nul"
   if ($LASTEXITCODE -ne 0) {
-    Write-Error "Image nicht ladbar (Workshop vorbei?): .\docker-run.ps1 --build baut es lokal"
-    exit $LASTEXITCODE
+    # Kein Workshop-Image (Workshop-Tag vorbei oder noch nicht): Basis-Image ohne Zugang
+    if (-not (docker images -q $Base)) {
+      docker pull $Base
+      if ($LASTEXITCODE -ne 0) {
+        Write-Error "Image nicht ladbar: .\docker-run.ps1 --build baut es lokal"
+        exit $LASTEXITCODE
+      }
+    }
+    $Image = $Base
+    if (-not $env:INFOMANIAK_API_KEY) {
+      Write-Host "HINWEIS: Basis-Image ohne Infomaniak-Zugang, eigenen setzen: WINDOWS_POWERSHELL.md"
+    }
   }
 }
 

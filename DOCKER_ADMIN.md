@@ -8,7 +8,7 @@ keinen Key eintippen. Dafür veröffentlicht die Kursleitung zwei Tags:
 | `base` | `Dockerfile`: Debian, opencode 2.0.32, `berry`, `git`. Keine Secrets. | einmal, bleibt |
 | `workshop` | `Dockerfile.workshop`: `base` + `ENV INFOMANIAK_PRODUCT_ID`/`INFOMANIAK_API_KEY` | Workshop-Morgen, danach löschen |
 
-`docker-run.sh` / `docker-run.ps1` laden `:workshop`, wenn es lokal fehlt; `--build` baut stattdessen
+`docker-run.sh` / `docker-run.ps1` laden `:workshop`, wenn es lokal fehlt, sonst `:base`; `--build` baut stattdessen
 aus dem `Dockerfile` (Fallback nach dem Workshop). Werte aus der eigenen Shell (`INFOMANIAK_*`,
 `GPLUG`) werden nur durchgereicht, wenn gesetzt, und überschreiben dann die Werte im Image.
 
@@ -107,8 +107,8 @@ tools/delete-image.sh        # löscht nur :workshop samt Teil-Manifesten, fragt
 
 Danach Token im Infomaniak-Manager widerrufen (Link druckt das Skript). `:base` und das Package
 bleiben, damit auch die Sichtbarkeit *public*: der nächste `:workshop`-Push (Schritt 5) ist sofort
-öffentlich. Ohne `:workshop` meldet `docker-run.sh` „Image nicht ladbar“; wer das Repo später
-nutzt, baut mit `./docker-run.sh --build` lokal.
+öffentlich. Ohne `:workshop` nimmt `docker-run.sh` das Basis-Image `:base` (ohne Zugang, Hinweis auf
+`SETUP_OPENCODE.md`); `./docker-run.sh --build` baut lokal.
 
 Erst wenn das ganze Package weg soll: GitHub-Package-Seite → *Danger Zone* → *Delete this
 package*. Dann ist nach dem nächsten Push Schritt 3 (Sichtbarkeit) wieder nötig.
@@ -117,7 +117,7 @@ package*. Dann ist nach dem nächsten Push Schritt 3 (Sichtbarkeit) wieder nöti
 
 | Meldung | Ursache | Behebung |
 |---|---|---|
-| `Image nicht ladbar (Workshop vorbei?)` bei Teilnehmenden | Package privat oder Tag `:workshop` fehlt | Schritt 3 (Sichtbarkeit) bzw. 5 |
+| `Image nicht ladbar` bei Teilnehmenden | Package privat (`:workshop` und `:base` nicht ladbar) | Schritt 3 (Sichtbarkeit) |
 | `denied` bei `docker pull` | wie oben; auf dem Mac klappt es, weil eingeloggt | Sichtbarkeit prüfen mit dem `curl`-Test in Schritt 3 |
 | „Setting is disabled by organization administrators“ | Org-Richtlinie | Schritt 2 |
 | `buildx` kennt nur eine Plattform | kein Container-Builder | `docker buildx create --use` |
