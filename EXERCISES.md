@@ -57,7 +57,11 @@ Daten vollständig, Darstellung minimal:
 2. Gerät antwortet: `./brcmd.sh 'tasmota.cmd("SpotStatus")'` → JSON mit `"Sim":true`.
    **`HeapFree` notieren** (Ausgangswert, z.B. 125).
 3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
-4. opencode starten: `./docker-run.sh` bzw. `opencode` im Repo-Ordner.
+4. opencode starten:
+   ```sh
+   ./docker-run.sh
+   ```
+   Nur ohne Docker (nativ installiert, `SETUP_OPENCODE.md`): `opencode` im Repo-Ordner.
 
 ## Ablauf pro Schritt
 
