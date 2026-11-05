@@ -70,19 +70,38 @@ Daten vollständig, Darstellung minimal:
    ```sh
    opencode
    ```
+   opencode startet im **build**-Agent; vor dem ersten Prompt auf **plan** schalten (`Tab`, siehe
+   *Ablauf pro Schritt*).
 
 ## Ablauf pro Schritt
 
-1. **Plan-Agent** (`Shift+Tab` bis `plan`): Prompt «planen» des Schritts. Plan lesen; weicht er von
-   den Vorgaben ab (eigene Zeichenschleife, Checkboxen, JavaScript): ablehnen, Vorgabe zitieren.
-2. **Build-Agent** (`Shift+Tab` bis `build`): Prompt «umsetzen» (gleich für alle Schritte, unten).
-   Shell-Befehle einzeln freigeben (nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `berry`, `cp`,
-   `git`).
-3. Fehler mit Prompt «Fehler zurückgeben» melden.
-4. Prüfschritte selbst durchgehen, in der WebUI ansehen, Stand sichern: Kopie
-   `cp app/spot.be spot_schritt1.be` (Nummer des Schritts); wer git kennt: `git commit`.
+opencode hat zwei Agenten. Welcher aktiv ist, steht unten im Eingabefeld (`Plan` bzw. `Build`).
+Umschalten mit **`Tab`** (oder `Shift+Tab`), jedes Drücken wechselt zum anderen Agenten. Der
+Gesprächsverlauf bleibt beim Wechsel erhalten: der Build-Agent kennt den Plan.
 
-### Prompt «umsetzen» (alle Schritte)
+| Agent | darf | wofür |
+|---|---|---|
+| **plan** | nur lesen, nichts ändern, nicht hochladen | Prompt «planen» |
+| **build** | Dateien ändern, Befehle ausführen (nach Freigabe) | Prompt «umsetzen», «Fehler zurückgeben» |
+
+opencode startet im **build**-Agent. Jeder Schritt läuft so:
+
+1. **Auf plan schalten**: `Tab` drücken, bis unten `Plan` steht.
+2. Prompt «planen» des Schritts einfügen, absenden. Plan lesen; weicht er von den Vorgaben ab
+   (eigene Zeichenschleife, Checkboxen, JavaScript): im plan-Agent ablehnen, Vorgabe zitieren,
+   neuen Plan verlangen. Erst weiter, wenn der Plan stimmt.
+3. **Auf build schalten**: `Tab` drücken, bis unten `Build` steht.
+4. Prompt «umsetzen» (gleich für alle Schritte, unten) einfügen, absenden. Shell-Befehle einzeln
+   freigeben (nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `berry`, `cp`, `git`).
+5. Fehler im **build**-Agent mit Prompt «Fehler zurückgeben» melden (nicht umschalten).
+6. Prüfschritte selbst durchgehen, in der WebUI ansehen, Stand sichern: Kopie
+   `cp app/spot.be spot_schritt1.be` (Nummer des Schritts); wer git kennt: `git commit`.
+7. Nächster Schritt: wieder bei 1, **zurück auf plan**.
+
+Merkregel: **planen = plan, alles andere = build.** Antwortet der Agent auf «umsetzen» nur mit
+Text und ändert nichts, ist noch plan aktiv: auf build schalten, Prompt nochmals senden.
+
+### Prompt «umsetzen» (alle Schritte, im build-Agent)
 
 ```
 Setze den Plan um, in dieser Reihenfolge:
@@ -93,7 +112,7 @@ Setze den Plan um, in dieser Reihenfolge:
 Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe ich selbst.
 ```
 
-### Prompt «Fehler zurückgeben»
+### Prompt «Fehler zurückgeben» (im build-Agent)
 
 ```
 ./log.sh zeigt nach dem Upload:
@@ -119,7 +138,7 @@ Vorgaben:
 - Bestehende Helfer verwenden (`chart_curves`, `value_range`, `y_scale`). Keine neue Schleife über
   die Slots ausserhalb einer Methode `send_bars`, kein JavaScript, nichts anderes ändern.
 
-### Prompt «planen»
+### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
 
 ```
 Lies @AGENTS.md, @TASMOTA_BERRY_API.md und in @app/spot.be den Abschnitt "F3  Chart" mit dem
@@ -162,7 +181,7 @@ Vorgaben:
   im Chart unter 0). Nicht über `SpotPrices` prüfen: das zeigt nur die nächsten 10 h, am Abend
   ist das Mittagstief vorbei.
 
-### Prompt «planen»
+### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
 
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 2".
@@ -202,7 +221,7 @@ Vorgaben:
 - **Heap**: vor und nach der Änderung `tasmota.gc()` + `heap_free` messen, Differenz melden.
   Mehr als 5 kB Einbruch beim Rendern: anhalten.
 
-### Prompt «planen»
+### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
 
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 3".
@@ -243,7 +262,7 @@ Vorgaben:
   unten.
 - Stückweise senden wie das obere Chart (`tasmota.web_send` pro Teil), kein Gesamtstring.
 
-### Prompt «planen»
+### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
 
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 4".
