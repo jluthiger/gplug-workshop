@@ -201,3 +201,5 @@ Alles grün: weiter mit `EXERCISES.md`, Abschnitt *Vorbereitung* (`HeapFree` not
 - gPlug zurück ins Heim-WLAN: zu Hause einstecken, er öffnet wieder sein eigenes WLAN; Schritt 4
   mit dem Heim-WLAN wiederholen.
 - Am Smart Meter echte Werte statt Simulator: in `app/spot.be` `"sim": false`, `./upload.sh app/spot.be`.
+
+Weiter zur [Übung (60 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-60-min).
