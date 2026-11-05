@@ -32,6 +32,8 @@ bis zum Zielbild `docs/zielbild.jpg` aus (entschieden 22.10.).
 
 ### Starter (Schritt 0)
 
+![Starter: nur die Preislinie, 1 Tag](docs/steps/schritt_0.png)
+
 Daten vollständig, Darstellung minimal:
 
 - Im Hintergrund: Preisabruf (F1), Zähler mit Simulator inkl. Zeitraffer, `Po` und gefüllten
@@ -122,6 +124,8 @@ Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
 
 ## Schritt 1 – Energie-Balken (Pflicht, ~20 min)
 
+![Ziel Schritt 1: grüne Energie-Balken, kWh-Achse links](docs/steps/schritt_1.png)
+
 ### Aufgabe
 
 Das Chart zeigt nur die Preislinie. Ergänze die **eingespeiste Energie pro Viertelstunde (kWh) als
@@ -166,6 +170,8 @@ Schreibe einen Plan: welche Methoden du änderst oder neu anlegst und wie du das
 
 ## Schritt 2 – Negativpreis hervorheben (Pflicht, ~15 min)
 
+![Ziel Schritt 2: orange Balken bei Preis < 0, Bereich unter 0 schattiert](docs/steps/schritt_2.png)
+
 ### Aufgabe
 
 Einspeisung bei negativem Preis kostet Geld. Mach das sichtbar: **Balken orange, wenn der Preis im
@@ -200,6 +206,8 @@ Preis erscheinen (der Simulator liefert heute ein Mittagstief < 0). Noch nichts 
 - Schattierung nur, wenn der Tag negative Preise hat; ohne sieht das Chart aus wie nach Schritt 1.
 
 ## Schritt 3 – 3 Tage mit Stundenwerten (für Schnelle, ~20 min)
+
+![Ziel Schritt 3: 3 Tage mit Stundenwerten und Tagesnamen](docs/steps/schritt_3.png)
 
 ### Aufgabe
 
@@ -245,6 +253,8 @@ und nach der Änderung (tasmota.gc(), dann heap_free). Liste im Plan jede Method
 - Heap nach Upload und `tasmota.gc()` höchstens ~2 kB unter dem Wert vor dem Schritt.
 
 ## Schritt 4 – Vergütungs-Chart (für Schnelle, ~15 min)
+
+![Ziel Schritt 4: zweites Chart Vergütung CHF/h mit Summe](docs/steps/schritt_4.png)
 
 ### Aufgabe
 
