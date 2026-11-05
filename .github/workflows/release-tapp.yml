@@ -42,6 +42,19 @@ jobs:
           4. Sommerzeit: einmalig `Timezone 99` setzen.
 
           **Update:** neue Datei hochladen (ersetzt die alte), neu starten.
+
+          **Simulator (`spot-sim.tapp`):** zum Ausprobieren ohne Smart Meter, Werte nur für Demos.
+
+          - Einspeisung: vollständig simuliert, auch die Vortage. Der echte Zähler wird nicht gelesen.
+          - Preise heute: echte BKW-Preise, aber von 12 bis 15 Uhr immer durch ein künstliches
+            Mittagstief ersetzt (um 13 Uhr ca. -8 Rp.). Fehlende Stunden kommen vom Folgetag, sonst
+            aus einer Fake-Kurve.
+          - Preise morgen: echt, sobald BKW sie liefert.
+          - Preise gestern und vorgestern: Fake-Kurve, solange keine Werte vorliegen.
+          - Ohne Netz: Heute und Vortage laufen komplett mit Fake-Preisen.
+
+          Vergütung, `SpotPrices` und CSV-Dateien enthalten diese simulierten Werte. `spot.tapp`
+          nutzt nur den echten Zähler und echte BKW-Preise.
           NOTES
           gh release create "$GITHUB_REF_NAME" dist/spot.tapp dist/spot-sim.tapp \
             --title "$GITHUB_REF_NAME" --notes-file dist/notes.md
