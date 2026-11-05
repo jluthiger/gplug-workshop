@@ -53,9 +53,9 @@ Daten vollständig, Darstellung minimal:
 
 ## Vorbereitung (5 min)
 
-1. Geräte-IP eintragen. Die Zeile fragt die IP ab (nur die IP eingeben, z.B. `192.168.1.50`):
+1. Geräte-IP prüfen (eingetragen im RUNBOOK, Schritt 6.1). Erwartet: die IP, z.B. `192.168.1.50`.
    ```sh
-   printf 'gPlug-IP: '; read -r ip; echo "$ip" > .gplug
+   cat .gplug
    ```
 2. Gerät antwortet, erwartet JSON mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
    ```sh
