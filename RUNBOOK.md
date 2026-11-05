@@ -18,21 +18,30 @@ Schritte 4–5 laufen parallel zu 1–3: das Gerät braucht Minuten zum Neustart
 ## Was du brauchst
 
 - Mitgebracht: gPlug, Notebook mit Netzteil, USB-Datenkabel (nicht nur Ladekabel), Texteditor,
-  [Docker Desktop](https://docs.docker.com/get-started/get-docker/) läuft (Test:
-  `docker run --rm hello-world`). Docker Desktop fehlt: Download ca. 1 GB, Installation 10 min,
-  gleich als Erstes starten. Besser zu Hause erledigen.
+  [Docker Desktop](https://docs.docker.com/get-started/get-docker/) läuft. Docker Desktop fehlt:
+  Download ca. 1 GB, Installation 10 min, gleich als Erstes starten. Besser zu Hause erledigen.
 - Vom Tisch: Zettel mit Workshop-WLAN (Name, Passwort).
 - Terminal: macOS *Terminal*, Linux beliebig, Windows **Ubuntu in WSL** (unten). Alle Befehle im
-  Workshop-Ordner.
+  Workshop-Ordner. Code-Blöcke lassen sich unverändert kopieren und ausführen; Werte fragen sie
+  selbst ab.
+
+Test, ob Docker läuft:
+
+```sh
+docker run --rm hello-world
+```
 
 Windows einmalig, vor Docker Desktop (Windows ohne Ubuntu, nur PowerShell:
 [`WINDOWS_POWERSHELL.md`](WINDOWS_POWERSHELL.md)):
-1. PowerShell **als Administrator** (Rechtsklick auf Start → *Terminal (Administrator)*):
-   `wsl --install -d Ubuntu`, dann Notebook neu starten. Meldet Windows, die Virtualisierung sei
-   deaktiviert: im BIOS/UEFI *Intel VT-x* bzw. *AMD-V/SVM* einschalten.
+1. PowerShell **als Administrator** öffnen (Rechtsklick auf Start → *Terminal (Administrator)*),
+   danach Notebook neu starten. Meldet Windows, die Virtualisierung sei deaktiviert: im BIOS/UEFI
+   *Intel VT-x* bzw. *AMD-V/SVM* einschalten.
+   ```powershell
+   wsl --install -d Ubuntu
+   ```
 2. Ubuntu öffnen (Startmenü → *Ubuntu*), Linux-Namen und -Passwort festlegen.
 3. Docker Desktop installieren, dann *Settings* → *Resources* → *WSL integration* → *Ubuntu*
-   einschalten → *Apply & restart*. Test in Ubuntu: `docker run --rm hello-world`.
+   einschalten → *Apply & restart*. Danach den Docker-Test oben in Ubuntu ausführen.
 
 Notebook zuerst ins Workshop-WLAN, Schritte 1–3 brauchen Internet.
 
@@ -45,10 +54,25 @@ unzip -q ki-workshop.zip && mv ki-workshop-main ki-workshop && rm ki-workshop.zi
 cd ki-workshop
 ```
 
-Ubuntu meldet `unzip: command not found`: `sudo apt install -y unzip`. Wer git kennt, klont
-stattdessen: `git clone https://github.com/gplug-ch/ki-workshop.git`, dann `cd ki-workshop`.
+Ubuntu meldet `unzip: command not found`: installieren, dann den Block oben wiederholen.
 
-Erwartet: `ls` zeigt u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`.
+```sh
+sudo apt install -y unzip
+```
+
+Wer git kennt, klont stattdessen:
+
+```sh
+cd ~
+git clone https://github.com/gplug-ch/ki-workshop.git
+cd ki-workshop
+```
+
+Prüfen, erwartet u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`:
+
+```sh
+ls
+```
 
 ## 2. Zugangsdaten für das Sprachmodell
 
@@ -58,21 +82,20 @@ Abschnitt *Alternative: Claude-Modelle von Anthropic*.
 
 ## 3. Docker-Image laden, Agent testen
 
-1. Shell im Container öffnen. Beim ersten Mal lädt das Skript das fertige Image von GitHub
-   (ca. 300 MB, 1–2 min):
+1. Image laden und opencode prüfen. Beim ersten Mal lädt das Skript das fertige Image von GitHub
+   (ca. 300 MB, 1–2 min). Erwartet: `opencode v2.0.32`.
    ```sh
-   ./docker-run.sh bash
-   opencode --version              # erwartet: opencode v2.0.32
+   ./docker-run.sh opencode --version
    ```
-2. Nur wer geklont hat: im Container Namen für Commits setzen, sonst überspringen (Stände sichert
-   ihr in der Übung als Kopie von `app/spot.be`):
+2. Nur wer geklont hat: Namen für Commits setzen, die Zeile fragt Name und E-Mail ab. Sonst
+   überspringen (Stände sichert ihr in der Übung als Kopie von `app/spot.be`):
    ```sh
-   git config user.name "Vorname Name"
-   git config user.email "du@example.ch"
+   ./docker-run.sh bash -c 'read -rp "Name: " n; read -rp "E-Mail: " e; git config user.name "$n"; git config user.email "$e"'
    ```
-   Danach `exit`.
-3. Agent starten: `./docker-run.sh`
-
+3. Agent starten:
+   ```sh
+   ./docker-run.sh
+   ```
    Erwartet: opencode-Oberfläche, unten das Modell `Qwen3.5 122B-A10B (Infomaniak AI (Schweiz))`.
 4. Erste Frage eintippen:
    ```
@@ -104,9 +127,12 @@ Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
    - **15.3.0 oder höher**: weiter mit 2.
    - **Tiefer**: Helfer rufen, nicht selbst aktualisieren. Der gPlug braucht seine eigene Firmware
      von gplug.ch (mit Zähler-Script), die Standard-Firmware von Tasmota passt nicht.
-2. *Werkzeuge* (*Tools*) → *Konsole* (*Console*), eingeben:
+2. *Werkzeuge* (*Tools*) → *Konsole* (*Console*). Nicht im Terminal: diese beiden Zeilen einzeln in
+   die Konsole eingeben, jede mit Enter.
    ```
    Timezone 99
+   ```
+   ```
    Time
    ```
    Erwartet: `Time` zeigt die aktuelle Uhrzeit (Sommer-/Winterzeit korrekt).
@@ -115,21 +141,30 @@ Die WebUI-Seite offen lassen, du brauchst sie in der Übung.
 
 ## 6. Starter aufs Gerät
 
-1. IP eintragen (nur die IP, eine Zeile):
+1. IP eintragen. Die Zeile fragt die IP aus Schritt 4 ab (nur die IP eingeben, z.B. `192.168.1.50`):
    ```sh
-   echo 192.168.x.y > .gplug
+   printf 'gPlug-IP: '; read -r ip; echo "$ip" > .gplug
    ```
 2. In der WebUI *Werkzeuge* → *Dateisystem verwalten* (*Manage File system*): gibt es schon eine
    `autoexec.be`?
-   - **Nein**: `./upload.sh app/spot.be app/autoexec.be`
+   - **Nein**:
+     ```sh
+     ./upload.sh app/spot.be app/autoexec.be
+     ```
    - **Ja**: nicht überschreiben. In der WebUI bearbeiten, Zeile `load("spot")` ergänzen,
-     speichern, dann nur `./upload.sh app/spot.be`.
+     speichern, dann nur:
+     ```sh
+     ./upload.sh app/spot.be
+     ```
 
    Erwartet: `OK  /spot.be (… Byte)`, `OK  BrRestart`, `OK  heap_free … kB`.
-3. Prüfen:
+3. Prüfen. Log, erwartet `SPOT: v0.3 geladen`, keine Zeile mit `BRY:`:
    ```sh
-   ./log.sh                                   # erwartet: SPOT: v0.3 geladen, keine Zeile mit BRY:
-   ./brcmd.sh 'tasmota.cmd("SpotStatus")'     # erwartet: JSON mit "Sim":true
+   ./log.sh
+   ```
+   Status, erwartet JSON mit `"Sim":true`:
+   ```sh
+   ./brcmd.sh 'tasmota.cmd("SpotStatus")'
    ```
 4. WebUI neu laden (Cmd+R / F5).
 
