@@ -109,6 +109,8 @@ Konfiguration am Anfang von `app/spot.be` (`spot_cfg`): `sim`, `meter_path`, `da
 - `app/spot.be` – Starter, `# ERWEITERUNGSPUNKT` markiert die Übungsschritte; neue Chart-Kurven
   über `chart_curves()` und `send_polyline` / `send_bars` (Abschnitt `F3  Chart`).
 - `app/steps/spot_1.be` … `spot_4.be` – Checkpoints; `spot_4.be` = Referenz-App.
+- `tools/build_tapp.sh` – `app/steps/spot_4.be` als `dist/spot.tapp` (Smart Meter) und
+  `dist/spot-sim.tapp` (Simulator) packen.
 - `tools/make_steps.py` – erzeugt Starter und Checkpoints 1–3 aus `spot_4.be` (ohne Option nur
   prüfen, `--write` schreibt). Nach Änderungen alle Stände mit dem Harness prüfen.
 - `app/desktop_harness.be` – simuliert einen Tag auf dem PC (`berry`, braucht `bkw.json`), endet
@@ -132,6 +134,7 @@ Neuladen ohne Neustart: `Br load("spot")` (idempotent).
 - `tools/sync_participant.sh` – überträgt den Stand ins Teilnehmer-Repo `gplug-ch/ki-workshop`.
 - `VERSION` – Version der Unterlagen (SemVer). Vor jedem Sync oder Image-Push anheben, als
   `git tag v$(cat VERSION)` markieren; landet im Image als Label und `$WORKSHOP_VERSION`.
+  Push des Tags baut das GitHub-Release mit den tapp-Dateien (`.github/workflows/release-tapp.yml`).
 <!-- /kursleitung -->
 
 ## Lizenz

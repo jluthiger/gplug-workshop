@@ -40,3 +40,7 @@ node_modules/
 
 # gPlug-Scripts (Lizenz unklar, enthalten Zählerschlüssel)
 reference/*_script.txt
+
+# Release-Artefakte (tools/build_tapp.sh)
+dist/
+.tapp.*/
