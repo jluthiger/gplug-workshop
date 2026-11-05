@@ -53,15 +53,23 @@ Daten vollständig, Darstellung minimal:
 
 ## Vorbereitung (5 min)
 
-1. Geräte-IP eintragen: `echo 192.168.x.y > .gplug`
-2. Gerät antwortet: `./brcmd.sh 'tasmota.cmd("SpotStatus")'` → JSON mit `"Sim":true`.
-   **`HeapFree` notieren** (Ausgangswert, z.B. 125).
+1. Geräte-IP eintragen. Die Zeile fragt die IP ab (nur die IP eingeben, z.B. `192.168.1.50`):
+   ```sh
+   printf 'gPlug-IP: '; read -r ip; echo "$ip" > .gplug
+   ```
+2. Gerät antwortet, erwartet JSON mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
+   ```sh
+   ./brcmd.sh 'tasmota.cmd("SpotStatus")'
+   ```
 3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
 4. opencode starten:
    ```sh
    ./docker-run.sh
    ```
-   Nur ohne Docker (nativ installiert, `SETUP_OPENCODE.md`): `opencode` im Repo-Ordner.
+   Nur ohne Docker (nativ installiert, `SETUP_OPENCODE.md`), im Repo-Ordner:
+   ```sh
+   opencode
+   ```
 
 ## Ablauf pro Schritt
 
