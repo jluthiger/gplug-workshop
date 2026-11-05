@@ -145,13 +145,20 @@ Vorgaben:
 ### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
 
 ```
-Lies @AGENTS.md, @TASMOTA_BERRY_API.md und in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 1".
+Lies @AGENTS.md, @TASMOTA_BERRY_API.md und in @app/spot.be den Abschnitt "F3  Chart" mit dem
+Kommentar "ERWEITERUNGSPUNKT Schritt 1".
 
-Aufgabe: Im Tageschart soll die eingespeiste Energie pro Viertelstunde (kWh) als grüne Balken hinter der Preislinie erscheinen.
+Aufgabe: Im Tageschart soll die eingespeiste Energie pro Viertelstunde (kWh) als grüne Balken
+hinter der Preislinie erscheinen.
 
-Vorgaben: Datenquelle self.store.energy_at(key, slot) (0.01 kWh, nil = Lücke). Kurzbuchstabe e, Farbe COL_ENERGY. Eine neue Achse links mit kWh von 0 bis Tagesmaximum (ausdrücklich erlaubt), Preisachse rechts unverändert. Legendeneintrag "Einspeisung" mit &#9632;, ein-/ausblendbar. Bestehende Helfer verwenden: chart_curves, value_range, y_scale. Kein JavaScript, nichts anderes ändern.
+Vorgaben: Datenquelle self.store.energy_at(key, slot) (0.01 kWh, nil = Lücke). Kurzbuchstabe e,
+Farbe COL_ENERGY. Eine neue Achse links mit kWh von 0 bis Tagesmaximum (ausdrücklich erlaubt),
+Preisachse rechts unverändert. Legendeneintrag "Einspeisung" mit &#9632;, ein-/ausblendbar.
+Bestehende Helfer verwenden: chart_curves, value_range, y_scale. Kein JavaScript, nichts anderes
+ändern.
 
-Schreibe einen Plan: welche Methoden du änderst oder neu anlegst und wie du das Ergebnis prüfst (Desktop-Harness, upload.sh, log.sh, Heap). Frag nach, wenn etwas unklar ist. Noch nichts ändern.
+Schreibe einen Plan: welche Methoden du änderst oder neu anlegst und wie du das Ergebnis prüfst
+(Desktop-Harness, upload.sh, log.sh, Heap). Frag nach, wenn etwas unklar ist. Noch nichts ändern.
 ```
 
 ### Erwartetes Resultat
@@ -185,9 +192,12 @@ Vorgaben:
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 2".
 
-Aufgabe: Energie-Balken in Slots mit negativem Preis orange (COL_NEG) statt grün. Bereich unter der Nulllinie halbtransparent schattieren mit Text "negativer Preis", nur wenn der Tag negative Preise hat. Legendeneintrag "Einspeisung bei Preis < 0" in Orange.
+Aufgabe: Energie-Balken in Slots mit negativem Preis orange (COL_NEG) statt grün. Bereich unter
+der Nulllinie halbtransparent schattieren mit Text "negativer Preis", nur wenn der Tag negative
+Preise hat. Legendeneintrag "Einspeisung bei Preis < 0" in Orange.
 
-Nichts anderes ändern. Nenne im Plan, wie du prüfst, dass orange Balken genau bei negativem Preis erscheinen (der Simulator liefert heute ein Mittagstief < 0). Noch nichts ändern.
+Nichts anderes ändern. Nenne im Plan, wie du prüfst, dass orange Balken genau bei negativem
+Preis erscheinen (der Simulator liefert heute ein Mittagstief < 0). Noch nichts ändern.
 ```
 
 ### Erwartetes Resultat
@@ -224,9 +234,15 @@ Vorgaben:
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 3".
 
-Aufgabe: Das Chart zeigt 3 Tage mit 72 Stundenwerten statt einem Tag mit 96 Viertelstunden. Stundenwert: Preis = Mittel, Energie = Summe der 4 Viertelstunden, Lücke wenn alle 4 fehlen. Stundenwerte einmal pro web_sensor-Aufruf in feste bytes-Puffer rechnen (fill_hours), nicht pro Kurve. x-Achse mit gestrichelten Tagesgrenzen, Marken 00 und 12, Tagesname mit Datum ("Do 11.06."). "jetzt"-Marke über alle 3 Tage richtig. Orange-Regel aus Schritt 2 pro Stunde.
+Aufgabe: Das Chart zeigt 3 Tage mit 72 Stundenwerten statt einem Tag mit 96 Viertelstunden.
+Stundenwert: Preis = Mittel, Energie = Summe der 4 Viertelstunden, Lücke wenn alle 4 fehlen.
+Stundenwerte einmal pro web_sensor-Aufruf in feste bytes-Puffer rechnen (fill_hours), nicht pro Kurve.
+x-Achse mit gestrichelten Tagesgrenzen, Marken 00 und 12, Tagesname mit Datum ("Do 11.06.").
+"jetzt"-Marke über alle 3 Tage richtig. Orange-Regel aus Schritt 2 pro Stunde.
 
-Baue die bestehenden Methoden um (Bereich als Parameter), kopiere sie nicht. Miss den Heap vor und nach der Änderung (tasmota.gc(), dann heap_free). Liste im Plan jede Methode auf, die du änderst, und warum. Noch nichts ändern.
+Baue die bestehenden Methoden um (Bereich als Parameter), kopiere sie nicht. Miss den Heap vor
+und nach der Änderung (tasmota.gc(), dann heap_free). Liste im Plan jede Methode auf, die du
+änderst, und warum. Noch nichts ändern.
 ```
 
 ### Erwartetes Resultat
@@ -261,9 +277,14 @@ Vorgaben:
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 4".
 
-Aufgabe: Unter dem Chart ein zweites, flaches Chart "Vergütung CHF/h": pro Stunde Summe aus Preis × Energie der 4 Viertelstunden, Balken gelb (COL_PAY) bei >= 0, rot (COL_COST) bei < 0, Achse links in CHF, Summe "Σ x.xx CHF" oben rechts über die 3 Tage. Gleiche x-Positionen wie oben, "jetzt"-Marke auch unten.
+Aufgabe: Unter dem Chart ein zweites, flaches Chart "Vergütung CHF/h": pro Stunde Summe aus
+Preis × Energie der 4 Viertelstunden, Balken gelb (COL_PAY) bei >= 0, rot (COL_COST) bei < 0,
+Achse links in CHF, Summe "Σ x.xx CHF" oben rechts über die 3 Tage. Gleiche x-Positionen wie
+oben, "jetzt"-Marke auch unten.
 
-Verwende die Stundenwert-Hilfsmethode aus Schritt 3 und die bestehenden Zeichenmethoden weiter. Sende stückweise mit tasmota.web_send. Nenne im Plan, welche Methoden du wiederverwendest und welche neu sind. Noch nichts ändern.
+Verwende die Stundenwert-Hilfsmethode aus Schritt 3 und die bestehenden Zeichenmethoden weiter.
+Sende stückweise mit tasmota.web_send. Nenne im Plan, welche Methoden du wiederverwendest und
+welche neu sind. Noch nichts ändern.
 ```
 
 ### Erwartetes Resultat
