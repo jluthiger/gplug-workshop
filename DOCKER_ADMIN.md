@@ -18,15 +18,27 @@ sofort nach dem Workshop löschen.
 
 ## 1. Einmalig: Werkzeuge
 
-Auf dem Mac der Kursleitung, Docker Desktop läuft.
+Auf dem Mac der Kursleitung, Docker Desktop läuft. Alle Befehle dieser Anleitung im Repo-Ordner
+ausführen und unverändert kopieren; Werte fragen sie selbst ab.
+
+Browser-Login, erweitert die Scopes des `gh`-Tokens:
 
 ```sh
-gh auth refresh -s write:packages,delete:packages      # Browser-Login, Scopes erweitern
-gh auth token | docker login ghcr.io -u <github-user> --password-stdin
-docker buildx create --use                              # Builder für amd64 + arm64
+gh auth refresh -s write:packages,delete:packages
 ```
 
-Prüfen: `docker buildx ls` zeigt einen Builder mit `linux/amd64*, linux/arm64*`.
+Docker bei ghcr.io anmelden:
+
+```sh
+gh auth token | docker login ghcr.io -u "$(gh api user -q .login)" --password-stdin
+```
+
+Builder für amd64 + arm64 anlegen und prüfen (Ausgabe zeigt `linux/amd64*, linux/arm64*`):
+
+```sh
+docker buildx create --use --bootstrap
+docker buildx ls
+```
 
 ## 2. Einmalig: Org darf öffentliche Packages
 
@@ -55,14 +67,17 @@ Das neue Package ist **privat**. Auf *public* stellen:
 1. <https://github.com/orgs/gplug-ch/packages/container/ki-workshop/settings>
 2. *Danger Zone* → *Change package visibility* → **Public** → `ki-workshop` eintippen → bestätigen.
 
-Prüfen ohne Login (Mac):
+Prüfen ohne Login (Mac), Ausgabe `1` = öffentlich:
 
 ```sh
-curl -s 'https://ghcr.io/token?scope=repository:gplug-ch/ki-workshop:pull' | grep -c token   # 1 = öffentlich
+curl -s 'https://ghcr.io/token?scope=repository:gplug-ch/ki-workshop:pull' | grep -c token
 ```
 
-Pull-Test auf einem fremden Notebook (Windows): `docker pull ghcr.io/gplug-ch/ki-workshop:base`.
-`denied` = noch privat.
+Pull-Test auf einem fremden Notebook (Windows), `denied` = noch privat:
+
+```sh
+docker pull ghcr.io/gplug-ch/ki-workshop:base
+```
 
 Repo `gplug-ch/ki-workshop` ebenfalls auf *public* (ZIP-Link im Runbook braucht das).
 
@@ -73,36 +88,56 @@ Repo `gplug-ch/ki-workshop` ebenfalls auf *public* (ZIP-Link im Runbook braucht 
    `ai-tools`, **Ablauf = Workshop-Tag + 1**. Token sofort kopieren (nur einmal sichtbar).
 3. Product-ID: Zahl in der URL der AI Tools (`…/ai-tools/<PRODUCT_ID>`).
 
-Test:
+Product-ID eingeben (Zeile einzeln einfügen, sie wartet auf die Eingabe):
 
 ```sh
-curl -s https://api.infomaniak.com/2/ai/<PRODUCT_ID>/openai/v1/models -H "Authorization: Bearer <TOKEN>" | head -c 200
+printf 'Product-ID: '; read -r INFOMANIAK_PRODUCT_ID; export INFOMANIAK_PRODUCT_ID
+```
+
+Token eingeben (ebenfalls einzeln; Eingabe unsichtbar, landet nicht in der Shell-History):
+
+```sh
+printf 'Token: '; stty -echo; read -r INFOMANIAK_API_KEY; stty echo; echo; export INFOMANIAK_API_KEY
+```
+
+Test, Ausgabe beginnt mit der Modell-Liste:
+
+```sh
+curl -s "https://api.infomaniak.com/2/ai/$INFOMANIAK_PRODUCT_ID/openai/v1/models" -H "Authorization: Bearer $INFOMANIAK_API_KEY" | head -c 200
 ```
 
 ## 5. Workshop-Morgen: Workshop-Image
 
+In einem neuen Terminal zuerst die beiden Eingabezeilen aus Schritt 4 wiederholen. Dann:
+
 ```sh
-export INFOMANIAK_PRODUCT_ID=123456
-export INFOMANIAK_API_KEY=xxxxxxxx
 tools/publish-image.sh workshop
 ```
 
 Pusht `ghcr.io/gplug-ch/ki-workshop:workshop` (schnell, nur eine `ENV`-Schicht auf `base`).
 Package ist schon public, Tag wird es automatisch.
 
-Test auf dem Mac, als wäre man Teilnehmer:
+Test auf dem Mac, als wäre man Teilnehmer. Lokale Kopie und Shell-Werte entfernen (erzwingt Pull),
+dann Inhalt prüfen (`No such image` von `docker rmi` ist normal, wenn keine lokale Kopie da ist):
 
 ```sh
-docker rmi -f ghcr.io/gplug-ch/ki-workshop:workshop   # lokale Kopie weg, erzwingt Pull
+docker rmi -f ghcr.io/gplug-ch/ki-workshop:workshop
 unset INFOMANIAK_PRODUCT_ID INFOMANIAK_API_KEY
-./docker-run.sh bash -c 'env | grep -E 'INFOMANIAK|WORKSHOP_VERSION'; opencode --version'
-./docker-run.sh                                        # Modell-Liste lädt, erste Frage antwortet
+./docker-run.sh bash -c 'env | grep -E "INFOMANIAK|WORKSHOP_VERSION"; opencode --version'
+```
+
+opencode starten: Modell-Liste lädt, erste Frage antwortet.
+
+```sh
+./docker-run.sh
 ```
 
 ## 6. Nach dem Workshop
 
+Löscht nur `:workshop` samt Teil-Manifesten, fragt vorher:
+
 ```sh
-tools/delete-image.sh        # löscht nur :workshop samt Teil-Manifesten, fragt vorher
+tools/delete-image.sh
 ```
 
 Danach Token im Infomaniak-Manager widerrufen (Link druckt das Skript). `:base` und das Package
