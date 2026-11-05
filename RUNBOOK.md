@@ -180,7 +180,7 @@ Die WebUI-Seite offen lassen, du brauchst sie in der Übung.
 | `./brcmd.sh 'tasmota.cmd("SpotStatus")'` | `"Sim":true`, Heap über 100 kB |
 | WebUI | Preislinie, Cursor zeigt Werte |
 
-Alles grün: weiter mit `EXERCISES.md`, Abschnitt *Vorbereitung* (`HeapFree` notieren).
+Alles grün: weiter mit [`EXERCISES.md`, Abschnitt *Vorbereitung*](https://github.com/gplug-ch/ki-workshop/blob/main/EXERCISES.md#vorbereitung-5-min) (`HeapFree` notieren).
 
 ## Häufige Probleme
 
