@@ -6,7 +6,7 @@
 # Ergebnis mit git diff im Ziel prüfen, dann dort committen und pushen.
 set -eu
 
-INTERN='^(WORKSHOP_PREP\.md|REPLY_HERMANN\.md|261021-meeting-hermann/|mock/|ui-drafts/|tools/sync_participant\.sh|DOCKER_ADMIN\.md|Dockerfile\.workshop|tools/publish-image\.sh|tools/delete-image\.sh|tools/build_tapp\.sh|\.github/)'
+INTERN='^(WORKSHOP_PREP\.md|REPLY_HERMANN\.md|261021-meeting-hermann/|issues/|mock/|ui-drafts/|tools/sync_participant\.sh|DOCKER_ADMIN\.md|Dockerfile\.workshop|tools/publish-image\.sh|tools/delete-image\.sh|tools/build_tapp\.sh|\.github/)'
 
 src=$(cd "$(dirname "$0")/.." && pwd)
 [ $# -eq 1 ] || { echo "Aufruf: $0 <ziel-repo>" >&2; exit 2; }
@@ -30,7 +30,7 @@ rsync -a --files-from="$T/keep" "$src/" "$dst/"
 sed -i.bak '/<!-- kursleitung -->/,/<!-- \/kursleitung -->/d' "$dst/README.md" && rm "$dst/README.md.bak"
 
 # Verweise auf interne Dateien, die im Ziel ins Leere zeigen
-if grep -rnE 'WORKSHOP_PREP|REPLY_HERMANN|261021-meeting|ui-drafts|mock/' --exclude-dir=.git --exclude='*.pdf' \
+if grep -rnE 'WORKSHOP_PREP|REPLY_HERMANN|261021-meeting|issues/|ui-drafts|mock/' --exclude-dir=.git --exclude='*.pdf' \
      --exclude=.gitignore "$dst"; then
   echo "HINWEIS: obige Zeilen verweisen auf interne Dateien"
 fi
