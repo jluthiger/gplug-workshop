@@ -1,6 +1,6 @@
 # Runbook – Einrichten vor Ort
 
-Ziel: in **45 min** vom eigenen Notebook und gPlug zu einem laufenden Agenten und dem Starter auf dem
+Ziel: in **40 min** vom eigenen Notebook und gPlug zu einem laufenden Agenten und dem Starter auf dem
 Gerät. Danach beginnt die Übung (`EXERCISES.md`). Jeder Schritt nennt, was du sehen solltest.
 Weicht etwas ab: Hand hoch, Helfer kommen. Begriffe: [`LEGENDE.md`](LEGENDE.md).
 
@@ -13,7 +13,7 @@ Weicht etwas ab: Hand hoch, Helfer kommen. Begriffe: [`LEGENDE.md`](LEGENDE.md).
 | 5 | Firmware prüfen, Zeitzone | 5–10 min |
 | 6 | Starter aufs Gerät | 5 min |
 
-Schritte 4–5 laufen parallel zu 1–3: das Gerät braucht Minuten zum Neustart, nutze die Zeit.
+Erst Notebook (Schritte 1–3), dann gPlug (4–5) mit Helfern, zuletzt Starter (6).
 
 ## Was du brauchst
 
@@ -202,4 +202,4 @@ Alles grün: weiter mit [`EXERCISES.md`, Abschnitt *Vorbereitung*](https://githu
   mit dem Heim-WLAN wiederholen.
 - Am Smart Meter echte Werte statt Simulator: in `app/spot.be` `"sim": false`, `./upload.sh app/spot.be`.
 
-Weiter zur [Übung (60 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-60-min).
+Weiter zur [Übung (55 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-55-min).

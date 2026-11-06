@@ -7,19 +7,20 @@ Rahmen: Do 17:00, ca. 3 h, 20 + 4 Teilnehmende, BYOD (eigener gPlug, eigenes Not
 
 Hauptthema: **Arbeiten mit einem Coding-Agenten** auf einem Embedded-Gerät. Die Berry-App ist das Übungsobjekt.
 
-| # | Zeit | Block | Ziel |
-|---|---|---|---|
-| 1 | 0:00–0:15 | Einlass, Zahlung, WLAN-Zettel verteilen | alle online |
-| 2a | 0:15–0:45 | Notebook: Repo von GitHub (ZIP), Docker-Image laden (`./docker-run.sh`, Key eingebaut), erste Agent-Antwort | Agent antwortet |
-| 2b | 0:15–0:45 | parallel, mit Helfern: gPlug ins Venue-WLAN, Firmware ≥ 15.3.0 per Datei-Upload durch Helfer, `Timezone 99` | `Information` zeigt ≥ 15.3.0, `Time` stimmt |
-| 2c | 0:45–1:00 | Referenz-App hochladen (`upload.sh`) | `SpotPrices` liefert JSON auf jedem Gerät |
-| 3 | 1:00–1:10 | Demo Referenz-App: Datenfluss, Grafik (3 Tage, Simulator-Zeitraffer), CSV, Konsole | Verständnis Übungsobjekt |
-| 4 | 1:10–1:35 | **KI-Einführung**: Kontext zeigen (INTENT, Cheat-Sheet, AGENTS.md), Live-Demo guter vs. schlechter Prompt, Demo „Agent halluziniert API → Kontext fixt es“, Agent testet selbst auf Gerät via `brcmd.sh` | Arbeitszyklus verstanden |
-| 5 | 1:35–2:35 | **Übung mit Agent**: eine Ergänzung (Vorlage in §1a) | Ergänzung läuft auf eigenem Gerät |
-| 6 | 2:35–2:50 | Zeigen: 3–4 Teilnehmende präsentieren Prompt-Verlauf + Ergebnis; was ging schief, was half | Reflexion Methode |
-| 7 | 2:50–3:00 | Abschluss, gPlug zurück ins Heim-WLAN, Links, Feedback | — |
+| # | Zeit | Block | Ziel | Wer |
+| --- | --- | --- | --- | --- |
+| 1a | 0:00–0:15 | Begrüssung, Einführung | — | Hermann |
+| 1b | 0:15–0:30 | Übersicht Infrastruktur: Docker, Infomaniak, Opencode, gPlug | — | Jürg |
+| 2a | 0:30–0:45 | Notebook: Repo von GitHub (ZIP), Docker-Image laden (`./docker-run.sh`, Key eingebaut), erste Agent-Antwort | Agent antwortet | |
+| 2b | 0:45–1:00 | mit Helfern: gPlug ins Venue-WLAN, Firmware ≥ 15.3.0 per Datei-Upload durch Helfer, `Timezone 99` | `Information` zeigt ≥ 15.3.0, `Time` stimmt | Helfer |
+| 2c | 1:00–1:10 | Starter hochladen (`upload.sh`) | `SpotStatus` liefert JSON auf jedem Gerät | |
+| 2d | 1:10–1:20 | Demo Referenz-App: Datenfluss, Grafik (3 Tage, Simulator-Zeitraffer), CSV, Konsole | Verständnis Übungsobjekt | |
+| 2e | 1:20–1:35 | **KI-Einführung**: Kontext zeigen (INTENT, Cheat-Sheet, AGENTS.md), Live-Demo guter vs. schlechter Prompt, Demo „Agent halluziniert API → Kontext fixt es“, Agent testet selbst auf Gerät via `brcmd.sh` | Arbeitszyklus verstanden | |
+| 2f | 1:35–2:30 | **Übung mit Agent**: Starter → Referenz-App, Schritte 1–2 Pflicht (`EXERCISES.md`) | Schritt 2 läuft auf eigenem Gerät | |
+| 3a | 2:30–2:45 | Zeigen: 3–4 Teilnehmende präsentieren Prompt-Verlauf + Ergebnis; was ging schief, was half | Reflexion Methode | |
+| 3b | 2:45–3:00 | Abschluss, gPlug zurück ins Heim-WLAN, Links, Feedback | — | Hermann |
 
-Puffer ist knapp; Block 2 ist der kritische. **Keine Vorab-Mail** (entschieden 22.10., Hermann): Teilnehmende machen vor dem Kurs nichts ausser den Voraussetzungen in §2. Firmware-Upgrade, Zeitzone und Agent-Setup laufen vor Ort; 2a und 2b parallel, Helfer übernehmen die Geräte.
+Puffer ist knapp; Setup (2a–2c) ist der kritische Teil. **Keine Vorab-Mail**: Teilnehmende machen vor dem Kurs nichts ausser den Voraussetzungen in §2. Firmware-Upgrade, Zeitzone und Agent-Setup laufen vor Ort; 2a und 2b nacheinander, in 2b übernehmen Helfer die Geräte.
 
 ## 1a. KI-Didaktik
 
@@ -32,7 +33,7 @@ Puffer ist knapp; Block 2 ist der kritische. **Keine Vorab-Mail** (entschieden 2
 
 **Übungsvorlagen** (je mit Prompt-Vorlage, erwartetem Ergebnis, Prüfschritt):
 
-- **Übung: vom Starter zur Referenz-App in 4 Schritten** (entschieden 22.10., Details in `EXERCISES.md`). Starter im Docker-Container zeigt nur die Preislinie (1 Tag, ¼ h); Ziel ist `docs/zielbild.jpg`. Schritte: 1 Energie-Balken mit kWh-Achse, 2 Negativpreis orange + Schattierung, 3 3 Tage mit Stundenwerten, 4 Vergütungs-Chart mit Σ. 1–2 Pflicht, 3–4 für Schnelle; Checkpoints `app/steps/spot_N.be` zum Aufholen. Probelauf 19.10. der alten Übung A (Qwen3.5-122B, 30 min, 14 Uploads, dritte Achse/Checkboxen/doppelte Schleife) bleibt Demo-Material für Block 4.
+- **Übung: vom Starter zur Referenz-App in 4 Schritten** (entschieden 22.10., Details in `EXERCISES.md`). Starter im Docker-Container zeigt nur die Preislinie (1 Tag, ¼ h); Ziel ist `docs/zielbild.jpg`. Schritte: 1 Energie-Balken mit kWh-Achse, 2 Negativpreis orange + Schattierung, 3 3 Tage mit Stundenwerten, 4 Vergütungs-Chart mit Σ. 1–2 Pflicht, 3–4 für Schnelle; Checkpoints `app/steps/spot_N.be` zum Aufholen. Probelauf 19.10. der alten Übung A (Qwen3.5-122B, 30 min, 14 Uploads, dritte Achse/Checkboxen/doppelte Schleife) bleibt Demo-Material für Block 2e.
 - **Bonus** (wer fertig ist): Stunden-CSV mit Aufbewahrung; Schwellwert an Shelly/MQTT.
 
 **Demo-Material** (vorbereiten, nicht improvisieren):
@@ -47,7 +48,7 @@ Puffer ist knapp; Block 2 ist der kritische. **Keine Vorab-Mail** (entschieden 2
 
 ## 2. Kursvoraussetzungen und Setup vor Ort
 
-Entschieden 22.10. (Hermann): **keine Vorbereitungsarbeiten** durch Teilnehmende, keine Mail vorab.
+**keine Vorbereitungsarbeiten** durch Teilnehmende, keine Mail vorab.
 Ausschreibung nennt nur:
 
 - Eigenen gPlug mitbringen.
@@ -55,7 +56,7 @@ Ausschreibung nennt nur:
 - Software installiert: Docker, Texteditor oder beliebige Entwicklungsumgebung.
 - Optional: eigener Claude-Code-Zugang.
 
-Vor Ort (Block 2, Anleitung in `RUNBOOK.md`, Repo öffentlich auf GitHub `gplug-ch/ki-workshop`, kein USB-Stick (entschieden 22.10.)):
+Vor Ort (Block 2a–2c, Anleitung in `RUNBOOK.md`, Repo öffentlich auf GitHub `gplug-ch/ki-workshop`, kein USB-Stick (entschieden 22.10.)):
 
 - [ ] Workshop-Repo holen (ZIP, wer git kennt: `git clone https://github.com/gplug-ch/ki-workshop.git`). Kein Key eintragen: steckt im Image (eigener Claude-Zugang: `SETUP_OPENCODE.md`).
 - [ ] `./docker-run.sh` bzw. `.\docker-run.ps1` lädt das Image beim ersten Start von ghcr.io (~300 MB). Test: `opencode --version` (v2.0.x), erste Frage an den Agenten.
@@ -91,6 +92,7 @@ curl 'http://192.168.0.201/?m=1'                            # Sensor-HTML wie im
 ```
 
 Hinweise:
+
 - `BrRestart` lädt nur `autoexec.be`; Dateien, die nicht dort stehen, müssen danach explizit geladen werden.
 - Ohne vorherigen Aufruf von `/ufsd` (nach jedem Reboot) behandelt Tasmota den Upload als Firmware und meldet „Upload fehlgeschlagen – Nicht genug Speicherplatz“. `upload.sh` muss den Aufruf immer voranstellen.
 - Upload-Größe prüfen: `Br open("/spot.be").size()` muss der lokalen Dateigröße entsprechen.
@@ -105,7 +107,6 @@ Hinweise:
 - [x] BKW-API: Folgetags-Serie ab 16:33–17:03 lokal (gemessen So 18.10.), danach nur noch Folgetag abrufbar.
 - [ ] BKW-API: Messung an einem Werktag wiederholen (Abrufe 15:00–18:00 lokal, alle 15 min).
 - [x] Venue-WLAN (Glue): ≥ 50 Clients, kein Captive Portal, keine Client-Isolation, HTTPS 443 frei — von Hermann bestätigt (22.10.). Trotzdem Test vor Ort am Workshop-Tag beim Aufbau (Notebook erreicht gPlug, `api.bkw.ch`, LLM-Provider).
-- [ ] Hermanns Antworten (Meeting 21.10., `261021-meeting-hermann/notes.md`) in `INTENT.md` §6 und F1/F2/F3 übertragen.
 - [x] Hauptfokus „Arbeiten mit Coding-Agent“, Berry-App als Übungsobjekt: bestätigt (21.10.).
 - [x] Zielbild Referenz-App: `docs/zielbild.jpg` (3 Tage, Stundenwerte, Energie + Preis, Vergütung CHF/h mit Σ), entschieden 22.10.
 - [ ] Infomaniak-LLM: ein Feature der Referenz-App damit bauen lassen, Qualität bewerten, Fallback-Provider festlegen.
@@ -115,7 +116,7 @@ Hinweise:
 ## 4. Deliverables (fertig, getestet, bis Ende Oktober)
 
 | # | Datei | Inhalt | Test |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | `app/spot.be` | Referenz-App Kern (F1, F2, F5), Tages-CSV — **v0.2 vorhanden**, Desktop-Harness grün, auf 192.168.0.201 live getestet (18.10.). **Grafik neu** nach Zielbild `docs/zielbild.jpg` (22.10.): 3 Tage, Stundenwerte, oben Einspeisung kWh (orange bei Preis < 0) + Preislinie + negativer Bereich schattiert + „jetzt“, unten Vergütung CHF/h + Σ — offen | ≥ 3 Tage auf gplugk (Meter) — offen; Rendering ohne Heap-Einbruch > 5 kB |
 | 2 | Simulator | in `spot.be` integriert (`sim: true`): Zähler-Tageskurve, Backfill des laufenden Tages, Preis-Fallback aus Folgetag — vorhanden. **Neu (22.10.)**: Zeitraffer (Takt 5/15/60 min, jeder Takt = eine ¼ h), zusätzlich Leistung `Po` (kW), 2 Vortage mit Fake-Preisen (inkl. negativ) und Fake-Energie auffüllen, als „(Sim)“ markiert — offen | Grafik füllt sich am Abend sichtbar |
 | 3 | `autoexec.be` | `load("spot")`, Kommentar | vorhanden (`app/autoexec.be`), auf .201 installiert 18.10., BrRestart lädt App, 1 UI-Block, Fetch OK |
@@ -125,7 +126,7 @@ Hinweise:
 | 6 | `TASMOTA_BERRY_API.md` | Agent-Kontext | Agent baut Übung ohne Halluzination |
 | 7 | `AGENTS.md` | Regeln für opencode.ai: Dateien, Upload-Befehl, Tests, „nie `tasmota.web_send` ausserhalb `web_sensor`“ usw. | Trockenlauf mit Agent |
 | 8 | `upload.sh`, `brcmd.sh`, `log.sh` (+ `.ps1`) | Agent-Werkzeuge: Upload + `BrRestart`, Berry-Ausdruck via `/cm?cmnd=Br`, Konsole lesen | Agent löst Schritt 1 allein, Mensch prüft nur |
-| 9 | `RUNBOOK.md` | Teilnehmer-Schritte **ab Null vor Ort** (Repo klonen, Image bauen, API-Key, WLAN, Firmware-Upload durch Helfer, `Timezone 99`, App hochladen) mit erwarteter Ausgabe pro Schritt (Screenshots) — **Entwurf 22.10.** (Menünamen vom Gerät .202 übernommen, deutsche WebUI). Offen: Verhalten ohne bekanntes WLAN (AP-Name, `192.168.4.1`, Dauer bis AP) an einem gPlug prüfen; Firmware-Upload durch Helfer: Dateiname auf Stick, bleiben WLAN/Script erhalten (§3); Screenshots | von einer unbeteiligten Person durchgespielt, Block 2 in ≤ 45 min |
+| 9 | `RUNBOOK.md` | Teilnehmer-Schritte **ab Null vor Ort** (Repo klonen, Image bauen, API-Key, WLAN, Firmware-Upload durch Helfer, `Timezone 99`, App hochladen) mit erwarteter Ausgabe pro Schritt (Screenshots) — **Entwurf 22.10.** (Menünamen vom Gerät .202 übernommen, deutsche WebUI). Offen: Verhalten ohne bekanntes WLAN (AP-Name, `192.168.4.1`, Dauer bis AP) an einem gPlug prüfen; Firmware-Upload durch Helfer: Dateiname auf Stick, bleiben WLAN/Script erhalten (§3); Screenshots | von einer unbeteiligten Person durchgespielt, Block 2a–2c in ≤ 40 min |
 | 10 | Agent-Setup | Standard: Docker-Image (`Dockerfile`, `docker-run.sh`/`.ps1`, opencode 2.0.32 + berry + git, nur Repo gemountet). Fallback: opencode 2.0 nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte) — Image vorhanden, auf macOS getestet 19.10. Image kommt fertig von `ghcr.io/gplug-ch/ki-workshop:workshop` mit eingebautem Key (23.10., siehe Ablauf unten); `docker-run.sh`/`.ps1` laden nur, wenn das Image fehlt, `--build` baut lokal | `docker pull` + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
 | 11 | `EXERCISES.md` | 4 Schritte Starter → Referenz-App mit Prompt-Vorlage, Ergebnis, Prüfschritt — geschrieben 22.10.; Bonus CSV/Shelly | Alle 4 Schritte mit Infomaniak-LLM durchspielen, Zeit pro Schritt messen (Ziel: 1–2 in 35 min) |
 | 12 | Demo-Transkript | 3 Ausschnitte aus Referenz-App-Entwicklung (guter Prompt, Halluzination, Korrektur) | auf Beamer lesbar |
@@ -162,7 +163,7 @@ Zu prüfen für D (Fallback): Verhalten auf Windows ohne Docker — Geräte-Skri
 Testgerät nach einer Agent-Sitzung mit 14 Upload-Zyklen bei 64 kB Heap (statt ~130), Preisabruf lieferte nur 39 von 96 Werten, einmal `MEMORY ALLOCATION FAILED`. Gemessen, je nach `tasmota.gc()`:
 
 | Aktion | Heap-Verlust | Erholt durch |
-|---|---|---|
+| --- | --- | --- |
 | `BrRestart` (jeder `upload.sh`-Lauf) | ~1 kB, ausserhalb Berry | nur `Restart 1` |
 | `load("spot")` ohne Restart, erstes Mal | ~20 kB (zweite Klassen-Kopie), danach ~0 | `BrRestart` |
 | Abruf alt (`get_string`) | 0 kB, aber unter ~70 kB still abgeschnitten, unter ~50 kB Reboot | — |
@@ -170,7 +171,7 @@ Testgerät nach einer Agent-Sitzung mit 14 Upload-Zyklen bei 64 kB Heap (statt ~
 | Abruf neu (`write_file` + `f.readbytes(2048)`) | 0 kB | — |
 | HTTPS klein, Datei-Upload | 0 kB | — |
 
-Massnahmen: `parse_file` liest mit `readbytes`; `upload.sh` prüft nach `BrRestart` den Heap und startet unter 100 kB (`MIN_HEAP`, bis 19.10. 80 kB) das Gerät neu; Cheat-Sheet und `AGENTS.md` nennen beide Fallen. Lehrinhalt für Block 4: Agent-Sitzung zeigt, wie 14 Iterationen das Gerät leise aushungern.
+Massnahmen: `parse_file` liest mit `readbytes`; `upload.sh` prüft nach `BrRestart` den Heap und startet unter 100 kB (`MIN_HEAP`, bis 19.10. 80 kB) das Gerät neu; Cheat-Sheet und `AGENTS.md` nennen beide Fallen. Lehrinhalt für Block 2e: Agent-Sitzung zeigt, wie 14 Iterationen das Gerät leise aushungern.
 
 ## 6. Vor Ort
 
@@ -178,15 +179,15 @@ Massnahmen: `parse_file` liest mit `readbytes`; `upload.sh` prüft nach `BrResta
 - [ ] 2 Ersatz-USB-Kabel (Daten, nicht nur Laden), 1 Notebook mit esptool, Chrome und USB-Treibern (CH340/CP210x) als Flash-Station.
 - [ ] WLAN-Zettel pro Tisch (nur WLAN, Key steckt im Image), Beamer, Verlängerungskabel.
 - [ ] Helfer-Notebooks gemäss Deliverable 14 (gPlug-Firmware, `bkw.json`).
-- [ ] 1 Helfer pro 6 Teilnehmende für Block 2 (Firmware-Upgrade und `Timezone 99` übernehmen Helfer, parallel zum Agent-Setup).
+- [ ] 1 Helfer pro 6 Teilnehmende für Block 2b (Firmware-Upgrade und `Timezone 99` übernehmen Helfer).
 
 ## 7. Risiken (Rangfolge)
 
-1. Firmware/Partition passt nicht oder Upgrade dauert → Block 2 platzt. Ohne Vorab-Mail kommen alle Geräte im Ab-Werk-Zustand. Mitigation: Upgrade per Datei-Upload vorab getestet (§3), Helfer übernehmen Geräte parallel zum Agent-Setup, Flash-Station, Reserve-Geräte.
+1. Firmware/Partition passt nicht oder Upgrade dauert → Setup (2a–2c) platzt. Ohne Vorab-Mail kommen alle Geräte im Ab-Werk-Zustand. Mitigation: Upgrade per Datei-Upload vorab getestet (§3), Helfer übernehmen Geräte in Block 2b, Flash-Station, Reserve-Geräte.
 2. Venue-WLAN blockiert oder überlastet. Mitigation: Test beim Aufbau, Hotspot-Fallback, Offline-JSON. Ohne Stick lädt jedes Notebook das Image-Material (Debian-Pakete, Berry, opencode; geschätzt einige 100 MB × 20) über das Venue-WLAN – Bandbreite beim Aufbau testen; Fallback: Image auf ghcr.io veröffentlichen oder Reserve-Stick mit `docker save`-Tar.
-3. Agent-Setup (opencode/Docker) frisst Zeit. Mitigation: Build-Dauer vorab auf Mac/Win/Linux messen, Option D als Fallback, Helfer prüfen in Block 1 beim Einlass, ob Docker läuft.
+3. Agent-Setup (opencode/Docker) frisst Zeit. Mitigation: Build-Dauer vorab auf Mac/Win/Linux messen, Option D als Fallback, Helfer prüfen in Block 1a beim Einlass, ob Docker läuft.
 4. Agent halluziniert Tasmota-API. Mitigation: Cheat-Sheet + `AGENTS.md` im Kontext — und als Demo bewusst zeigen, das ist Lehrinhalt.
 5. Zu viel Scope live. Mitigation: nur eine Übung, Referenz-App fertig.
-8. Grösserer Scope der Referenz-App (22.10.) sprengt Budget oder Liefertermin Ende Oktober. Mitigation: Aufwand früh schätzen (§3), Hermann rechtzeitig informieren; 3-Tage-Grafik vor Simulator-Zeitraffer priorisieren. Starter + 4 Checkpoints verfünffachen den Testaufwand der Grafik.
-6. Infomaniak-LLM zu schwach für Berry → Übung scheitert, Teilnehmende schliessen „KI taugt nicht“. Mitigation: Übungen vorab mit genau diesem Modell durchspielen (Deliverable 11), Fallback-Modell konfiguriert.
-7. Agent führt destruktives Kommando auf Gerät aus (`Reset 1`, falsches `Upgrade`). Mitigation: `brcmd.sh` filtert Kommandoliste, `AGENTS.md` verbietet, Reserve-Geräte.
+6. Grösserer Scope der Referenz-App (22.10.) sprengt Budget oder Liefertermin Ende Oktober. Mitigation: Aufwand früh schätzen (§3), Hermann rechtzeitig informieren; 3-Tage-Grafik vor Simulator-Zeitraffer priorisieren. Starter + 4 Checkpoints verfünffachen den Testaufwand der Grafik.
+7. Infomaniak-LLM zu schwach für Berry → Übung scheitert, Teilnehmende schliessen „KI taugt nicht“. Mitigation: Übungen vorab mit genau diesem Modell durchspielen (Deliverable 11), Fallback-Modell konfiguriert.
+8. Agent führt destruktives Kommando auf Gerät aus (`Reset 1`, falsches `Upgrade`). Mitigation: `brcmd.sh` filtert Kommandoliste, `AGENTS.md` verbietet, Reserve-Geräte.

@@ -10,6 +10,23 @@ Unterlagen für den DIY-Workshop **«Arbeiten mit einem Coding-Agenten auf einem
 dynamischen BKW-Einspeisetarife, misst die eingespeiste Energie und zeigt beides als Chart in der
 Tasmota-WebUI.
 
+## Programm
+
+Do 12.11.2026, 17:00–20:00.
+
+| Zeit | Block |
+|---|---|
+| 17:00–17:15 | Begrüssung, Einführung |
+| 17:15–17:30 | Übersicht Infrastruktur: Docker, Infomaniak, opencode, gPlug |
+| 17:30–17:45 | Notebook einrichten: Workshop-Ordner, Docker-Image, erste Agent-Antwort |
+| 17:45–18:00 | gPlug einrichten mit Helfern: WLAN, Firmware, Zeitzone |
+| 18:00–18:10 | Starter aufs Gerät |
+| 18:10–18:20 | Demo Referenz-App |
+| 18:20–18:35 | KI-Einführung: Kontext, gute und schlechte Prompts, Arbeitszyklus |
+| 18:35–19:30 | Übung mit dem Agenten |
+| 19:30–19:45 | Ergebnisse zeigen: Prompts, was schiefging, was half |
+| 19:45–20:00 | Abschluss, Feedback |
+
 ## Mitbringen
 
 Eigener gPlug ([gplug.ch](https://gplug.ch)), Notebook (macOS, Linux, Windows mit Ubuntu in WSL) mit Netzteil,
@@ -35,7 +52,7 @@ Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfas
 Befehle für Linux, macOS und Ubuntu in WSL. Windows nur mit PowerShell:
 [`WINDOWS_POWERSHELL.md`](WINDOWS_POWERSHELL.md).
 
-## Übung (60 min)
+## Übung (55 min)
 
 Ablauf, Prompts und Prüfschritte: [`EXERCISES.md`](EXERCISES.md) ([PDF, A4](docs/EXERCISES.pdf)).
 
