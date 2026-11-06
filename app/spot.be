@@ -5,7 +5,8 @@
      F1  BKW-Einspeisepreise laden (stündlicher Cron, nur wenn Preise fehlen), 2-Byte-Ringpuffer
      F2  Einspeisezähler alle 15 min lesen (Smart Meter oder Simulator), Differenz speichern.
          Simulator: Leistung Po, Vortage mit Fake-Daten, Mittagstief < 0, Zeitraffer (sim_tick)
-     F3  WebUI: Tageschart (96 Viertelstunden) mit Spotpreis und Jetzt-Marke, Cursor mit Werten
+     F3  WebUI: Tageschart (96 Viertelstunden) mit Spotpreis und Jetzt-Marke, Cursor mit Werten. Chart über /spot.svg,
+         nicht im 2.3-s-Refresh
      F4  Tageszeile in /spot_YYYY-MM.csv, max. 2 Monatsdateien
      F5  Command SpotPrices [15] — nächste 10 h als JSON
 
@@ -79,11 +80,22 @@ class SpotStore
     end
   end
 
+  # while statt for: jedes `for i:0..n` baut ein Range-Objekt, auf dem C3 ~0.2 ms pro Aufruf
   def day_index(key)
-    for i:0..self.ndays-1
+    var i = 0
+    while i < self.ndays
       if self.keys[i] == key return i end
+      i += 1
     end
     return -1
+  end
+
+  # Byte-Offset des Tages in prices/energy oder -1. Für Schleifen über viele Slots: einmal holen,
+  # dann buf.geti(off + slot * 2, 2) direkt lesen und mit INVALID vergleichen. get() kostet auf dem
+  # C3 ~0.6 ms pro Wert (day_index + zwei Methodenaufrufe), geti() 0.04 ms (gemessen 6.11.).
+  def day_off(key)
+    var i = self.day_index(key)
+    return i < 0 ? -1 : i * self.SLOTS * 2
   end
 
   # Tag finden oder den ältesten Tag dafür freigeben
@@ -119,9 +131,11 @@ class SpotStore
 
   # Anzahl gültiger Werte eines Tages
   def count(buf, key)
+    var off = self.day_off(key)
+    if off < 0 return 0 end
     var n = 0
     for s:0..self.SLOTS-1
-      if self.get(buf, key, s) != nil n += 1 end
+      if buf.geti(off + s * 2, 2) != self.INVALID n += 1 end
     end
     return n
   end
@@ -138,6 +152,8 @@ class SpotApp
   var time_tries          # Wartezyklen auf gültige Uhrzeit nach Kaltstart
   var legend_html         # Legende + CSS, aus chart_curves() gebaut
   var bw                  # Breite eines Werts in SVG-Einheiten (CH_W / CH_N)
+  var sums, sums_key      # Tagessummen von heute (day_sums) und ihr Tag, siehe today_sums
+  var chart_gen           # Stand der Chartdaten; data-v des Platzhalters #spotchart, siehe F3
 
   def init(cfg)
     self.cfg = cfg
@@ -147,6 +163,7 @@ class SpotApp
     self.busy = false
     self.time_tries = 0
     self.bw = self.CH_W / self.CH_N
+    self.chart_gen = 0
     self.legend_html = self.build_legend()
     self.cnt = persist.find("spot_cnt", nil)
     self.cnt_t = persist.find("spot_cnt_t", 0)
@@ -245,6 +262,7 @@ class SpotApp
       self.last_fetch = string.format("%d Werte um %s", n, tasmota.strftime("%H:%M", spot_now()))
     end
     if self.cfg["sim"] self.sim_fill_prices() end     # auch ohne Netz: Chart zeigt Fake-Preise
+    self.data_changed()
     log(string.format("SPOT: fetch %s, heap %d -> %d kB", self.last_fetch, heap0, tasmota.memory("heap_free")), 2)
     self.busy = false
   end
@@ -261,6 +279,7 @@ class SpotApp
     if n > 0
       self.last_fetch = string.format("%d Werte aus %s", n, name)
       if self.cfg["sim"] self.sim_fill_prices() end
+      self.data_changed()
     end
     return n
   end
@@ -418,6 +437,7 @@ class SpotApp
       self.store.set_energy(key, s, spot_round(self.sim_kw(key + s * 900) * 25))   # kW * 0.25 h * 100
       s += 1
     end
+    self.data_changed()
   end
 
   # Zeitraffer: jeder Takt rückt die Sim-Zeit auf die nächste Viertelstunde vor
@@ -452,23 +472,46 @@ class SpotApp
       persist.save()
       if self.cfg["sim"] self.sim_fill_prices() end         # neuer Tag braucht Preise und Mittagstief
     end
+    self.data_changed()                                     # Summen neu, Chart neu (Jetzt-Marke wandert)
   end
 
   # ---------------------------------------------------------------- F4
-  # Summen eines Tages: [kWh, CHF, Anzahl Slots mit Energie]
+  # Summen eines Tages: [kWh, CHF, Anzahl Slots mit Energie]. Liest die Puffer direkt (day_off).
   def day_sums(key)
+    var off = self.store.day_off(key)
+    if off < 0 return [0.0, 0.0, 0] end
+    var pb = self.store.prices
+    var eb = self.store.energy
+    var inv = self.store.INVALID
     var e = 0
     var v = 0.0
     var n = 0
     for s:0..self.store.SLOTS-1
-      var en = self.store.energy_at(key, s)
-      if en == nil continue end
+      var en = eb.geti(off + s * 2, 2)
+      if en == inv continue end
       e += en
       n += 1
-      var p = self.store.price(key, s)
-      if p != nil v += en * p end             # 0.01 kWh * 1/10000 CHF/kWh = 1e-6 CHF, real wegen Überlauf
+      var p = pb.geti(off + s * 2, 2)
+      if p != inv v += en * p end             # 0.01 kWh * 1/10000 CHF/kWh = 1e-6 CHF, real wegen Überlauf
     end
     return [e / 100.0, v / 1000000.0, n]
+  end
+
+  # Summen von heute, gecacht: WebUI und Telemetrie fragen sie alle paar Sekunden, ändern tun sie
+  # sich nur alle 15 min. Wer Energie oder Preise schreibt, ruft data_changed().
+  def today_sums(key)
+    if self.sums == nil || self.sums_key != key
+      self.sums = self.day_sums(key)
+      self.sums_key = key
+    end
+    return self.sums
+  end
+
+  # Energie oder Preise haben sich geändert: Summen-Cache leeren, Chart-Stand erhöhen (data-v,
+  # der Browser holt dann /spot.svg neu)
+  def data_changed()
+    self.sums = nil
+    self.chart_gen += 1
   end
 
   def day_end(key)
@@ -581,24 +624,28 @@ class SpotApp
   end
 
   # ---------------------------------------------------------------- F3  Chart
-  # Sensorbereich = Kopfzeilen -> SVG -> Legende -> Fusszeilen. Tasmota ruft web_sensor() bei
-  # jedem WebRefresh (2.3 s). Darum: ein Durchlauf pro Kurve und Versand in Häppchen
-  # (tasmota.web_send), nie das ganze SVG als ein String. web_send nur aus web_sensor() und den
-  # send_*-Helfern, nirgends sonst.
+  # Sensorbereich = Kopfzeilen -> Platzhalter #spotchart -> Legende -> Fusszeilen. Tasmota ruft
+  # web_sensor() bei jedem WebRefresh (2.3 s), darum steht das Chart nicht darin: der Platzhalter
+  # trägt data-v (Stand der Daten, chart_gen); das Cursor-Script holt /spot.svg (page_svg) einmal
+  # pro Seite und neu, wenn data-v wechselt (jede Viertelstunde, nach Abruf), und setzt es nach jedem
+  # Refresh wieder ein. Mit dem Chart im Refresh kostete jeder Refresh ~1.2 s Berry-Zeit: Load > 100 %,
+  # Abstürze am gPlugK (Issue 6.11.).
+  # page_svg sendet das SVG in Häppchen (ein Durchlauf pro Kurve, tasmota.web_send), nie als ein
+  # String. web_send nur aus web_sensor(), page_svg() und den send_*-Helfern, nirgends sonst.
   #
   # Das Chart zeigt den heutigen Tag mit 96 Viertelstunden: Spotpreis Rp/kWh als Linie, Achse rechts.
   # Einheiten aus dem Ringpuffer: Preis 1/10000 CHF/kWh (Rp/kWh = p/100), Energie 0.01 kWh.
   # nil = kein Wert = Lücke im Chart.
   #
   # ERWEITERUNGSPUNKT Schritt 1 (Energie-Balken): Kurve 'e' in chart_curves(), neue Methode
-  #   send_bars (ein Balken pro Wert ab y_of(0), Häppchen wie send_polyline), kWh-Skala mit 0 auf
+  #   send_bars (ein Balken pro Wert ab y_of(0) als dicker Strich, ein <path> pro Farbe), kWh-Skala mit 0 auf
   #   der 0-Rp-Linie, kWh-Beschriftung links in send_axes, data-e in send_svg_open (der Cursor zeigt
   #   dann kWh). Farbe COL_ENERGY.
   # ERWEITERUNGSPUNKT Schritt 2 (Negativpreis): Balkenfarbe COL_NEG statt COL_ENERGY, wenn der Preis
   #   im selben Wert < 0 ist; in send_axes den Bereich unter der 0-Rp-Linie schattieren, nur wenn
   #   es negative Preise gibt. Legendentext von 'e' ergänzen.
   # ERWEITERUNGSPUNKT Schritt 3 (3 Tage, Stundenwerte): CH_N = 72, CH_MIN = 60; Stundenwerte einmal
-  #   pro web_sensor in feste bytes-Puffer rechnen; value_range, send_bars, send_polyline lesen dann
+  #   pro page_svg in feste bytes-Puffer rechnen (Ringpuffer direkt lesen, day_off); value_range, send_bars, send_polyline lesen dann
   #   daraus. send_x_axis mit Tagesgrenzen und Tagesnamen, data-d für den Cursor.
   # ERWEITERUNGSPUNKT Schritt 4 (Vergütung): zweites Chart unterhalb (viewBox höher), Vergütung
   #   pro Stunde in fill_hours mitrechnen, Balken mit send_bars, Summe über alle Stunden, data-v
@@ -692,12 +739,32 @@ class SpotApp
     try
       var now = spot_now()
       var key = spot_day(now)
-      self.send_header(key, spot_slot(now), self.day_sums(key))
-      self.send_svg(key, now)
+      self.send_header(key, spot_slot(now), self.today_sums(key))
+      tasmota.web_send(string.format("<div id='spotchart' data-v='%d'></div>", self.chart_gen))
       tasmota.web_send(self.legend_html)
       self.send_footer(now)
     except .. as e, m
       log("SPOT: web_sensor " + str(e) + " " + str(m), 2)
+    end
+  end
+
+  # ---- Chart-Handler /spot.svg (siehe F3 oben)
+  def web_add_handler()
+    import webserver
+    webserver.on("/spot.svg", /-> self.page_svg(), webserver.HTTP_GET)
+  end
+
+  def page_svg()
+    import webserver
+    try
+      webserver.content_open(200, "image/svg+xml")
+      if spot_time_ok()
+        var now = spot_now()
+        self.send_svg(spot_day(now), now)
+      end
+      webserver.content_close()
+    except .. as e, m
+      log("SPOT: page_svg " + str(e) + " " + str(m), 2)
     end
   end
 
@@ -858,7 +925,10 @@ class SpotApp
   #   3. Mausposition -> SVG-x -> Wert i (data-x0, data-bw, data-n)
   #   4. Zeit aus i und data-m (mit Tag aus data-d, falls vorhanden), dazu jeder vorhandene Wert:
   #      data-p Rp/kWh, data-e kWh, data-v CHF. Neue Werte brauchen nur ihr data-Attribut.
-  #   5. MutationObserver auf #l1: nach jedem AJAX-Refresh letzte Mausposition erneut anwenden
+  #   5. Chart-Lader c(): nach jedem AJAX-Refresh (MutationObserver auf #l1) das gemerkte SVG in den
+  #      leeren Platzhalter #spotchart setzen; hat sich data-v geändert, /spot.svg holen und einsetzen
+  #      (ein Fehlschlag setzt V zurück, der nächste Refresh versucht es erneut)
+  #   6. danach letzte Mausposition erneut anwenden
   # Gleich in allen Ausbaustufen. Der String ist absichtlich kompakt; Änderungen nur mit Test im Browser.
   def web_add_main_button()
     import webserver
@@ -877,7 +947,10 @@ class SpotApp
       "+(e=='-'?'':' · <tspan fill=\"%s\">'+(e/100).toFixed(2)+' kWh</tspan>')"
       "+(v=='-'?'':' · <tspan fill=\"'+(v<0?'%s':'%s')+'\">'+(v/1e6).toFixed(3)+' CHF</tspan>');}"
       "document.addEventListener('mousemove',f);document.addEventListener('touchstart',f,{passive:true});document.addEventListener('touchmove',f,{passive:true});"
-      "var l1=document.getElementById('l1');if(l1)new MutationObserver(function(){if(L)f(L);}).observe(l1,{childList:true});})();</script>",
+      "var V=null,S='';function c(){var d=document.getElementById('spotchart');if(!d)return;if(S&&!d.firstChild)d.innerHTML=S;"
+      "if(d.dataset.v!==V){V=d.dataset.v;fetch('/spot.svg').then(function(r){return r.text()}).then(function(t){S=t;"
+      "var e=document.getElementById('spotchart');if(e)e.innerHTML=S;if(L)f(L);}).catch(function(){V=null});}if(L)f(L);}c();"
+      "var l1=document.getElementById('l1');if(l1)new MutationObserver(c).observe(l1,{childList:true});})();</script>",
       self.COL_PRICE, self.COL_ENERGY, self.COL_COST, self.COL_PAY))
   end
 
@@ -887,7 +960,7 @@ class SpotApp
     var now = spot_now()
     var key = spot_day(now)
     var p = self.store.price(key, spot_slot(now))
-    var sums = self.day_sums(key)
+    var sums = self.today_sums(key)
     tasmota.response_append(string.format(',"Spot":{"Price":%s,"EnergyToday":%.2f,"RevenueToday":%.2f%s}',
       p == nil ? "null" : string.format("%.4f", p / 10000.0), sums[0], sums[1],
       self.cfg["sim"] ? string.format(',"Po":%.3f', self.sim_kw(now)) : ""))
