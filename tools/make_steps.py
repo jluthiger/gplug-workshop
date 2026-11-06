@@ -24,6 +24,9 @@ HEAD_F3 = {
     3: "     F3  WebUI: 3 Tage mit Stundenwerten, Einspeisung (Balken, orange bei Preis < 0) und\n         Spotpreis (Linie), Jetzt-Marke, Cursor mit Werten\n",
     4: "     F3  WebUI: 3 Tage mit Stundenwerten. Oben Einspeisung (Balken) + Spotpreis (Linie),\n         unten Vergütung CHF/h mit Summe. Jetzt-Marke, Cursor mit Werten\n",
 }
+# Alle Stufen: Chart über /spot.svg statt im 2.3-s-Refresh (Issue 6.11., v0.12.0)
+for _k in HEAD_F3:
+    HEAD_F3[_k] = HEAD_F3[_k][:-1] + ". Chart über /spot.svg,\n         nicht im 2.3-s-Refresh\n"
 VARS = {
     0: "  var bw                  # Breite eines Werts in SVG-Einheiten (CH_W / CH_N)\n",
     3: "  var bw                  # Breite eines Werts in SVG-Einheiten (CH_W / CH_N)\n"
@@ -32,12 +35,17 @@ VARS = {
        "  var hp, he, hv          # Stundenwerte des Charts (Preis, Energie, Vergütung), siehe fill_hours\n",
 }
 VARS[1] = VARS[2] = VARS[0]
+for _k in VARS:
+    VARS[_k] += ("  var sums, sums_key      # Tagessummen von heute (day_sums) und ihr Tag, siehe today_sums\n"
+                 "  var chart_gen           # Stand der Chartdaten; data-v des Platzhalters #spotchart, siehe F3\n")
 INIT = {
     0: "    self.bw = self.CH_W / self.CH_N\n",
     3: "    self.bw = self.CH_W / self.CH_N\n    self.hp = bytes(-(self.CH_N * 4))\n    self.he = bytes(-(self.CH_N * 4))\n",
     4: "    self.bw = self.CH_W / self.CH_N\n    self.hp = bytes(-(self.CH_N * 4))\n    self.he = bytes(-(self.CH_N * 4))\n    self.hv = bytes(-(self.CH_N * 4))\n",
 }
 INIT[1] = INIT[2] = INIT[0]
+for _k in INIT:
+    INIT[_k] += "    self.chart_gen = 0\n"
 
 
 def cut(s, a, b):
@@ -50,13 +58,8 @@ def f3(S):
     o = []
     w = o.append
     days = S >= 3
-    w("""  # ---------------------------------------------------------------- F3  Chart
-  # Sensorbereich = Kopfzeilen -> SVG -> Legende -> Fusszeilen. Tasmota ruft web_sensor() bei
-  # jedem WebRefresh (2.3 s). Darum: ein Durchlauf pro Kurve und Versand in Häppchen
-  # (tasmota.web_send), nie das ganze SVG als ein String. web_send nur aus web_sensor() und den
-  # send_*-Helfern, nirgends sonst.
-  #
-""")
+    w(base[base.index("  # ---------------------------------------------------------------- F3  Chart"):
+           base.index("  # Das SVG enthält zwei Charts")])
     if S == 0:
         w("""  # Das Chart zeigt den heutigen Tag mit 96 Viertelstunden: Spotpreis Rp/kWh als Linie, Achse rechts.
   # Einheiten aus dem Ringpuffer: Preis 1/10000 CHF/kWh (Rp/kWh = p/100), Energie 0.01 kWh.
@@ -86,7 +89,7 @@ def f3(S):
     # Erweiterungspunkte für die noch offenen Schritte
     hints = {
         1: """  # ERWEITERUNGSPUNKT Schritt 1 (Energie-Balken): Kurve 'e' in chart_curves(), neue Methode
-  #   send_bars (ein Balken pro Wert ab y_of(0), Häppchen wie send_polyline), kWh-Skala mit 0 auf
+  #   send_bars (ein Balken pro Wert ab y_of(0) als dicker Strich, ein <path> pro Farbe), kWh-Skala mit 0 auf
   #   der 0-Rp-Linie, kWh-Beschriftung links in send_axes, data-e in send_svg_open (der Cursor zeigt
   #   dann kWh). Farbe COL_ENERGY.
 """,
@@ -95,7 +98,7 @@ def f3(S):
   #   es negative Preise gibt. Legendentext von 'e' ergänzen.
 """,
         3: """  # ERWEITERUNGSPUNKT Schritt 3 (3 Tage, Stundenwerte): CH_N = 72, CH_MIN = 60; Stundenwerte einmal
-  #   pro web_sensor in feste bytes-Puffer rechnen; value_range, send_bars, send_polyline lesen dann
+  #   pro page_svg in feste bytes-Puffer rechnen (Ringpuffer direkt lesen, day_off); value_range, send_bars, send_polyline lesen dann
   #   daraus. send_x_axis mit Tagesgrenzen und Tagesnamen, data-d für den Cursor.
 """,
         4: """  # ERWEITERUNGSPUNKT Schritt 4 (Vergütung): zweites Chart unterhalb (viewBox höher), Vergütung
@@ -204,63 +207,16 @@ def f3(S):
   end
 
 """)
+        fh = base[base.index("  # Stundenwerte der 72 Stunden ab start"):base.index("  # Wertebereich [lo, hi]")]
         if S == 3:
-            w("""  # Stundenwerte der 72 Stunden ab start in hp/he schreiben (je 4 Byte pro Stunde).
-  # Ein Durchlauf über die Viertelstunden; alle Kurven lesen danach nur noch hour_*().
-  def fill_hours(start)
-    for i:0..self.CH_N-1
-      var key = start + (i / 24) * 86400
-      var s0 = (i % 24) * 4
-      var ps = 0  var pn = 0  var es = 0  var en = 0
-      for s:s0..s0+3
-        var p = self.store.price(key, s)
-        var e = self.store.energy_at(key, s)
-        if p != nil  ps += p  pn += 1 end
-        if e != nil  es += e  en += 1 end
-      end
-      self.hp.seti(i * 4, pn > 0 ? spot_round(ps / real(pn)) : self.INV, 4)
-      self.he.seti(i * 4, en > 0 ? es : self.INV, 4)
-    end
-  end
-
-  def hour_get(buf, i)
-    var v = buf.geti(i * 4, 4)
-    return v == self.INV ? nil : v
-  end
-  def hour_p(i) return self.hour_get(self.hp, i) end
-  def hour_e(i) return self.hour_get(self.he, i) end
-
-""")
-        else:
-            w("""  # Stundenwerte der 72 Stunden ab start in hp/he/hv schreiben (je 4 Byte pro Stunde).
-  # Ein Durchlauf über die Viertelstunden; alle Kurven lesen danach nur noch hour_*().
-  def fill_hours(start)
-    for i:0..self.CH_N-1
-      var key = start + (i / 24) * 86400
-      var s0 = (i % 24) * 4
-      var ps = 0  var pn = 0  var es = 0  var en = 0  var vs = 0.0  var vn = 0
-      for s:s0..s0+3
-        var p = self.store.price(key, s)
-        var e = self.store.energy_at(key, s)
-        if p != nil  ps += p  pn += 1 end
-        if e != nil  es += e  en += 1 end
-        if p != nil && e != nil  vs += e * p  vn += 1 end
-      end
-      self.hp.seti(i * 4, pn > 0 ? spot_round(ps / real(pn)) : self.INV, 4)
-      self.he.seti(i * 4, en > 0 ? es : self.INV, 4)
-      self.hv.seti(i * 4, vn > 0 ? spot_round(vs) : self.INV, 4)
-    end
-  end
-
-  def hour_get(buf, i)
-    var v = buf.geti(i * 4, 4)
-    return v == self.INV ? nil : v
-  end
-  def hour_p(i) return self.hour_get(self.hp, i) end
-  def hour_e(i) return self.hour_get(self.he, i) end
-  def hour_v(i) return self.hour_get(self.hv, i) end
-
-""")
+            for a, b in [("in hp/he/hv", "in hp/he"), ("  var vs = 0.0  var vn = 0", ""),
+                         ("        if p != inv && e != inv  vs += e * p  vn += 1 end\n", ""),
+                         ("      self.hv.seti(i * 4, vn > 0 ? spot_round(vs) : self.INV, 4)\n", ""),
+                         ("  def hour_v(i) return self.hour_get(self.hv, i) end\n", "")]:
+                assert fh.count(a) == 1, a
+                fh = fh.replace(a, b)
+            assert "hv" not in fh and "vs " not in fh
+        w(fh)
     w("""  # Wertebereich [lo, hi] der Chart-Werte: lo <= 0, hi >= floor, damit die Achse nie entartet.
   # value_at(i) liefert den Rohwert (int) oder nil.
   def value_range(value_at, floor)
@@ -299,20 +255,40 @@ def f3(S):
     try
       var now = spot_now()
       var key = spot_day(now)
-      self.send_header(key, spot_slot(now), self.day_sums(key))
-""")
-    if days:
-        w("""      var start = self.chart_start(now)
-      self.fill_hours(start)
-      self.send_svg(start, now)
-""")
-    else:
-        w("""      self.send_svg(key, now)
-""")
-    w("""      tasmota.web_send(self.legend_html)
+      self.send_header(key, spot_slot(now), self.today_sums(key))
+      tasmota.web_send(string.format("<div id='spotchart' data-v='%d'></div>", self.chart_gen))
+      tasmota.web_send(self.legend_html)
       self.send_footer(now)
     except .. as e, m
       log("SPOT: web_sensor " + str(e) + " " + str(m), 2)
+    end
+  end
+
+  # ---- Chart-Handler /spot.svg (siehe F3 oben)
+  def web_add_handler()
+    import webserver
+    webserver.on("/spot.svg", /-> self.page_svg(), webserver.HTTP_GET)
+  end
+
+  def page_svg()
+    import webserver
+    try
+      webserver.content_open(200, "image/svg+xml")
+      if spot_time_ok()
+        var now = spot_now()
+""")
+    if days:
+        w("""        var start = self.chart_start(now)
+        self.fill_hours(start)
+        self.send_svg(start, now)
+""")
+    else:
+        w("""        self.send_svg(spot_day(now), now)
+""")
+    w("""      end
+      webserver.content_close()
+    except .. as e, m
+      log("SPOT: page_svg " + str(e) + " " + str(m), 2)
     end
   end
 
@@ -496,30 +472,7 @@ def f3(S):
     if S == 4:
         w(base[base.index("  # Unteres Chart: Titel, Summe"):base.index("  # Balken pro ")])
     if S >= 1:
-        w("""  # Balken pro Wert in der Gruppe id='s<cid>': ab der Nulllinie y_of(0) nach oben bzw. unten.
-  # value_at(i) -> Rohwert oder nil (kein Balken), color_at(i, v) -> Farbe.
-  def send_bars(cid, value_at, color_at, y_of)
-    var s = string.format("<g id='s%s'>", cid)
-    var bw = self.bw
-    var y0 = y_of(0)
-    for i:0..self.CH_N-1
-      var v = value_at(i)
-      if v != nil
-        var top = v >= 0 ? y_of(v) : y0
-        var h = v >= 0 ? y0 - top : y_of(v) - y0
-        if h < 0.3 h = 0.3 end
-        s += string.format("<rect x='%.1f' y='%.1f' width='%.1f' height='%.1f' fill='%s'/>",
-          self.CH_X0 + i * bw + bw * 0.1, top, bw * 0.8, h, color_at(i, v))
-      end
-      if i % self.CH_SEND_EVERY == self.CH_SEND_EVERY - 1
-        tasmota.web_send(s)
-        s = ""
-      end
-    end
-    tasmota.web_send(s + "</g>")
-  end
-
-""")
+        w(base[base.index("  # Balken pro Wert in der Gruppe"):base.index("  # Eine Kurve als Linie in der Gruppe")])
     w(base[base.index("  # Eine Kurve als Linie in der Gruppe"):base.index("  # Gestrichelte Marke")])
     # now marker
     w("""  # Gestrichelte Marke "jetzt"%s.
@@ -566,39 +519,7 @@ def f3(S):
 
 """)
     # cursor (identisch in allen Stufen)
-    w("""  # ---- Cursor-Script
-  # Cursor-Linie mit Werten beim Überfahren/Antippen des Charts. Das Script steht ausserhalb des
-  # Sensorbereichs (web_add_main_button rendert unterhalb der Sensoren) und läuft einmal pro
-  # Seitenaufruf; im Sensorbereich liefe es nie, weil Tasmota den per AJAX ersetzt. Ablauf:
-  #   1. bei jeder Mausbewegung das aktuelle #spotsvg suchen (nach jedem Refresh ein neues Element)
-  #   2. einmal eine Gruppe <g id='cur'> mit Linie und Text anhängen
-  #   3. Mausposition -> SVG-x -> Wert i (data-x0, data-bw, data-n)
-  #   4. Zeit aus i und data-m (mit Tag aus data-d, falls vorhanden), dazu jeder vorhandene Wert:
-  #      data-p Rp/kWh, data-e kWh, data-v CHF. Neue Werte brauchen nur ihr data-Attribut.
-  #   5. MutationObserver auf #l1: nach jedem AJAX-Refresh letzte Mausposition erneut anwenden
-  # Gleich in allen Ausbaustufen. Der String ist absichtlich kompakt; Änderungen nur mit Test im Browser.
-  def web_add_main_button()
-    import webserver
-    webserver.content_send(string.format("<script>(function(){var N='http://www.w3.org/2000/svg',L=null;"
-      "function f(ev){var s=document.getElementById('spotsvg');if(!s)return;var d=s.dataset;"
-      "var g=s.getElementById('cur');if(!g){g=document.createElementNS(N,'g');g.id='cur';"
-      "g.innerHTML=\\"<line y1='10' y2='\\"+d.y2+\\"' stroke='#fff' stroke-width='.7'/><text x='170' y='-1' font-size='9' fill='#fff' text-anchor='middle'></text>\\";s.appendChild(g);}"
-      "var t=ev.touches?ev.touches[0]:ev;L={clientX:t.clientX,clientY:t.clientY};"
-      "var el=document.elementFromPoint(t.clientX,t.clientY);if(!el||!el.closest('#spotsvg')){g.style.display='none';return;}"
-      "var r=s.getBoundingClientRect(),x=(t.clientX-r.left)*340/r.width,x0=+d.x0,bw=+d.bw,i=Math.floor((x-x0)/bw);"
-      "if(i<0||i>=+d.n){g.style.display='none';return;}g.style.display='';"
-      "var xc=x0+(i+.5)*bw,l=g.firstChild,tx=g.lastChild;l.setAttribute('x1',xc);l.setAttribute('x2',xc);"
-      "function a(k){return d[k]?d[k].split(',')[i]:'-'}var p=a('p'),e=a('e'),v=a('v'),mm=i*d.m;"
-      "var h=(d.d?d.d.split(',')[Math.floor(mm/1440)]+' ':'')+('0'+Math.floor(mm%%1440/60)).slice(-2)+':'+('0'+mm%%60).slice(-2);"
-      "tx.innerHTML=h+'  <tspan fill=\\"%s\\">'+(p=='-'?'–':(p/100).toFixed(1)+' Rp/kWh')+'</tspan>'"
-      "+(e=='-'?'':' · <tspan fill=\\"%s\\">'+(e/100).toFixed(2)+' kWh</tspan>')"
-      "+(v=='-'?'':' · <tspan fill=\\"'+(v<0?'%s':'%s')+'\\">'+(v/1e6).toFixed(3)+' CHF</tspan>');}"
-      "document.addEventListener('mousemove',f);document.addEventListener('touchstart',f,{passive:true});document.addEventListener('touchmove',f,{passive:true});"
-      "var l1=document.getElementById('l1');if(l1)new MutationObserver(function(){if(L)f(L);}).observe(l1,{childList:true});})();</script>",
-      self.COL_PRICE, self.COL_ENERGY, self.COL_COST, self.COL_PAY))
-  end
-
-""")
+    w(base[base.index("  # ---- Cursor-Script"):base.index("  # Telemetrie (tele/SENSOR")])
     return "".join(o)
 
 

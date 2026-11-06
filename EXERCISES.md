@@ -217,7 +217,7 @@ jüngste Tag morgen) **mit Stundenwerten** statt einem Tag mit Viertelstunden.
 Vorgaben:
 
 - 72 Werte. Stundenwert: Preis = **Mittel**, Energie = **Summe** der 4 Viertelstunden. Fehlen
-  alle 4 Werte: Lücke. Stundenwerte **einmal pro Aufruf** von `web_sensor` rechnen
+  alle 4 Werte: Lücke. Stundenwerte **einmal pro Aufruf** von `page_svg` (Handler `/spot.svg`) rechnen
   (`fill_hours(start)` in feste `bytes`-Puffer), Kurven lesen sie mit `hour_p(i)`/`hour_e(i)`.
   Grund: 72 × 4 Store-Zugriffe pro Kurve überschreiten sonst die 50-ms-Grenze.
 - x-Achse: Tagesgrenzen gestrichelt, Marken 00 und 12, Tagesname mit Datum unter jedem Tag
@@ -236,7 +236,7 @@ Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPU
 
 Aufgabe: Das Chart zeigt 3 Tage mit 72 Stundenwerten statt einem Tag mit 96 Viertelstunden.
 Stundenwert: Preis = Mittel, Energie = Summe der 4 Viertelstunden, Lücke wenn alle 4 fehlen.
-Stundenwerte einmal pro web_sensor-Aufruf in feste bytes-Puffer rechnen (fill_hours), nicht pro Kurve.
+Stundenwerte einmal pro page_svg-Aufruf in feste bytes-Puffer rechnen (fill_hours), nicht pro Kurve.
 x-Achse mit gestrichelten Tagesgrenzen, Marken 00 und 12, Tagesname mit Datum ("Do 11.06.").
 "jetzt"-Marke über alle 3 Tage richtig. Orange-Regel aus Schritt 2 pro Stunde.
 
@@ -329,11 +329,14 @@ Werte anfahren.
    (strict mode). Zeile wörtlich an den Agenten.
 9. **Scope-Creep** («bei der Gelegenheit habe ich auch …»): «nichts anderes ändern» wiederholen,
    Änderung mit `/undo` zurücknehmen.
-10. **Stubs aufs Gerät** (`persist.be`, `path.be`, `desktop_harness.be`): `upload.sh` lehnt ab.
+10. **Stubs aufs Gerät** (`persist.be`, `path.be`, `webserver.be`, `desktop_harness.be`): `upload.sh` lehnt ab.
     Der Agent soll nur `app/spot.be` hochladen.
-11. **Cursor zeigt nichts** nach einem Upload: Die Seite läuft noch mit dem alten Cursor-Script
-    (Tasmota ersetzt per AJAX nur den Sensorbereich, das Script lädt nur beim Seitenaufruf).
-    Seite neu laden, kein Fehler im Code.
+11. **Chart oder Cursor fehlt** nach einem Upload: Die Seite läuft noch mit dem alten Script, das
+    `/spot.svg` holt und den Cursor zeichnet (Tasmota ersetzt per AJAX nur den Sensorbereich, das
+    Script lädt nur beim Seitenaufruf). Seite neu laden, kein Fehler im Code. Das Chart steht nicht
+    im Sensorbereich, sondern kommt vom Handler `/spot.svg` (`page_svg`); `web_sensor` sendet nur
+    Zahlen und den Platzhalter `#spotchart`. Will der Agent das Chart zurück in `web_sensor` holen:
+    nein (kostete 1.2 s pro Refresh, Gerät stürzte ab).
 12. **Shell-Freigaben.** opencode fragt vor jedem Befehl. Nur `./upload.sh`, `./log.sh`,
     `./brcmd.sh`, `berry`, `cp`, `git` freigeben; alles andere ablehnen und den Agenten fragen,
     wozu.
