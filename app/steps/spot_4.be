@@ -80,11 +80,22 @@ class SpotStore
     end
   end
 
+  # while statt for: jedes `for i:0..n` baut ein Range-Objekt, auf dem C3 ~0.2 ms pro Aufruf
   def day_index(key)
-    for i:0..self.ndays-1
+    var i = 0
+    while i < self.ndays
       if self.keys[i] == key return i end
+      i += 1
     end
     return -1
+  end
+
+  # Byte-Offset des Tages in prices/energy oder -1. Für Schleifen über viele Slots: einmal holen,
+  # dann buf.geti(off + slot * 2, 2) direkt lesen und mit INVALID vergleichen. get() kostet auf dem
+  # C3 ~0.6 ms pro Wert (day_index + zwei Methodenaufrufe), geti() 0.04 ms (gemessen 6.11.).
+  def day_off(key)
+    var i = self.day_index(key)
+    return i < 0 ? -1 : i * self.SLOTS * 2
   end
 
   # Tag finden oder den ältesten Tag dafür freigeben
@@ -120,9 +131,11 @@ class SpotStore
 
   # Anzahl gültiger Werte eines Tages
   def count(buf, key)
+    var off = self.day_off(key)
+    if off < 0 return 0 end
     var n = 0
     for s:0..self.SLOTS-1
-      if self.get(buf, key, s) != nil n += 1 end
+      if buf.geti(off + s * 2, 2) != self.INVALID n += 1 end
     end
     return n
   end
@@ -140,6 +153,7 @@ class SpotApp
   var legend_html         # Legende + CSS, aus chart_curves() gebaut
   var bw                  # Breite eines Werts in SVG-Einheiten (CH_W / CH_N)
   var hp, he, hv          # Stundenwerte des Charts (Preis, Energie, Vergütung), siehe fill_hours
+  var sums, sums_key      # Tagessummen von heute (day_sums) und ihr Tag, siehe today_sums
 
   def init(cfg)
     self.cfg = cfg
@@ -250,6 +264,7 @@ class SpotApp
       self.last_fetch = string.format("%d Werte um %s", n, tasmota.strftime("%H:%M", spot_now()))
     end
     if self.cfg["sim"] self.sim_fill_prices() end     # auch ohne Netz: Chart zeigt Fake-Preise
+    self.sums = nil
     log(string.format("SPOT: fetch %s, heap %d -> %d kB", self.last_fetch, heap0, tasmota.memory("heap_free")), 2)
     self.busy = false
   end
@@ -266,6 +281,7 @@ class SpotApp
     if n > 0
       self.last_fetch = string.format("%d Werte aus %s", n, name)
       if self.cfg["sim"] self.sim_fill_prices() end
+      self.sums = nil
     end
     return n
   end
@@ -423,6 +439,7 @@ class SpotApp
       self.store.set_energy(key, s, spot_round(self.sim_kw(key + s * 900) * 25))   # kW * 0.25 h * 100
       s += 1
     end
+    self.sums = nil
   end
 
   # Zeitraffer: jeder Takt rückt die Sim-Zeit auf die nächste Viertelstunde vor
@@ -446,6 +463,7 @@ class SpotApp
         if d > 32000 d = 32000 end
         var t = now - 900                                   # Slot, der gerade endete
         self.store.set_energy(spot_day(t), spot_slot(t), d)
+        self.sums = nil
       end
       self.cnt = c
       self.cnt_t = now
@@ -460,20 +478,35 @@ class SpotApp
   end
 
   # ---------------------------------------------------------------- F4
-  # Summen eines Tages: [kWh, CHF, Anzahl Slots mit Energie]
+  # Summen eines Tages: [kWh, CHF, Anzahl Slots mit Energie]. Liest die Puffer direkt (day_off).
   def day_sums(key)
+    var off = self.store.day_off(key)
+    if off < 0 return [0.0, 0.0, 0] end
+    var pb = self.store.prices
+    var eb = self.store.energy
+    var inv = self.store.INVALID
     var e = 0
     var v = 0.0
     var n = 0
     for s:0..self.store.SLOTS-1
-      var en = self.store.energy_at(key, s)
-      if en == nil continue end
+      var en = eb.geti(off + s * 2, 2)
+      if en == inv continue end
       e += en
       n += 1
-      var p = self.store.price(key, s)
-      if p != nil v += en * p end             # 0.01 kWh * 1/10000 CHF/kWh = 1e-6 CHF, real wegen Überlauf
+      var p = pb.geti(off + s * 2, 2)
+      if p != inv v += en * p end             # 0.01 kWh * 1/10000 CHF/kWh = 1e-6 CHF, real wegen Überlauf
     end
     return [e / 100.0, v / 1000000.0, n]
+  end
+
+  # Summen von heute, gecacht: WebUI und Telemetrie fragen sie alle paar Sekunden, ändern tun sie
+  # sich nur alle 15 min. Wer Energie oder Preise schreibt, setzt self.sums = nil.
+  def today_sums(key)
+    if self.sums == nil || self.sums_key != key
+      self.sums = self.day_sums(key)
+      self.sums_key = key
+    end
+    return self.sums
   end
 
   def day_end(key)
@@ -666,17 +699,24 @@ class SpotApp
 
   # Stundenwerte der 72 Stunden ab start in hp/he/hv schreiben (je 4 Byte pro Stunde).
   # Ein Durchlauf über die Viertelstunden; alle Kurven lesen danach nur noch hour_*().
+  # Liest die Puffer direkt (day_off, einmal pro Tag): 576 store.price/energy_at kosteten ~350 ms.
   def fill_hours(start)
+    var pb = self.store.prices
+    var eb = self.store.energy
+    var inv = self.store.INVALID
+    var off = -1
     for i:0..self.CH_N-1
-      var key = start + (i / 24) * 86400
+      if i % 24 == 0 off = self.store.day_off(start + (i / 24) * 86400) end
       var s0 = (i % 24) * 4
       var ps = 0  var pn = 0  var es = 0  var en = 0  var vs = 0.0  var vn = 0
-      for s:s0..s0+3
-        var p = self.store.price(key, s)
-        var e = self.store.energy_at(key, s)
-        if p != nil  ps += p  pn += 1 end
-        if e != nil  es += e  en += 1 end
-        if p != nil && e != nil  vs += e * p  vn += 1 end
+      var s = s0
+      while off >= 0 && s < s0 + 4
+        var p = pb.geti(off + s * 2, 2)
+        var e = eb.geti(off + s * 2, 2)
+        if p != inv  ps += p  pn += 1 end
+        if e != inv  es += e  en += 1 end
+        if p != inv && e != inv  vs += e * p  vn += 1 end
+        s += 1
       end
       self.hp.seti(i * 4, pn > 0 ? spot_round(ps / real(pn)) : self.INV, 4)
       self.he.seti(i * 4, en > 0 ? es : self.INV, 4)
@@ -730,7 +770,7 @@ class SpotApp
     try
       var now = spot_now()
       var key = spot_day(now)
-      self.send_header(key, spot_slot(now), self.day_sums(key))
+      self.send_header(key, spot_slot(now), self.today_sums(key))
       var start = self.chart_start(now)
       self.fill_hours(start)
       self.send_svg(start, now)
@@ -1016,7 +1056,7 @@ class SpotApp
     var now = spot_now()
     var key = spot_day(now)
     var p = self.store.price(key, spot_slot(now))
-    var sums = self.day_sums(key)
+    var sums = self.today_sums(key)
     tasmota.response_append(string.format(',"Spot":{"Price":%s,"EnergyToday":%.2f,"RevenueToday":%.2f%s}',
       p == nil ? "null" : string.format("%.4f", p / 10000.0), sums[0], sums[1],
       self.cfg["sim"] ? string.format(',"Po":%.3f', self.sim_kw(now)) : ""))
