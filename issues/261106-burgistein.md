@@ -104,3 +104,25 @@ Nachladen bei `SpotTick` (data-v 2→4, drei Fetches), kein `SPOT:`-Fehler im Lo
 
 Offen: `tools/make_steps.py` (Starter, Schritte 1–3, EXERCISES.md) an die neue F3-Struktur anpassen;
 Gegenprobe am gPlugK (Abstürze weg?); Backtrace-Dekodierung bleibt für die endgültige Absturzursache.
+
+## Gegenprobe gPlugK (6.11., 192.168.0.130, Tasmota 15.5.0, Kamstrup, `spot.tapp` v0.12.0)
+
+Gerät lief bereits mit der neuen tapp (Start 17:27, BootCount 208). Messung mit Chrome und `brcmd.sh`:
+
+| Messgrösse | Issue (alt) | v0.12.0 |
+|---|---|---|
+| Refresh `/?m=1` | 9.7 kB, ~1.5 s | 3.9 kB, Ø 233 ms |
+| `/spot.svg` | – | 4.1 kB, 579 ms, einmal pro Seite/Viertelstunde |
+| LoadAvg WebUI offen | > 100 | 22–52 (30 min, 1 Probe/min) |
+| LoadAvg WebUI zu | ~25 | 19–40 |
+| Heap frei | 65–80 kB | 87–99 kB |
+| Neustarts in 30 min WebUI offen | 1 pro 30–40 min | 0 |
+
+WebUI kostet keine messbare Last mehr; die Grundlast kommt vom Script/SML. Einzige Spitze: LoadAvg 305
+um 18:05 = stündlicher Abruf (`on_hour`, HTTPS + Parse, "96 Werte um 18:05").
+30 min ohne Absturz sind ein gutes Zeichen, aber noch kein Beweis: über Nacht weiter beobachten
+(BootCount 208).
+
+Nebenbefund (nicht Teil des Fixes): Nach einem Neustart nach ~17 Uhr hat der Zählerbetrieb keine
+Preise für heute (BKW liefert dann nur noch morgen; der Simulator füllt sie, der Zähler nicht).
+Folge: "Spotpreis jetzt –", Vergütung heute 0, `need_fetch` bleibt wahr, Abruf jede Stunde.
