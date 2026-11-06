@@ -201,5 +201,7 @@ Alles grün: weiter mit [`EXERCISES.md`, Abschnitt *Vorbereitung*](https://githu
 - gPlug zurück ins Heim-WLAN: zu Hause einstecken, er öffnet wieder sein eigenes WLAN; Schritt 4
   mit dem Heim-WLAN wiederholen.
 - Am Smart Meter echte Werte statt Simulator: in `app/spot.be` `"sim": false`, `./upload.sh app/spot.be`.
+- Weiterarbeiten mit KI: [`SETUP_OPENCODE.md`](SETUP_OPENCODE.md); ohne KI, mit Editor und Upload
+  von Hand: [`SETUP_OHNE_KI.md`](SETUP_OHNE_KI.md).
 
 Weiter zur [Übung (55 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-55-min).

@@ -70,6 +70,8 @@ kopieren.
 - Am Smart Meter: in `app/spot.be` `"sim": false` setzen und `./upload.sh app/spot.be`.
 - Weiterarbeiten mit eigenem Zugang zum Sprachmodell: [`SETUP_OPENCODE.md`](SETUP_OPENCODE.md),
   Image lokal bauen mit `./docker-run.sh --build`.
+- Weiterarbeiten ohne KI, nur mit Texteditor und Upload von Hand (Skript oder WebUI):
+  [`SETUP_OHNE_KI.md`](SETUP_OHNE_KI.md).
 
 ## Wichtige Dateien
 
