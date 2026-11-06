@@ -28,7 +28,7 @@ Vor der ersten Änderung lesen, nicht raten:
 |---|---|---|
 | `app/spot.be` | die App | ja |
 | `app/autoexec.be` | lädt `spot` beim Start und bei `BrRestart` | ja, nur bei Bedarf |
-| `app/desktop_harness.be`, `app/persist.be`, `app/path.be` | Desktop-Test, Stubs | **nie** |
+| `app/desktop_harness.be`, `app/persist.be`, `app/path.be`, `app/webserver.be` | Desktop-Test, Stubs | **nie** |
 | `reference/` | `read_sensors`-Beispiele (Zähler-Pfad) | nein |
 | `app/steps/spot_N.be` | fertiger Stand nach Schritt N; nicht ändern, nur der Mensch kopiert einen davon nach `app/spot.be` | nein (nur als `app/spot.be`) |
 | `tools/make_steps.py` | Vorbereitung der Kursleitung; nie mit `--write` aufrufen (überschreibt `app/spot.be`) | nein |
@@ -82,7 +82,8 @@ einhalten. Unklar, ob ein Kommando harmlos ist: Mensch fragen.
 
 - Berry blockiert Tasmota: kein Callback länger als 50 ms, kein Warten in Schleifen, lange Arbeit mit
   `tasmota.set_timer` aufteilen.
-- `tasmota.web_send` nur in `web_sensor()`, `webserver.on` nur in `web_add_handler()`.
+- `tasmota.web_send` nur in `web_sensor()`, im Handler `page_svg()` (`/spot.svg`) und den `send_*`-Helfern;
+  `webserver.on` nur in `web_add_handler()`.
 - Strict Mode: keine undeklarierten Globals lesen; Klassen-Member mit `var` deklarieren.
 - RAM ist knapp (~120 kB frei): keine grossen Strings oder Listen aufbauen, HTML/SVG stückweise
   senden, BKW-Antwort nie mit `json.load` parsen.

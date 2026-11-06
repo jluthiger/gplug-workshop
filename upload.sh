@@ -17,7 +17,7 @@ if [ "${1:-}" = "--no-restart" ]; then restart=0; shift; fi
 for f in "$@"; do
   [ -f "$f" ] || { echo "FEHLER: $f nicht gefunden" >&2; exit 1; }
   case "$(basename "$f")" in
-    persist.be|path.be|desktop_harness.be)
+    persist.be|path.be|webserver.be|desktop_harness.be)
       echo "FEHLER: $f ist ein Desktop-Stub und gehört nicht aufs Gerät" >&2; exit 1 ;;
   esac
 done

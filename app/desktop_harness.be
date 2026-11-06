@@ -86,6 +86,7 @@ class Tas
   def read_sensors() return '{"Time":"2026-10-18T17:04:11","z":{"SMid":"","Eo":0.0}}' end
 end
 tasmota = Tas()
+import webserver                     # Stub webserver.be im selben Ordner (Handler /spot.svg)
 def log(m, l) print("LOG:", m) end
 
 class webclient
@@ -157,10 +158,22 @@ end
 var html = "<table style='width:100%'>"
 for s: tasmota.out html += untoken(s) end
 html += "</table>"
+print("HTML chunks =", tasmota.out.size(), "bytes =", size(html))
+
+# Chart: Handler /spot.svg aufrufen (Stub webserver.be) und am Platzhalter in sensor.html einsetzen
+spot.web_add_handler()
+tasmota.out = []
+webserver.handlers["/spot.svg"]()
+var svg = tasmota.out.concat()
+print("SVG chunks =", tasmota.out.size(), "bytes =", size(svg))
+assert(string.find(svg, "<svg id='spotsvg'") == 0, "kein SVG")
+var ph = string.find(html, "<div id='spotchart'")
+assert(ph >= 0, "Platzhalter #spotchart fehlt")
+var pe = string.find(html, "</div>", ph)
+html = html[0..pe-1] + svg + html[pe..]
 var f = open("sensor.html", "w")
 f.write(html)
 f.close()
-print("HTML chunks =", tasmota.out.size(), "bytes =", size(html))
 
 # Tagesende: 00:00 lokal am 19.10. -> CSV für 18.10., Aufbewahrung 2 Dateien
 f = open("spot_2026-08.csv", "w") f.write("alt\n") f.close()
