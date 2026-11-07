@@ -988,7 +988,7 @@ class SpotApp
       "+(v=='-'?'':' · <tspan fill=\"'+(v<0?'%s':'%s')+'\">'+(v/1e6).toFixed(3)+' CHF</tspan>');}"
       "document.addEventListener('mousemove',f);document.addEventListener('touchstart',f,{passive:true});document.addEventListener('touchmove',f,{passive:true});"
       "var V=null,S='';function c(){var d=document.getElementById('spotchart');if(!d)return;if(S&&!d.firstChild)d.innerHTML=S;"
-      "if(d.dataset.v!==V){V=d.dataset.v;fetch('/spot.svg').then(function(r){return r.text()}).then(function(t){S=t;"
+      "if(d.dataset.v!==V){V=d.dataset.v;fetch('spot.svg').then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){S=t;"
       "var e=document.getElementById('spotchart');if(e)e.innerHTML=S;if(L)f(L);}).catch(function(){V=null});}if(L)f(L);}c();"
       "var l1=document.getElementById('l1');if(l1)new MutationObserver(c).observe(l1,{childList:true});})();</script>",
       self.COL_PRICE, self.COL_ENERGY, self.COL_COST, self.COL_PAY))
