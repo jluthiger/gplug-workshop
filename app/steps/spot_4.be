@@ -1,4 +1,4 @@
-#- spot.be — gPlug Spot-Einspeisung, Referenz-App v0.12.3
+#- spot.be — gPlug Spot-Einspeisung, Referenz-App v0.12.4
    Tasmota >= 15.3.0, ESP32-C3.
 
    Funktionen
@@ -1145,4 +1145,4 @@ tasmota.add_cmd("SpotPrices", /c, i, p -> spot.cmd_prices(c, i, p))
 tasmota.add_cmd("SpotFetch",  /c, i, p -> spot.cmd_fetch(c, i, p))
 tasmota.add_cmd("SpotTick",   /c, i, p -> spot.cmd_tick(c, i, p))
 tasmota.add_cmd("SpotStatus", /c, i, p -> spot.cmd_status(c, i, p))
-log(string.format("SPOT: v0.12.3 geladen, sim=%s, heap_free=%d kB", spot_cfg["sim"] ? "true" : "false", tasmota.memory("heap_free")), 2)
+log(string.format("SPOT: v0.12.4 geladen, sim=%s, heap_free=%d kB", spot_cfg["sim"] ? "true" : "false", tasmota.memory("heap_free")), 2)
