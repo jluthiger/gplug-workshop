@@ -94,7 +94,7 @@ class SpotStore
 
   # Byte-Offset des Tages in prices/energy oder -1. Für Schleifen über viele Slots: einmal holen,
   # dann buf.geti(off + slot * 2, 2) direkt lesen und mit INVALID vergleichen. get() kostet auf dem
-  # C3 ~0.6 ms pro Wert (day_index + zwei Methodenaufrufe), geti() 0.04 ms (gemessen 6.11.).
+  # C3 ~0.6 ms pro Wert (day_index + zwei Methodenaufrufe), geti() 0.04 ms.
   def day_off(key)
     var i = self.day_index(key)
     return i < 0 ? -1 : i * self.SLOTS * 2
@@ -191,8 +191,8 @@ class SpotApp
 
   # ---------------------------------------------------------------- F1
   # Nach Kaltstart/Restart ist die Uhr beim Laden noch nicht gestellt (NTP kommt erst nach
-  # dem WLAN). Die Regel Time#Initialized feuert oft, bevor sie registriert ist (Race, 19.10.
-  # auf 15.3.0 beobachtet: kein Abruf bis zum nächsten Stunden-Cron). Darum pollen.
+  # dem WLAN). Die Regel Time#Initialized feuert oft, bevor sie registriert ist (Race:
+  # kein Abruf bis zum nächsten Stunden-Cron). Darum pollen.
   def on_net()
     tasmota.set_timer(2000, /-> self.on_time(), "spot_t")
   end
@@ -238,7 +238,7 @@ class SpotApp
     if self.busy return end
     tasmota.gc()
     var heap0 = tasmota.memory("heap_free")
-    if heap0 < self.cfg["fetch_min_heap"]           # TLS-Handshake bei knappem Heap: Absturz (Kamstrup-gPlug 7.11.)
+    if heap0 < self.cfg["fetch_min_heap"]           # TLS-Handshake bei knappem Heap: Absturz
       self.last_fetch = string.format("übersprungen, heap %d kB", heap0)
       log(string.format("SPOT: fetch übersprungen, heap %d < %d kB", heap0, self.cfg["fetch_min_heap"]), 2)
       return
@@ -253,7 +253,7 @@ class SpotApp
       var rc = wc.GET()
       if rc == 200
         # Nicht get_string(): bei fragmentiertem Heap liefert es die (chunked) Antwort still
-        # abgeschnitten (19.10., 65 kB frei: 8.7 von 21 kB). write_file streamt ins Flash.
+        # abgeschnitten (65 kB frei: 8.7 von 21 kB). write_file streamt ins Flash.
         if wc.write_file(self.cfg["dl_file"]) > 0
           n = self.parse_file(self.cfg["dl_file"])
         else
@@ -350,7 +350,7 @@ class SpotApp
   # BKW-Antwort blockweise aus einer Datei parsen: nie mehr als ca. 2.5 kB Text im RAM.
   # Ein am Blockende abgeschnittener Eintrag wird mit dem nächsten Block fertig gelesen.
   # readbytes statt f.read(n): f.read(n) verliert in Tasmota 15.3 pro Durchlauf ~1.5 x n
-  # Byte Berry-Heap (gemessen 19.10.), readbytes()/readline() nicht.
+  # Byte Berry-Heap, readbytes()/readline() nicht.
   def parse_file(name)
     var n = 0
     var rest = ""
@@ -606,8 +606,7 @@ class SpotApp
   # SpotFetch        -> BKW-API abrufen
   # SpotFetch file   -> /bkw.json aus dem Dateisystem (Workshop ohne Internet)
   # HTTPS-Abruf nicht im Command-Handler: aus Berry verschachtelt aufgerufen
-  # (Br tasmota.cmd("SpotFetch"), z.B. über brcmd.sh) stürzte der Abruf ab (Kamstrup-gPlug 7.11., 15.5.0,
-  # 3 von 3; direkt per cm?cmnd=SpotFetch lief er). Darum per Timer aus der Hauptschleife starten;
+  # (Br tasmota.cmd("SpotFetch"), z.B. über brcmd.sh) stürzte der Abruf ab. Darum per Timer aus der Hauptschleife starten;
   # Resultat danach mit SpotStatus oder im Log.
   def cmd_fetch(cmd, idx, payload)
     if payload == "file"
@@ -646,7 +645,7 @@ class SpotApp
   # trägt data-v (Stand der Daten, chart_gen); das Cursor-Script holt /spot.svg (page_svg) einmal
   # pro Seite und neu, wenn data-v wechselt (jede Viertelstunde, nach Abruf), und setzt es nach jedem
   # Refresh wieder ein. Mit dem Chart im Refresh kostete jeder Refresh ~1.2 s Berry-Zeit: Load > 100 %,
-  # Abstürze am Kamstrup-gPlug (Issue 6.11.).
+  # Abstürze am Kamstrup-gPlug.
   # page_svg sendet das SVG in Häppchen (ein Durchlauf pro Kurve, tasmota.web_send), nie als ein
   # String. web_send nur aus web_sensor(), page_svg() und den send_*-Helfern, nirgends sonst.
   #

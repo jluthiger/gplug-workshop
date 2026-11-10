@@ -13,8 +13,8 @@ Grundlagen: `AGENTS.md` (Regeln und Werkzeuge, liest der Agent automatisch), `TA
 ## Überblick: vom Starter zur Referenz-App in 4 Schritten, dazu Schritt 5
 
 Teilnehmende erhalten im Docker-Container einen **Starter** und bauen die Grafik in vier Schritten
-bis zum Zielbild `docs/zielbild.jpg` aus (entschieden 22.10.). Schritt 5 für Fortgeschrittene geht
-darüber hinaus: 2 Tage mit Viertelstunden statt 3 Tage mit Stundenwerten (ergänzt 9.11.).
+bis zum Zielbild `docs/zielbild.jpg` aus. Schritt 5 für Fortgeschrittene geht
+darüber hinaus: 2 Tage mit Viertelstunden statt 3 Tage mit Stundenwerten.
 
 | Schritt | Ziel | Sichtbares Resultat | Lernziel KI |
 |---|---|---|---|
@@ -300,8 +300,8 @@ welche neu sind. Noch nichts ändern.
 
 ![Ziel Schritt 5: 2 Tage mit 192 Viertelstunden, Preis als Treppe](docs/steps/schritt_5.png)
 
-Hintergrund: BKW publiziert inzwischen **verschiedene Preise pro Viertelstunde** (am 10.11.
-in allen 24 Stunden, z.B. 16 Uhr: 32.8 / 34.4 / 46.5 / 48.9 Rp.). Das Stundenmittel aus Schritt 3
+Hintergrund: BKW publiziert inzwischen **verschiedene Preise pro Viertelstunde** (z.B.
+16 Uhr: 32.8 / 34.4 / 46.5 / 48.9 Rp.). Das Stundenmittel aus Schritt 3
 glättet die Spitzen weg (Mittel 40.6 Rp.). Die Daten im Speicher sind schon Viertelstunden, nur
 die Darstellung fasst zusammen.
 
@@ -370,7 +370,7 @@ diff spot_schritt2.be app/spot.be | head -40      # wenige Stellen (oder git dif
 Im Browser: Seite **neu laden** (Cmd+R / F5), Kurven per Legende aus- und einblenden, mit der Maus
 Werte anfahren.
 
-## Stolpersteine (aus dem Probelauf 19.10., 30 min, 14 Uploads)
+## Stolpersteine (aus einem Probelauf: 30 min, 14 Uploads)
 
 1. **Weitere Achsen.** Erlaubt ist nur die kWh-Achse links aus Schritt 1 (und die CHF-Achse im
    eigenen Chart aus Schritt 4), so steht es auch in `AGENTS.md`. Will der Agent mehr

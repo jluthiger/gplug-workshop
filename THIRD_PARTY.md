@@ -13,7 +13,7 @@ Eigener Code und eigene Dokumente: MIT, siehe `LICENSE`.
 
 Die Decryption-Keys in den Scripts sind Platzhalter (`dKEY=""`). Eigenen Zählerschlüssel nie committen.
 
-## Entscheide (20./22.10.2026)
+## Entscheide
 
 - **BKW-API**: keine Lizenz und keine Nutzungsbedingungen angegeben. Risiko akzeptiert: die App liest nur öffentliche Tarifdaten, im Repo liegen keine BKW-Daten.
-- **Zählerschlüssel**: das Kamstrup-Script in `reference/` enthielt einen echten Schlüssel (`jluthiger/gplug-workshop` ab Commit `f6ceda4`, entfernt 22.10. in `9d9e2d2`; `gplug-ch/ki-workshop` in `d9dded0`, entfernt 20.10.). Schlüssel am Zähler/beim Netzbetreiber ersetzen lassen. Verlauf bereinigen (Rewrite + Force-Push) nur nach ausdrücklicher Freigabe.
+- **Zählerschlüssel**: das Kamstrup-Script in `reference/` enthielt einen echten Schlüssel (`jluthiger/gplug-workshop` ab Commit `f6ceda4`, entfernt in `9d9e2d2`; `gplug-ch/ki-workshop` in `d9dded0`, inzwischen entfernt). Schlüssel am Zähler/beim Netzbetreiber ersetzen lassen. Verlauf bereinigen (Rewrite + Force-Push) nur nach ausdrücklicher Freigabe.

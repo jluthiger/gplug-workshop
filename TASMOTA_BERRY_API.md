@@ -11,7 +11,7 @@ condensed to what a data/telemetry app needs. Verified against docs on 2026-10-1
 - `load("file.be")` loads and runs a script; `BrRestart` (console command) restarts the Berry VM and re-runs `autoexec.be` — use this to iterate without reboot.
 - Berry **blocks Tasmota while it runs**. Never block > 50 ms. Long work → split with `tasmota.set_timer`. Never busy-wait.
 - Network calls before Wi-Fi is up crash. Wrap first network use in `tasmota.when_network_up(f)`.
-- Wall-clock is invalid until NTP sync. Gate time-based logic on `tasmota.rtc("utc") > 1700000000`. Don't rely on the rule `Time#Initialized` after boot: it fires as soon as NTP syncs, often **before** your `when_network_up` callback registers it (seen 19.10. on 15.3.0; app fetched nothing until the next cron). Poll with `tasmota.set_timer(2000, …)` until the clock is valid instead.
+- Wall-clock is invalid until NTP sync. Gate time-based logic on `tasmota.rtc("utc") > 1700000000`. Don't rely on the rule `Time#Initialized` after boot: it fires as soon as NTP syncs, often **before** your `when_network_up` callback registers it (the app then fetches nothing until the next cron). Poll with `tasmota.set_timer(2000, …)` until the clock is valid instead.
 - Uncaught exceptions kill the current callback, not Tasmota. Still wrap every callback body in `try ... except .. as e, m  log("X: " + e + " " + m, 2) end`.
 - Console: `print(x)` → Berry console; `log(msg, level)` → Tasmota log (level 2 = info, 3 = debug, default 3). Use `log` for anything the user should see.
 - Heap: ESP32 without PSRAM has ~100–200 kB free. `tasmota.memory("heap_free")` → kB. `tasmota.gc()` forces collection, returns Berry-allocated bytes.
@@ -142,7 +142,7 @@ wc = nil
 tasmota.gc()
 ```
 
-- **`get_string()` drops responses > 32 KB, and silently truncates them when the heap is fragmented** (chunked response, no error; seen 19.10. at 65 kB free: 8.7 of 21 kB). For anything over a few kB use `wc.write_file("/file.json")` → bytes written or -1, then parse from flash in blocks with `f.read(2048)` (see `parse_file` in `app/spot.be`).
+- **`get_string()` drops responses > 32 KB, and silently truncates them when the heap is fragmented** (chunked response, no error; seen at 65 kB free: 8.7 of 21 kB). For anything over a few kB use `wc.write_file("/file.json")` → bytes written or -1, then parse from flash in blocks with `f.read(2048)` (see `parse_file` in `app/spot.be`).
 - HTTPS is insecure mode (no cert check) — fine for public read-only APIs. Cipher ECDHE_RSA_AES128_GCM_SHA256 only.
 - Redirects off by default: `wc.set_follow_redirects(true)`.
 - `GET()` blocks Tasmota for the duration of the request (several hundred ms). Acceptable a few times a day; never in a fast loop.
@@ -195,7 +195,7 @@ Rounding: no `math.round` — use `int(x + 0.5)` for x ≥ 0, `int(x - 0.5)` for
 
 ## 7. Gotchas
 
-- **`f.read(n)` leaks** (Tasmota 15.3.0, measured 19.10.): each pass over a file with `f.read(2048)` loses ~3 kB of Berry heap for good, `gc()` does not get it back. Read files in blocks with `f.readbytes(n).asstring()` or line by line with `f.readline()`; both are leak-free. `f.read()` without size is fine but needs the whole file in RAM.
+- **`f.read(n)` leaks** (Tasmota 15.3.0): each pass over a file with `f.read(2048)` loses ~3 kB of Berry heap for good, `gc()` does not get it back. Read files in blocks with `f.readbytes(n).asstring()` or line by line with `f.readline()`; both are leak-free. `f.read()` without size is fine but needs the whole file in RAM.
 - **`BrRestart` is not free**: each VM restart costs ~1 kB of heap outside Berry, and only a real `Restart 1` returns it. 20 upload cycles ≈ 20 kB. `upload.sh` reboots the device by itself when the heap drops below 100 kB.
 - Memory floor: HTTPS needs ~40 kB free for the TLS handshake. Below ~50 kB a 21 kB `get_string()` reboots the device ("MEMORY ALLOCATION FAILED"); between ~50 and ~70 kB it returns a silently truncated string. Check `tasmota.memory("heap_free")` after `tasmota.gc()`, aim to stay above 90 kB.
 - Cron pattern has **6 fields** (seconds first) and runs in **local** time, DST included.

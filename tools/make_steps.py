@@ -27,7 +27,7 @@ HEAD_F3 = {
     3: "     F3  WebUI: 3 Tage mit Stundenwerten, Einspeisung (Balken, orange bei Preis < 0) und\n         Spotpreis (Linie), Jetzt-Marke, Cursor mit Werten\n",
     4: "     F3  WebUI: 3 Tage mit Stundenwerten. Oben Einspeisung (Balken) + Spotpreis (Linie),\n         unten Vergütung CHF/h mit Summe. Jetzt-Marke, Cursor mit Werten\n",
 }
-# Alle Stufen: Chart über /spot.svg statt im 2.3-s-Refresh (Issue 6.11., v0.12.0)
+# Alle Stufen: Chart über /spot.svg statt im 2.3-s-Refresh
 for _k in HEAD_F3:
     HEAD_F3[_k] = HEAD_F3[_k][:-1] + ". Chart über /spot.svg,\n         nicht im 2.3-s-Refresh\n"
 VARS = {
