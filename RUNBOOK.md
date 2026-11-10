@@ -99,7 +99,7 @@ Abschnitt *Alternative: Claude-Modelle von Anthropic*.
    Erwartet: opencode-Oberfläche, unten das Modell `Qwen3.5 122B-A10B (Infomaniak AI (Schweiz))`.
 4. Erste Frage eintippen:
    ```
-   Lies INTENT.md. Erkläre in 5 Sätzen, was app/spot.be tut.
+   Lies app/spot.be. Erkläre in 5 Sätzen, was die App tut.
    ```
    Erwartet: Der Agent liest Dateien (Werkzeug-Aufrufe sichtbar) und antwortet sinnvoll.
    Beenden mit `/exit`.

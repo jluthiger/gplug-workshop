@@ -14,7 +14,6 @@ anhalten und den Menschen fragen.
 
 Vor der ersten Änderung lesen, nicht raten:
 
-- `INTENT.md` – Anforderungen, Randbedingungen, Entscheide.
 - `TASMOTA_BERRY_API.md` – die Tasmota-Berry-API. **Nur** Funktionen verwenden, die dort, in
   `app/spot.be` oder in der Berry-Sprachreferenz
   (<https://tasmota.github.io/docs/_media/BERRY_LANGUAGE_REFERENCE.txt>) stehen. Fehlt etwas: sagen,

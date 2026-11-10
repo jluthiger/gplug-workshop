@@ -1,5 +1,5 @@
 #- spot.be — gPlug Spot-Einspeisung, Referenz-App v0.12.3
-   Tasmota >= 15.3.0, ESP32-C3. Siehe INTENT.md.
+   Tasmota >= 15.3.0, ESP32-C3.
 
    Funktionen
      F1  BKW-Einspeisepreise laden (stündlicher Cron, nur wenn Preise fehlen), 2-Byte-Ringpuffer

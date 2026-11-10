@@ -1,6 +1,6 @@
 # Legende
 
-Begriffe und Abkürzungen aus dem Workshop. Weitere Fachbegriffe (BKW-API, Tarife, Zeit): `INTENT.md` §8.
+Begriffe und Abkürzungen aus dem Workshop.
 
 | Begriff | Bedeutung |
 |---|---|

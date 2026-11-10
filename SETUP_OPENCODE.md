@@ -75,7 +75,7 @@ durchgereicht. Sitzungen bleiben im Docker-Volume `gplug-workshop-data`. Im Imag
 begrenzen das, ersetzen die Isolation aber nicht: Shell-Befehle vor dem Bestätigen lesen.
 
 Nach dem Start: unten im TUI steht `Qwen3.5 122B-A10B (Infomaniak AI (Schweiz))`. Erste Frage:
-`Lies INTENT.md. Erkläre in 5 Sätzen, was app/spot.be tut.` `AGENTS.md` wird automatisch geladen,
+`Lies app/spot.be. Erkläre in 5 Sätzen, was die App tut.` `AGENTS.md` wird automatisch geladen,
 `/init` ist nicht nötig.
 
 | Befehl im TUI | Wirkung |
@@ -139,7 +139,7 @@ Ohne Docker geht auch `export ANTHROPIC_API_KEY=…`. Fest einstellen: in `openc
 ## 7. Arbeitsweise
 
 1. **Planen** im `plan`-Agent mit der Prompt-Vorlage aus `EXERCISES.md`.
-2. **Kontext geben**: `@INTENT.md @TASMOTA_BERRY_API.md @app/spot.be`, sonst erfinden Modelle
+2. **Kontext geben**: `@TASMOTA_BERRY_API.md @app/spot.be`, sonst erfinden Modelle
    Tasmota-API.
 3. **Umsetzen** im `build`-Agent, kleine Schritte.
 4. **Testen** auf dem Gerät, Fehlermeldung aus der Konsole **wörtlich** zurückgeben.
