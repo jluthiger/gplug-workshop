@@ -1,0 +1,8 @@
+# Workshop-Variante: Basis-Image plus Infomaniak-Zugang für den Workshop-Tag.
+# Werte kommen als --build-arg aus der Shell der Kursleitung (tools/publish-image.sh), nie hierher.
+# Image nach dem Workshop löschen (tools/delete-image.sh) und Token im Manager widerrufen.
+ARG BASE=ghcr.io/gplug-ch/ki-workshop:base
+FROM ${BASE}
+ARG INFOMANIAK_PRODUCT_ID
+ARG INFOMANIAK_API_KEY
+ENV INFOMANIAK_PRODUCT_ID=${INFOMANIAK_PRODUCT_ID} INFOMANIAK_API_KEY=${INFOMANIAK_API_KEY}

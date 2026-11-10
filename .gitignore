@@ -1,0 +1,50 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Secrets (Infomaniak / LLM API keys, device passwords)
+.env
+.env.*
+*.key
+secrets*.json
+opencode.json.local
+infomaniak-secure.txt
+
+# Device address for upload.sh / brcmd.sh / log.sh (per participant)
+.gplug
+
+# Desktop harness run artefacts (never commit)
+app/spot_20*.csv
+app/spot_h_20*.csv
+app/sensor.html
+app/spot_dl.json
+mock/*.csv
+bkw*.json
+
+# Device dumps / logs
+*.log
+console*.txt
+
+# Python helpers
+__pycache__/
+*.pyc
+.venv/
+
+# Agent tooling
+.opencode/
+.claude/
+node_modules/
+
+# gPlug-Scripts (Lizenz unklar, enthalten Zählerschlüssel)
+reference/*_script.txt
+
+# Release-Artefakte (tools/build_tapp.sh)
+dist/
+.tapp.*/
+
+# Interne Rückmeldungen und Meeting-Notizen (enthalten Personen-/Standortangaben, nie publizieren)
+issues/
+261021-meeting/
