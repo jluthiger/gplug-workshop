@@ -5,8 +5,8 @@
 *Vom Starter (links, nur Spotpreis) zur Referenz-App (rechts): Einspeisung, Negativpreise, 3 Tage,
 Vergütung. Am Workshop baust du diese Schritte mit dem Coding-Agenten.*
 
-Unterlagen für den DIY-Workshop **«Arbeiten mit einem Coding-Agenten auf einem Embedded-Gerät»**
-(12. November 2026, Glue, Bern). Stand der Unterlagen: Datei `VERSION`. Die Berry-App für den [gPlug](https://gplug.ch) holt die
+Unterlagen für den DIY-Workshop **«Arbeiten mit einem Coding-Agenten auf einem Embedded-Gerät»**.
+Stand der Unterlagen: Datei `VERSION`. Die Berry-App für den [gPlug](https://gplug.ch) holt die
 dynamischen BKW-Einspeisetarife, misst die eingespeiste Energie und zeigt beides als Chart in der
 Tasmota-WebUI.
 
@@ -161,4 +161,4 @@ Neuladen ohne Neustart: `Br load("spot")` (idempotent).
 
 ## Lizenz
 
-MIT, siehe `LICENSE`; Fremdes: `THIRD_PARTY.md`.
+MIT, siehe `LICENSE`.

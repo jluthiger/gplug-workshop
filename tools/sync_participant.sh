@@ -2,13 +2,11 @@
 # sync_participant.sh – Stand dieses Repos ins Teilnehmer-Repo (gplug-ch/ki-workshop) übertragen.
 #   tools/sync_participant.sh ../workshop-261112
 # Kopiert alle committeten Dateien ausser den internen (INTERN), löscht dort Dateien, die es hier
-# nicht mehr gibt, und entfernt im README den Block <!-- kursleitung -->. Dateien in NOSYNC bleiben
-# im Ziel, wie sie sind (weder kopiert noch gelöscht). Committet nicht:
+# nicht mehr gibt, und entfernt im README den Block <!-- kursleitung -->. Committet nicht:
 # Ergebnis mit git diff im Ziel prüfen, dann dort committen und pushen.
 set -eu
 
-INTERN='^(WORKSHOP_PREP\.md|REPLY_RFC\.md|261021-meeting/|issues/|mock/|ui-drafts/|tools/sync_participant\.sh|DOCKER_ADMIN\.md|Dockerfile\.workshop|tools/publish-image\.sh|tools/delete-image\.sh|tools/build_tapp\.sh|\.github/)'
-NOSYNC='^(INTENT\.md|THIRD_PARTY\.md)$'
+INTERN='^(WORKSHOP_PREP\.md|INTENT\.md|THIRD_PARTY\.md|REPLY_RFC\.md|261021-meeting/|issues/|mock/|ui-drafts/|tools/sync_participant\.sh|DOCKER_ADMIN\.md|Dockerfile\.workshop|tools/publish-image\.sh|tools/delete-image\.sh|tools/build_tapp\.sh|\.github/)'
 
 src=$(cd "$(dirname "$0")/.." && pwd)
 [ $# -eq 1 ] || { echo "Aufruf: $0 <ziel-repo>" >&2; exit 2; }
@@ -21,18 +19,18 @@ git -C "$dst" remote get-url origin | grep -q 'ki-workshop' \
 
 T=$(mktemp -d)
 trap 'rm -rf "$T"' EXIT
-git -C "$src" ls-files | grep -Ev "$INTERN" | grep -Ev "$NOSYNC" > "$T/keep"
+git -C "$src" ls-files | grep -Ev "$INTERN" > "$T/keep"
 
 # Dateien, die es in der Quelle nicht (mehr) gibt, im Ziel löschen
 git -C "$dst" ls-files | sort > "$T/old"
 sort "$T/keep" > "$T/new"
-comm -23 "$T/old" "$T/new" | grep -Ev "$NOSYNC" | while read -r f; do git -C "$dst" rm -q -- "$f"; echo "DEL $f"; done
+comm -23 "$T/old" "$T/new" | while read -r f; do git -C "$dst" rm -q -- "$f"; echo "DEL $f"; done
 
 rsync -a --files-from="$T/keep" "$src/" "$dst/"
 sed -i.bak '/<!-- kursleitung -->/,/<!-- \/kursleitung -->/d' "$dst/README.md" && rm "$dst/README.md.bak"
 
 # Verweise auf interne Dateien, die im Ziel ins Leere zeigen
-if grep -rnE 'WORKSHOP_PREP|REPLY_RFC|261021-meeting|issues/|ui-drafts|mock/' --exclude-dir=.git --exclude='*.pdf' \
+if grep -rnE 'WORKSHOP_PREP|INTENT\.md|THIRD_PARTY|REPLY_RFC|261021-meeting|issues/|ui-drafts|mock/' --exclude-dir=.git --exclude='*.pdf' \
      --exclude=.gitignore "$dst"; then
   echo "HINWEIS: obige Zeilen verweisen auf interne Dateien"
 fi
