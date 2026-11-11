@@ -22,6 +22,10 @@ Eigener gPlug ([gplug.ch](https://gplug.ch)), Notebook (macOS, Linux, Windows mi
 USB-Datenkabel. Installiert: [Docker Desktop](https://docs.docker.com/get-started/get-docker/)
 und ein Texteditor. Sonst keine Vorbereitung nötig.
 
+## Einführung
+
+Folien zur Einführung: <https://gplug-ch.github.io/ki-workshop/slides/>
+
 ## Vor Ort einrichten
 
 Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfassung:
