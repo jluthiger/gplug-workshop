@@ -29,7 +29,7 @@ jobs:
 
           **Nur eine Datei installieren:**
 
-          - `spot.tapp` – am Smart Meter (`"sim": false`)
+          - `spot.tapp` – am Smart Meter (`"sim": false`, ohne Simulator-Code)
           - `spot-sim.tapp` – ohne Smart Meter, Simulator mit Fake-Daten (`"sim": true`)
 
           **Installation:**
@@ -54,7 +54,10 @@ jobs:
           - Ohne Netz: Heute und Vortage laufen komplett mit Fake-Preisen.
 
           Vergütung, `SpotPrices` und CSV-Dateien enthalten diese simulierten Werte. `spot.tapp`
-          nutzt nur den echten Zähler und echte BKW-Preise.
+          nutzt nur den echten Zähler und echte BKW-Preise; der Simulator ist darin nicht enthalten
+          (kleinere Datei, ca. 2 kB weniger Berry-Heap).
+
+          Die installierte Version steht in der WebUI in der Zeile *App* und im Log beim Start.
           NOTES
           gh release create "$GITHUB_REF_NAME" dist/spot.tapp dist/spot-sim.tapp \
             --title "$GITHUB_REF_NAME" --notes-file dist/notes.md
