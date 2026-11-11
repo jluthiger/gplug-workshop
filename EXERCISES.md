@@ -171,6 +171,24 @@ Schreibe einen Plan: welche Methoden du änderst oder neu anlegst und wie du das
 - Summe der Balken ≈ «Einspeisung heute» in der Kopfzeile.
 - `app/sensor.html` (Harness) enthält `<g id='se'>`.
 
+> [!WARNING]
+> **Das Resultat des Agenten kann falsch sein, auch wenn alles «OK» meldet.**
+> `HARNESS OK`, ein sauberes Log und ein Chart mit grünen Balken beweisen nur, dass der Code
+> läuft, **nicht, dass er richtig rechnet**. Der Agent sagt «fertig» genauso überzeugt, wenn die
+> Werte falsch sind.
+>
+> Typisches Beispiel: **falsche Skala.**
+>
+> - Balken mit der Preis-Skala statt mit eigener kWh-Skala gezeichnet: 0.075 kWh auf einer Achse
+>   von 0–15 Rp. ergibt Balken von 1–2 Pixel, das Chart sieht «fast leer» aus.
+> - Achse links in Rohwerten (0.01 kWh) beschriftet: oben steht «30» statt «0.30» kWh.
+> - Achse links beschriftet, Balken aber mit anderem Maximum skaliert: Balkenhöhe passt nicht zur
+>   Zahl auf der Achse.
+>
+> **Selbst nachrechnen, nicht dem Agenten glauben:** Höchster Balken = Zahl oben an der kWh-Achse?
+> Sockel ≈ 0.075 kWh? Summe ≈ «Einspeisung heute»? Preislinie unverändert wie vorher? Stimmt eine
+> Zahl nicht: Fehler mit konkreten Werten an den Agenten zurückgeben.
+
 ## Schritt 2 – Negativpreis hervorheben (Pflicht, ~15 min)
 
 ![Ziel Schritt 2: orange Balken bei Preis < 0, Bereich unter 0 schattiert](docs/steps/schritt_2.png)
