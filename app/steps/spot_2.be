@@ -1,4 +1,4 @@
-#- spot.be — gPlug Spot-Einspeisung, Referenz-App v0.13.0
+#- spot.be — gPlug Spot-Einspeisung, Referenz-App v0.13.1
    Tasmota >= 15.3.0, ESP32-C3.
 
    Funktionen
@@ -26,7 +26,7 @@ import json
 import persist
 import path
 
-var SPOT_VERSION = "0.13.0"     # gleich wie VERSION; Titelzeile, Log und WebUI
+var SPOT_VERSION = "0.13.1"     # gleich wie VERSION; Titelzeile, Log und WebUI
 
 # ============================ Konfiguration ============================
 spot_cfg = {
