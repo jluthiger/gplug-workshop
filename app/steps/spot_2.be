@@ -308,7 +308,7 @@ class SpotApp
       end
     end
     for s:48..59
-      self.store.set_price(key, s, self.sim_price(key + s * 900, base, base + 800))   # 13 Uhr ca. -8 Rp
+      self.store.set_price(key, s, self.sim_price(key + s * 900, base, base + 800))   # 13:30 ca. -8 Rp
     end
     for d:1..2
       var k = key - d * 86400
@@ -336,12 +336,12 @@ class SpotApp
     return 900
   end
 
-  # Simulator: Preis einer Stunde in 1/10000 CHF/kWh. Grundpreis base, Spitzen um 8 und 19 Uhr,
-  # dip = Tiefe der Mittagssenke um 13 Uhr. Pro Stunde konstant wie bei BKW.
+  # Simulator: Preis einer Viertelstunde in 1/10000 CHF/kWh. Grundpreis base, Spitzen um 8 und
+  # 19 Uhr, dip = Tiefe der Mittagssenke um 13:30 Uhr. Pro Viertelstunde konstant wie bei BKW.
   def sim_price(t, base, dip)
-    var h = real((t % 86400) / 3600)
+    var h = (t % 86400) / 900 / 4.0
     var p = base + 700 * math.exp(-((h - 8) * (h - 8)) / 5) + 1000 * math.exp(-((h - 19) * (h - 19)) / 5)
-    return spot_round(p - dip * math.exp(-((h - 13) * (h - 13)) / 4))
+    return spot_round(p - dip * math.exp(-((h - 13.5) * (h - 13.5)) / 9))
   end
 
   # BKW-Antwort blockweise aus einer Datei parsen: nie mehr als ca. 2.5 kB Text im RAM.
@@ -921,7 +921,8 @@ class SpotApp
     tasmota.web_send(s + "</g>")
   end
 
-  # Eine Kurve als Linie in der Gruppe id='s<cid>'. value_at(i) -> Rohwert oder nil, y_of(wert)
+  # Eine Kurve als Treppenlinie in der Gruppe id='s<cid>': jeder Wert waagrecht über seine Breite
+  # (diskrete ¼-h-Preise). value_at(i) -> Rohwert oder nil, y_of(wert)
   # -> SVG-y. Bei nil endet die Polyline, die nächste beginnt beim nächsten Wert (Lücke). Nach je
   # CH_SEND_EVERY Werten wird gesendet, der String bleibt klein. attrs: weitere SVG-Attribute als
   # String, z.B. "stroke-dasharray='4,2'" (weglassen oder nil = keine).
@@ -943,7 +944,9 @@ class SpotApp
         s += string.format("<polyline fill='none' stroke='%s' stroke-width='1.5'%s points='", color, attrs)
         open_line = true
       end
-      s += string.format("%.1f,%.1f ", self.CH_X0 + (i + 0.5) * bw, y_of(v))
+      var x = self.CH_X0 + i * bw
+      var y = y_of(v)
+      s += string.format("%.1f,%.1f %.1f,%.1f ", x, y, x + bw, y)
       if i % self.CH_SEND_EVERY == self.CH_SEND_EVERY - 1
         tasmota.web_send(s)
         s = ""

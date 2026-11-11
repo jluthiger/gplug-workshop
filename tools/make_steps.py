@@ -481,8 +481,8 @@ def f3(S):
     if S == 4:
         w(base[base.index("  # Unteres Chart: Titel, Summe"):base.index("  # Balken pro ")])
     if S >= 1:
-        w(base[base.index("  # Balken pro Wert in der Gruppe"):base.index("  # Eine Kurve als Linie in der Gruppe")])
-    w(base[base.index("  # Eine Kurve als Linie in der Gruppe"):base.index("  # Gestrichelte Marke")])
+        w(base[base.index("  # Balken pro Wert in der Gruppe"):base.index("  # Eine Kurve als Treppenlinie in der Gruppe")])
+    w(base[base.index("  # Eine Kurve als Treppenlinie in der Gruppe"):base.index("  # Gestrichelte Marke")])
     # now marker
     w("""  # Gestrichelte Marke "jetzt"%s.
   def send_now_marker(cid, start, now)
