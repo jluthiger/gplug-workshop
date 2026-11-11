@@ -361,7 +361,7 @@ Heap misst. Noch nichts ändern.
 cd app && berry desktop_harness.be | tail -1      # HARNESS OK
 cd ..
 ./upload.sh app/spot.be                           # OK ... heap_free N kB
-./log.sh                                          # keine BRY:-Zeile
+./log.sh                                          # keine BRY:-Fehlermeldung
 ./brcmd.sh 'tasmota.cmd("SpotStatus")'            # Days vorhanden, HeapFree nahe Ausgangswert
 ./brcmd.sh 'tasmota.gc()'; ./brcmd.sh 'tasmota.memory("heap_free")'
 diff spot_schritt2.be app/spot.be | head -40      # wenige Stellen (oder git diff --stat)

@@ -158,7 +158,8 @@ Die WebUI-Seite offen lassen, du brauchst sie in der Übung.
      ```
 
    Erwartet: `OK  /spot.be (… Byte)`, `OK  BrRestart`, `OK  heap_free … kB`.
-3. Prüfen. Log, erwartet `SPOT: v… geladen`, keine Zeile mit `BRY:`:
+3. Prüfen. Log, erwartet `SPOT: v… geladen`, keine Fehlermeldung mit `BRY:`
+   (`BRY: Berry initialized` und `BRY: Successfully loaded …` sind normal):
    ```sh
    ./log.sh
    ```
@@ -176,7 +177,7 @@ Die WebUI-Seite offen lassen, du brauchst sie in der Übung.
 | Prüfung | Erwartet |
 |---|---|
 | `./docker-run.sh` | opencode mit Modell Qwen3.5, antwortet |
-| `./log.sh` | `SPOT: v… geladen`, keine `BRY:`-Zeile |
+| `./log.sh` | `SPOT: v… geladen`, keine `BRY:`-Fehlermeldung |
 | `./brcmd.sh 'tasmota.cmd("SpotStatus")'` | `"Sim":true`, Heap über 100 kB |
 | WebUI | Preislinie, Cursor zeigt Werte |
 

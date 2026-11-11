@@ -45,7 +45,7 @@ Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfas
    ```sh
    echo <gplug-ip> > .gplug
    ./upload.sh app/spot.be app/autoexec.be
-   ./log.sh                                  # erwartet: SPOT: v… geladen, keine BRY:-Zeile
+   ./log.sh                                  # erwartet: SPOT: v… geladen, keine BRY:-Fehlermeldung
    ```
    Die WebUI zeigt jetzt die Preislinie (Simulator, kein Smart Meter nötig).
 

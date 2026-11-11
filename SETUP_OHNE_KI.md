@@ -28,7 +28,8 @@ Dieselben Skripte wie am Workshop, nur rufst du sie selbst auf.
    ./upload.sh app/spot.be
    ```
    Erwartet: `OK  /spot.be (… Byte)`, `OK  BrRestart`, `OK  heap_free … kB`.
-4. Konsole lesen. Erwartet `SPOT: … geladen`, keine Zeile mit `BRY:`:
+4. Konsole lesen. Erwartet `SPOT: … geladen`, keine Fehlermeldung mit `BRY:`
+   (`BRY: Berry initialized` und `BRY: Successfully loaded …` sind normal):
    ```sh
    ./log.sh
    ```
@@ -48,7 +49,7 @@ Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
    ```
    BrRestart
    ```
-   Konsole lesen: `SPOT: … geladen`, keine Zeile mit `BRY:`.
+   Konsole lesen: `SPOT: … geladen`, keine Fehlermeldung mit `BRY:`.
 4. Heap prüfen, soll über 100 kB liegen. Jeder `BrRestart` kostet ~1 kB, erst ein Neustart gibt ihn
    zurück:
    ```
