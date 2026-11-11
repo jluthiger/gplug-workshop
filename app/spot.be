@@ -674,7 +674,6 @@ class SpotApp
   static CH_N = 96               # Werte im Chart: Viertelstunden eines Tages (DST-Tage: 92/100, Rest fällt weg)
   static CH_MIN = 15             # Minuten pro Wert
   static CH_SEND_EVERY = 24      # nach so vielen Werten wird der Teilstring gesendet
-  static E_STEPS = [5, 10, 20, 25, 50, 100, 200, 250, 500, 1000]   # Achsenstufen kWh (0.01 kWh)
   static P_STEPS = [100, 200, 500, 1000, 2000, 5000, 10000]          # Achsenstufen Rp (1/10000 CHF)
 
   # Farben (Legende, Kurven, Kopfzeilen, Cursor-Script)
@@ -692,7 +691,6 @@ class SpotApp
   # Daraus folgen: SVG-Gruppe id='s<k>', Legenden-Span id='l<k>', Body-Klasse 'h<k>' = ausgeblendet.
   def chart_curves()
     return [
-      ["e", string.format("<span style='color:%s'>&#9632;</span> Einspeisung", self.COL_ENERGY)],
       ["p", string.format("<span style='color:%s'>&#8212;</span> Spotpreis", self.COL_PRICE)],
       ["n", string.format("<span style='color:%s'>&#9478;</span> jetzt", self.COL_NOW)]
     ]
@@ -825,14 +823,10 @@ class SpotApp
   # Das Chart ab start (lokale Mitternacht des ersten Tages). Jede Kurve ist eine SVG-Gruppe
   # id='s<k>' (siehe chart_curves).
   def send_svg(start, now)
-    var er = self.nice_range(self.value_range(/ i -> self.store.energy_at(start, i), 10), self.E_STEPS)    # 0.01 kWh
     var pr = self.nice_range(self.value_range(/ i -> self.store.price(start, i), 100), self.P_STEPS)   # 1/10000 CHF/kWh
     var py = self.y_scale(pr[0], pr[1], self.CH_Y_BASE, self.CH_H)
-    var y0 = py(0)
-    var ey = self.y_scale(0, er[1], y0, y0 - self.CH_Y_TOP)    # eigene kWh-Skala, 0 kWh auf der 0-Rp-Linie
     self.send_svg_open(start)
-    self.send_axes(ey, py, er, pr)
-    self.send_bars("e", self.COL_ENERGY, / i -> self.store.energy_at(start, i), ey)
+    self.send_axes(py, pr)
     self.send_polyline("p", self.COL_PRICE, / i -> self.store.price(start, i), py)
     self.send_x_axis(start)
     self.send_now_marker("n", start, now)
@@ -847,7 +841,6 @@ class SpotApp
     tasmota.web_send(string.format("<svg id='spotsvg' viewBox='0 -8 340 166' style='width:100%%;display:block;margin:24px 0 6px' "
       "xmlns='http://www.w3.org/2000/svg' data-x0='%.0f' data-bw='%.4f' data-n='%d' data-m='%d' data-y2='%.0f'",
       self.CH_X0, self.bw, self.CH_N, self.CH_MIN, self.CH_Y_BASE))
-    self.send_data_attr("e", / i -> self.store.energy_at(start, i))
     self.send_data_attr("p", / i -> self.store.price(start, i))
     tasmota.web_send(">")
   end
@@ -866,9 +859,9 @@ class SpotApp
     end
   end
 
-  # Gitter und Preisachse rechts in runden Stufen (nice_range), Nulllinie, kWh-Achse links,
-  # Einheiten oben. Weitere Achsen nur nach Rückfrage (AGENTS.md).
-  def send_axes(ey, py, er, pr)
+  # Gitter und Preisachse rechts in runden Stufen (nice_range), Nulllinie, Einheit oben.
+  # Weitere Achsen nur nach Rückfrage (AGENTS.md).
+  def send_axes(py, pr)
     var x0 = self.CH_X0
     var x1 = self.CH_X0 + self.CH_W
     var s = ""
@@ -879,13 +872,6 @@ class SpotApp
       p += pr[2]
     end
     s += string.format("<line x1='%.0f' y1='%.1f' x2='%.0f' y2='%.1f' stroke='%s' stroke-width='0.7'/>", x0, py(0), x1, py(0), self.COL_ZERO)
-    var e = 0
-    while e <= er[1]
-      s += string.format("<text x='%.0f' y='%.1f' fill='%s' font-size='10' text-anchor='end'>%s</text>", x0 - 4, ey(e) + 3.5, self.COL_ENERGY,
-        e == 0 ? "0" : string.format(er[2] % 10 == 0 ? "%.1f" : "%.2f", e / 100.0))
-      e += er[2]
-    end
-    s += string.format("<text x='%.0f' y='4' fill='%s' font-size='8' text-anchor='end'>kWh</text>", x0 - 4, self.COL_ENERGY)
     s += string.format("<text x='%.0f' y='4' fill='%s' font-size='8'>Rp.</text>", x1 + 4, self.COL_PRICE)
     tasmota.web_send(s)
   end
@@ -923,28 +909,6 @@ class SpotApp
     end
     if open_line s += "'/>" end
     tasmota.web_send(s + "</g>")
-  end
-
-  # Balken pro Wert in der Gruppe id='s<cid>': ab der Nulllinie y_of(0) nach oben bzw. unten.
-  # value_at(i) -> Rohwert oder nil (kein Balken). Ein <path>, jeder Balken ein dicker Strich
-  # "M x y0 V y" (stroke-width = Balkenbreite): ein <rect> kostete auf dem C3 1.5 ms.
-  def send_bars(cid, color, value_at, y_of)
-    var bw = self.bw
-    var y0 = y_of(0)
-    var y0s = string.format("%.1f", y0)
-    var s = string.format("<g id='s%s' fill='none' stroke-width='%.1f'><path stroke='%s' d='", cid, bw * 0.8, color)
-    for i:0..self.CH_N-1
-      var v = value_at(i)
-      if v == nil continue end
-      var y = y_of(v)
-      if v >= 0 && y > y0 - 0.3 y = y0 - 0.3 end     # mindestens ein sichtbarer Strich
-      s += string.format("M%.1f %sV%.1f", self.CH_X0 + (i + 0.5) * bw, y0s, y)
-      if i % self.CH_SEND_EVERY == self.CH_SEND_EVERY - 1
-        tasmota.web_send(s)
-        s = ""
-      end
-    end
-    tasmota.web_send(s + "'/></g>")
   end
 
   # Gestrichelte Marke "jetzt".
