@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workshop-Infrastruktur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  html, body { margin:0; height:100%; background:#0d141b; overflow:hidden; }
+  #stage { position:absolute; left:50%; top:50%; width:1920px; height:1080px; transform-origin:center; }
+  .slide { position:absolute; inset:0; width:1920px; height:1080px; box-sizing:border-box; overflow:hidden; }
+  .slide:not(.on) { display:none !important; }
+  .slide *, .slide *::before, .slide *::after { box-sizing:border-box; margin:0; }
+  .slide h1 { line-height:1.1; } .slide h2 { line-height:1.15; } .slide h3 { line-height:1.2; }
+  .slide p, .slide li { line-height:1.4; }
+  .slide ol, .slide ul { padding-left:1.3em; }
+  .slide li + li { margin-top:0.25em; }
+  .slide table { border-collapse:collapse; width:100%; }
+  .slide th, .slide td { padding:0.35em 0.6em; text-align:left; border-bottom:1px solid #D2CCC0; vertical-align:top; }
+  .slide th { font-weight:600; border-bottom:2px solid #16212C; }
+  .slide td:first-child, .slide th:first-child { white-space:nowrap; }
+  .slide .conn { position:absolute; left:0; top:0; width:1920px; height:1080px; pointer-events:none; overflow:visible; }
+  #nav { position:fixed; right:16px; bottom:12px; font:14px/1 'IBM Plex Sans', Arial, sans-serif; color:#8C99A6; user-select:none; }
+  #nav button { background:#24323F; color:#F5F3EE; border:0; border-radius:6px; padding:8px 12px; margin-left:6px; cursor:pointer; font:inherit; }
+  #notes { position:fixed; left:0; right:0; bottom:0; max-height:40%; overflow:auto; background:#16212Cee; color:#F5F3EE;
+            font:20px/1.5 'IBM Plex Sans', Arial, sans-serif; padding:16px 24px 56px; display:none; }
+  #notes.on { display:block; }
+</style>
+</head>
+<body>
+<div id="stage">
+<section id="cover" class="slide" style="display:flex; flex-direction:column; gap:40px; justify-content:center; padding:128px; background:#16212c">
+  <p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; letter-spacing:2px; text-transform:uppercase; color:#f08a3e">KI-Workshop gPlug</p>
+  <h1 style="font-family:'IBM Plex Sans', Arial, sans-serif; font-size:112px; font-weight:700; line-height:1.05; color:#f5f3ee">Die Infrastruktur<br>des Workshops</h1>
+  <p style="font-family:'IBM Plex Sans', Arial, sans-serif; font-size:40px; line-height:1.4; color:#bfc8d2">Was auf deinem Notebook läuft, wo das Sprachmodell rechnet<br>und wie der Agent dein gPlug erreicht.</p>
+  <div style="display:flex; flex-direction:row; flex-wrap:wrap; gap:20px">
+    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">Docker</p>
+    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">opencode</p>
+    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">Infomaniak AI</p>
+    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">Skripte</p>
+    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">gPlug</p>
+    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">WLAN</p>
+  </div>
+  
+</section>
+<section id="ueberblick" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">Gesamtbild</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Vier Orte, ein Arbeitsablauf</h2>
+<div style="position:absolute;left:128px;top:312px;width:760px;background:#ECE8DF;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:24px">
+<h3 style="font-size:36px;font-weight:600;color:#16212C">Dein Notebook</h3>
+<div style="background:#16212C;border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:32px;font-weight:600;color:#F08A3E">Docker-Container</h3>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">opencode · der Agent</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">berry · Desktop-Test</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">git · Stände sichern</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">/work = Workshop-Ordner</p>
+</div>
+<p style="font-size:26px;color:#46505C">Browser → Tasmota-WebUI des gPlug</p>
+</div>
+<div style="position:absolute;left:1216px;top:410px;width:576px;background:#FBFAF7;border:2px solid #2E6DA4;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
+<h3 style="font-size:32px;font-weight:600;color:#16212C">Infomaniak AI</h3>
+<p style="font-size:24px;color:#46505C">Sprachmodell, Rechenzentrum Schweiz</p>
+</div>
+<div style="position:absolute;left:1216px;top:580px;width:576px;background:#FBFAF7;border:2px solid #B04E0F;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
+<h3 style="font-size:32px;font-weight:600;color:#16212C">gPlug</h3>
+<p style="font-size:24px;color:#46505C">Tasmota + Berry-App spot.be</p>
+</div>
+<div style="position:absolute;left:1216px;top:790px;width:576px;background:#FBFAF7;border:2px solid #8C96A0;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
+<h3 style="font-size:32px;font-weight:600;color:#16212C">api.bkw.ch</h3>
+<p style="font-size:24px;color:#46505C">Einspeisepreise, 96 Werte pro Tag</p>
+</div>
+<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#2E6DA4"/></marker></defs><line x1="856.0" y1="472.0" x2="1216.0" y2="472.0" stroke="#2E6DA4" stroke-width="4.0" marker-start="url(#ah1)" marker-end="url(#ah1)"/></svg>
+<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#B04E0F"/></marker></defs><line x1="856.0" y1="642.0" x2="1216.0" y2="642.0" stroke="#B04E0F" stroke-width="4.0" marker-end="url(#ah2)"/></svg>
+<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#8C96A0"/></marker></defs><line x1="1504.0" y1="704.0" x2="1504.0" y2="790.0" stroke="#8C96A0" stroke-width="4.0" marker-end="url(#ah3)"/></svg>
+<p style="position:absolute;left:904px;top:420px;width:296px;font-size:24px;color:#2E6DA4;font-weight:600">HTTPS · Prompts</p>
+<p style="position:absolute;left:904px;top:590px;width:296px;font-size:24px;color:#B04E0F;font-weight:600">HTTP · 3 Skripte</p>
+<p style="position:absolute;left:904px;top:658px;width:296px;font-size:24px;color:#5F6773">im Workshop-WLAN</p>
+<p style="position:absolute;left:1528px;top:728px;width:264px;font-size:24px;color:#5F6773">HTTPS · Preise</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Notebook und gPlug im selben WLAN · Internet für Image, Sprachmodell und Preise</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">2 / 9</p>
+
+</section>
+<section id="docker" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">1 · Docker</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Eine Sandbox, gleich auf jedem Notebook</h2>
+<div style="display:flex;flex-direction:row;gap:64px;flex:1;padding:40px 0px 0px 0px">
+<div style="flex:1;display:flex;flex-direction:column;gap:28px">
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Image</b> ghcr.io/gplug-ch/ki-workshop, einmal laden, ca. 300 MB</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Inhalt</b> Debian, opencode 2.0.32, berry, git</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Sichtbar</b> nur der Workshop-Ordner, im Container als /work</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Gedächtnis</b> Sitzungen bleiben im Volume gplug-workshop-data</p>
+<p style="font-size:32px;line-height:1.4;color:#B04E0F;font-weight:600">Der Agent darf Dateien ändern und Befehle ausführen, aber nur in diesem Ordner.</p>
+</div>
+<div style="width:800px;background:#16212C;border-radius:20px;padding:48px;display:flex;flex-direction:column;gap:14px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">$ ./docker-run.sh opencode --version</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># opencode v2.0.32</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">$ ./docker-run.sh</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># startet den Agenten</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">$ ./docker-run.sh bash</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># Shell im Container, zum Prüfen</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F08A3E">PS&gt; .\docker-run.ps1</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># Windows ohne Ubuntu/WSL</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Notebook</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">3 / 9</p>
+
+</section>
+<section id="opencode" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">2 · opencode</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Der Coding-Agent im Terminal</h2>
+<div style="display:flex;flex-direction:row;gap:32px;padding:40px 0px 0px 0px">
+<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<svg viewBox="0 0 24 24" fill="none" stroke="#2E6DA4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.2" y2="16.2"/></svg>
+<h3 style="font-size:40px;font-weight:600;color:#16212C">Liest</h3>
+<p style="font-size:30px;line-height:1.4;color:#46505C">Dateien im Ordner, AGENTS.md automatisch bei jedem Start.</p>
+</div>
+<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<svg viewBox="0 0 24 24" fill="none" stroke="#2E6DA4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+<h3 style="font-size:40px;font-weight:600;color:#16212C">Handelt</h3>
+<p style="font-size:30px;line-height:1.4;color:#46505C">Ändert app/spot.be, lädt hoch und liest das Log des gPlug.</p>
+</div>
+<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<svg viewBox="0 0 24 24" fill="none" stroke="#B04E0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+<h3 style="font-size:40px;font-weight:600;color:#16212C">Fragt</h3>
+<p style="font-size:30px;line-height:1.4;color:#46505C">Befehle nur mit deinem OK. ls, cat, grep frei; rm und sudo gesperrt.</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center;flex-wrap:wrap;padding:32px 0px 0px 0px">
+<p style="font-size:28px;color:#16212C;font-weight:600">Kontext für den Agenten:</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">AGENTS.md</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">TASMOTA_BERRY_API.md</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">EXERCISES.md</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">app/spot.be</p>
+</div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#46505C">Shift+Tab: Build ↔ Plan (Plan liest nur, lädt nichts hoch) · /exit beendet</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Notebook</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">4 / 9</p>
+
+</section>
+<section id="infomaniak" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">3 · Infomaniak AI</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Das Sprachmodell rechnet in der Schweiz</h2>
+<div style="display:flex;flex-direction:row;gap:64px;padding:40px 0px 0px 0px">
+<div style="flex:1;display:flex;flex-direction:column;gap:24px">
+<p style="font-size:26px;color:#5F6773;text-transform:uppercase;letter-spacing:2px">Standardmodell</p>
+<p style="font-size:64px;font-weight:700;line-height:1.1;color:#2E6DA4">Qwen3.5 122B-A10B</p>
+<p style="font-size:30px;line-height:1.4;color:#46505C">Offenes Modell, betrieben von Infomaniak. Eure Prompts und euer Code bleiben in der Schweiz.</p>
+<p style="font-size:30px;line-height:1.4;color:#46505C">OpenAI-kompatible API: opencode spricht sie direkt an.</p>
+<p style="font-size:30px;line-height:1.4;color:#B04E0F;font-weight:600">Zugang steckt im Workshop-Image und gilt nur heute.</p>
+</div>
+<div style="width:760px;display:flex;flex-direction:column;gap:20px">
+<table style="font-family:'IBM Plex Sans', Arial, sans-serif;font-size:28px;color:#16212C">
+<tr><th style="width:58%">Modell</th><th style="width:42%">Einsatz</th></tr>
+<tr style="background:#ECE8DF"><td>Qwen3.5 122B-A10B</td><td>Standard</td></tr>
+<tr><td>Qwen3.5 397B-A17B</td><td>grösser</td></tr>
+<tr><td>Kimi K2.6</td><td>Alternative</td></tr>
+<tr><td>Mistral Small 4</td><td>Alternative</td></tr>
+<tr><td>Ministral 3 14B</td><td>Nebenaufgaben</td></tr>
+</table>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#46505C">Wechseln in opencode: /models</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Danach eigener Zugang (Infomaniak oder Claude): SETUP_OPENCODE.md</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">5 / 9</p>
+
+</section>
+<section id="skripte" class="slide" style="background:#ECE8DF;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">4 · Brücke zum Gerät</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Drei Skripte reden mit dem gPlug</h2>
+<div style="display:flex;flex-direction:row;gap:20px;align-items:center;padding:32px 0px 8px 0px">
+<p style="font-size:30px;color:#46505C">Die IP steht in der Datei .gplug:</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE;background:#16212C;padding:10px 24px;border-radius:12px">echo &lt;gplug-ip&gt; &gt; .gplug</p>
+</div>
+<table style="font-family:'IBM Plex Sans', Arial, sans-serif;font-size:28px;color:#16212C">
+<tr><th style="width:17%">Skript</th><th style="width:38%">Wirkung</th><th style="width:45%">Beispiel</th></tr>
+<tr style="background:#F5F3EE"><td>upload.sh</td><td>hochladen, Grösse prüfen, App neu laden</td><td>./upload.sh app/spot.be</td></tr>
+<tr><td>brcmd.sh</td><td>Berry-Ausdruck ausführen, Antwort als JSON</td><td>./brcmd.sh 'tasmota.cmd("SpotStatus")'</td></tr>
+<tr style="background:#F5F3EE"><td>log.sh</td><td>letzte Zeilen der Konsole lesen</td><td>./log.sh</td></tr>
+</table>
+<div style="display:flex;flex-direction:row;gap:20px;align-items:center;padding:32px 0px 0px 0px">
+<svg viewBox="0 0 24 24" fill="none" stroke="#B04E0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:48px;height:48px" aria-hidden="true"><path d="M12 3 22 20H2Z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+<p style="font-size:30px;line-height:1.4;color:#16212C">Der Agent nutzt nur diese Skripte, kein direktes curl. brcmd.sh sperrt Reset, Firmware- und WLAN-Befehle.</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Gerät und Netz</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">6 / 9</p>
+
+</section>
+<section id="gplug" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">5 · gPlug</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Kleines Gerät, knapper Speicher</h2>
+<div style="display:flex;flex-direction:row;gap:32px;padding:40px 0px 0px 0px">
+<div style="flex:1;background:#16212C;border-radius:20px;padding:32px 40px;display:flex;flex-direction:column;gap:8px">
+<p style="font-size:56px;font-weight:700;color:#F08A3E">ESP32-C3</p>
+<p style="font-size:26px;color:#BFC8D2">Mikrocontroller mit WLAN</p>
+</div>
+<div style="flex:1;background:#16212C;border-radius:20px;padding:32px 40px;display:flex;flex-direction:column;gap:8px">
+<p style="font-size:56px;font-weight:700;color:#F08A3E">15.3.0+</p>
+<p style="font-size:26px;color:#BFC8D2">Tasmota mit Berry</p>
+</div>
+<div style="flex:1;background:#16212C;border-radius:20px;padding:32px 40px;display:flex;flex-direction:column;gap:8px">
+<p style="font-size:56px;font-weight:700;color:#F08A3E">~110 kB</p>
+<p style="font-size:26px;color:#BFC8D2">freier Heap mit App</p>
+</div>
+<div style="flex:1;background:#16212C;border-radius:20px;padding:32px 40px;display:flex;flex-direction:column;gap:8px">
+<p style="font-size:56px;font-weight:700;color:#F08A3E">50 ms</p>
+<p style="font-size:26px;color:#BFC8D2">max. pro Callback</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px;padding:32px 0px 0px 0px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:36px;font-weight:600;color:#16212C">Die App spot.be</h3>
+<p style="font-size:28px;line-height:1.4;color:#46505C">Holt die BKW-Einspeisepreise, misst die Energie pro ¼ h, zeichnet das Chart in der WebUI.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:36px;font-weight:600;color:#16212C">Heute: Simulator</h3>
+<p style="font-size:28px;line-height:1.4;color:#46505C">Kein Smart Meter vor Ort. Der Simulator liefert Einspeisung, Vortage und Negativpreise am Mittag.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:36px;font-weight:600;color:#16212C">Darum</h3>
+<p style="font-size:28px;line-height:1.4;color:#46505C">Kleine Schritte, Heap nach jedem Upload prüfen, über 100 kB bleiben.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Gerät und Netz</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">7 / 9</p>
+
+</section>
+<section id="wlan" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">6 · WLAN</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Alle im selben Netz</h2>
+<div style="display:flex;flex-direction:row;gap:64px;padding:40px 0px 0px 0px">
+<div style="flex:1;display:flex;flex-direction:column;gap:20px">
+<h3 style="font-size:36px;font-weight:600;color:#16212C">gPlug ins Workshop-WLAN</h3>
+<ol style="font-size:30px;line-height:1.45;color:#46505C">
+<li>gPlug einstecken, 1–2 min warten.</li>
+<li>Mit seinem WLAN „gPlug…“ oder „tasmota…“ verbinden, sonst http://192.168.4.1 öffnen.</li>
+<li>Workshop-WLAN wählen, Passwort vom Zettel. Neue IP notieren.</li>
+<li>Notebook zurück ins Workshop-WLAN, http://&lt;gplug-ip&gt; öffnen.</li>
+</ol>
+</div>
+<div style="width:680px;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:20px">
+<h3 style="font-size:36px;font-weight:600;color:#16212C">Muss ins Internet</h3>
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#16212C">ghcr.io</p>
+<p style="font-size:26px;color:#5F6773">Docker-Image, einmal</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#16212C">api.infomaniak.com</p>
+<p style="font-size:26px;color:#5F6773">Sprachmodell, bei jedem Prompt</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#16212C">api.bkw.ch</p>
+<p style="font-size:26px;color:#5F6773">Preise, vom gPlug stündlich geprüft</p>
+</div>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#B04E0F;font-weight:600">Nach dem Workshop: gPlug zurück ins Heim-WLAN</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">8 / 9</p>
+
+</section>
+<section id="zuhause" class="slide" style="background:#ECE8DF;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">7 · Zuhause</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Weiterbauen: das Minimum</h2>
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center;padding:24px 0px 0px 0px">
+<p style="font-size:28px;color:#16212C;font-weight:600">Immer:</p>
+<p style="font-size:28px;color:#46505C">gPlug im Heim-WLAN · Workshop-Ordner · IP in .gplug</p>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px;padding:16px 0px 0px 0px">
+<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center">
+<svg viewBox="0 0 24 24" fill="none" stroke="#2E6DA4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:48px;height:48px" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+<h3 style="font-size:40px;font-weight:600;color:#16212C">Ohne KI</h3>
+</div>
+<p style="font-size:26px;color:#5F6773">Texteditor + Browser · 5 min · gratis</p>
+<ol style="font-size:28px;line-height:1.45;color:#46505C">
+<li>app/spot.be im Editor ändern.</li>
+<li>WebUI: Werkzeuge → Dateisystem verwalten → hochladen.</li>
+<li>Konsole: BrRestart, keine BRY:-Zeile.</li>
+</ol>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#46505C">oder ./upload.sh + ./log.sh</p>
+</div>
+<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center">
+<svg viewBox="0 0 24 24" fill="none" stroke="#B04E0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:48px;height:48px" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+<h3 style="font-size:40px;font-weight:600;color:#16212C">Mit KI</h3>
+</div>
+<p style="font-size:26px;color:#5F6773">Docker + eigener Zugang · 15 min · bezahlt pro Token</p>
+<ol style="font-size:28px;line-height:1.45;color:#46505C">
+<li>Infomaniak AI Tools aktivieren, Ausgabenlimite setzen.</li>
+<li>Token (Scope ai-tools) als INFOMANIAK_API_KEY, Product-ID als INFOMANIAK_PRODUCT_ID.</li>
+<li>./docker-run.sh, alles wie heute.</li>
+</ol>
+<p style="font-size:24px;color:#46505C">Alternative: Claude von Anthropic</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Anleitungen: SETUP_OHNE_KI.md · SETUP_OPENCODE.md</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">9 / 9</p>
+
+</section>
+</div>
+<div id="notes"></div>
+<div id="nav"><span id="pos"></span><button id="prev" aria-label="Zurück">←</button><button id="next" aria-label="Weiter">→</button><button id="nbtn" title="Notizen (N)">Notizen</button><button id="fbtn" title="Vollbild (F)">⛶</button></div>
+<script>
+const notes = ["15 Minuten. Ziel: Alle wissen, welche Teile zusammenspielen, bevor wir einrichten. Details stehen im RUNBOOK.md, hier nur das Bild im Kopf.", "Das ganze Bild auf einer Folie. Links euer Notebook: Docker startet einen Container, darin läuft der Agent opencode. Der Agent schickt Prompts per HTTPS an Infomaniak in der Schweiz und bekommt Antworten zurück. Zum gPlug spricht er nur über drei Skripte, per HTTP im Workshop-WLAN. Der gPlug selbst holt die Einspeisepreise bei der BKW. Ihr schaut im Browser auf die WebUI des gPlug.", "Docker gibt allen dieselbe Umgebung, egal ob Mac, Linux oder Windows mit WSL. Das Image kommt fertig von GitHub, nichts zu bauen. Wichtig ist die Grenze: Im Container sieht der Agent nur den Workshop-Ordner. Er kann also nichts auf eurem Notebook kaputt machen. Der Zugang zum Sprachmodell steckt im Workshop-Image und gilt nur heute.", "opencode ist ein Open-Source-Agent fürs Terminal. Er liest Dateien, schreibt Code und führt Befehle aus. Die Regeln für unser Projekt stehen in AGENTS.md, die liest er von selbst. Welche Befehle er ohne Rückfrage ausführen darf, steht in opencode.json. Im Plan-Modus darf er nur lesen und planen; zum Ändern und Hochladen wechselt ihr mit Shift+Tab in den Build-Modus. Mehr zum Prompten um 18:20.", "Der Agent ist nur so gut wie das Modell dahinter. Wir nutzen Infomaniak, einen Schweizer Anbieter mit offenen Modellen. Standard ist Qwen3.5 mit 122 Milliarden Parametern, davon 10 Milliarden aktiv pro Token: schnell genug für den Workshop. Wer will, probiert ein anderes Modell aus der Liste. Der Schlüssel im Image läuft morgen ab; wer weitermachen will, findet in SETUP_OPENCODE.md den Weg zu einem eigenen Zugang.", "Der Agent hat keine Hände am Gerät, nur diese drei Skripte. Upload lädt die App hoch und startet sie neu. brcmd führt einen Berry-Ausdruck aus, so prüft der Agent selbst, ob seine Änderung wirkt. log zeigt Fehlermeldungen; die liest der Agent nach jedem Upload. Gefährliche Befehle sind gesperrt, damit niemand sein Gerät aus dem WLAN wirft.", "Der gPlug liest normalerweise den Smart Meter aus. Darauf läuft Tasmota, und Tasmota kann Berry-Skripte ausführen. Unsere App ist so ein Skript. Das Gerät ist klein: rund 110 kB freier Speicher, und jeder Callback blockiert das ganze Gerät, also maximal 50 ms. Das muss auch der Agent wissen, deshalb steht es in AGENTS.md. Heute ohne Zähler: der Simulator füllt das Chart.", "Euer gPlug kennt nur euer Heim-WLAN. Findet er es nicht, öffnet er ein eigenes WLAN; darüber tragt ihr das Workshop-WLAN ein. Danach müssen Notebook und gPlug im selben Netz sein, sonst erreichen die Skripte das Gerät nicht. Ins Internet gehen drei Dinge: das Docker-Image, das Sprachmodell und die BKW-Preise. Helfer kommen um 17:45 an die Tische.", "Was braucht ihr zuhause? Immer: den gPlug zurück im Heim-WLAN, den Workshop-Ordner und die neue IP in .gplug. Ohne KI reichen Texteditor und Browser: Datei ändern, über die WebUI hochladen, in der Konsole BrRestart. Wer die Skripte mag, nimmt upload.sh und log.sh. Mit KI ist es dasselbe Setup wie heute, nur mit eigenem Zugang: Infomaniak AI Tools aktivieren, Kreditkarte und Ausgabenlimite, Token erstellen, zwei Variablen setzen, docker-run.sh. Neukunden bekommen Gratis-Credits für einen Monat. Wer lieber Claude nutzt: Anleitung steht in SETUP_OPENCODE.md."];
+const slides = [...document.querySelectorAll('.slide')];
+const stage = document.getElementById('stage');
+let i = Math.min(Math.max(parseInt(location.hash.slice(1)) - 1 || 0, 0), slides.length - 1);
+function fit() {
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `translate(-50%,-50%) scale(${k})`;
+}
+function show(n) {
+  i = Math.min(Math.max(n, 0), slides.length - 1);
+  slides.forEach((s, j) => s.classList.toggle('on', j === i));
+  document.getElementById('pos').textContent = `${i + 1} / ${slides.length}`;
+  document.getElementById('notes').textContent = notes[i];
+  history.replaceState(null, '', '#' + (i + 1));
+}
+document.addEventListener('keydown', e => {
+  if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) show(i + 1);
+  else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) show(i - 1);
+  else if (e.key === 'Home') show(0);
+  else if (e.key === 'End') show(slides.length - 1);
+  else if (e.key === 'n' || e.key === 'N') document.getElementById('notes').classList.toggle('on');
+  else if (e.key === 'f' || e.key === 'F') toggleFs();
+  else return;
+  e.preventDefault();
+});
+function toggleFs() { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+document.getElementById('prev').onclick = () => show(i - 1);
+document.getElementById('next').onclick = () => show(i + 1);
+document.getElementById('nbtn').onclick = () => document.getElementById('notes').classList.toggle('on');
+document.getElementById('fbtn').onclick = toggleFs;
+let tx = null;
+addEventListener('touchstart', e => tx = e.touches[0].clientX, {passive:true});
+addEventListener('touchend', e => { if (tx === null) return; const d = e.changedTouches[0].clientX - tx;
+  if (Math.abs(d) > 40) show(i + (d < 0 ? 1 : -1)); tx = null; });
+addEventListener('resize', fit);
+addEventListener('hashchange', () => show(parseInt(location.hash.slice(1)) - 1 || 0));
+fit(); show(i);
+</script>
+</body>
+</html>
