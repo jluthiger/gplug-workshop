@@ -12,20 +12,9 @@ Tasmota-WebUI.
 
 ## Programm
 
-Do 12.11.2026, 17:00–20:00.
+Ablauf pro Durchführung im Ordner [`workshop-instances/`](workshop-instances/):
 
-| Zeit | Block |
-|---|---|
-| 17:00–17:15 | Begrüssung, Einführung |
-| 17:15–17:30 | Übersicht Infrastruktur: Docker, Infomaniak, opencode, gPlug |
-| 17:30–17:45 | Notebook einrichten: Workshop-Ordner, Docker-Image, erste Agent-Antwort |
-| 17:45–18:00 | gPlug einrichten mit Helfern: WLAN, Firmware, Zeitzone |
-| 18:00–18:10 | Starter aufs Gerät |
-| 18:10–18:20 | Demo Referenz-App |
-| 18:20–18:35 | KI-Einführung: Kontext, gute und schlechte Prompts, Arbeitszyklus |
-| 18:35–19:30 | Übung mit dem Agenten |
-| 19:30–19:45 | Ergebnisse zeigen: Prompts, was schiefging, was half |
-| 19:45–20:00 | Abschluss, Feedback |
+- [Do 12.11.2026, 17:00–20:00](workshop-instances/2026-11-12.md)
 
 ## Mitbringen
 
