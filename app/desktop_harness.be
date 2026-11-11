@@ -194,5 +194,5 @@ spot.cfg["fetch_min_heap"] = 1000
 spot.fetch()
 print("fetch bei wenig Heap:", spot.last_fetch)
 assert(string.find(spot.last_fetch, "übersprungen") == 0, "Heap-Schranke")
-spot.cfg["fetch_min_heap"] = 80
+spot.cfg["fetch_min_heap"] = 70
 print("HARNESS OK")

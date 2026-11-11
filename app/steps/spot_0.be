@@ -1,4 +1,4 @@
-#- spot.be — gPlug Spot-Einspeisung, Referenz-App v0.14.0
+#- spot.be — gPlug Spot-Einspeisung, Referenz-App v0.14.1
    Tasmota >= 15.3.0, ESP32-C3.
 
    Funktionen
@@ -25,7 +25,7 @@ import json
 import persist
 import path
 
-var SPOT_VERSION = "0.14.0"     # gleich wie VERSION; Titelzeile, Log und WebUI
+var SPOT_VERSION = "0.14.1"     # gleich wie VERSION; Titelzeile, Log und WebUI
 
 # ============================ Konfiguration ============================
 spot_cfg = {
@@ -36,7 +36,7 @@ spot_cfg = {
   "days": 4,                   # Tage im Ringpuffer (heute, morgen, gestern, vorgestern)
   "csv_dir": "/",              # Ablage der CSV-Dateien
   "dl_file": "/spot_dl.json",  # letzte BKW-Antwort (Download landet im Flash, nicht im RAM)
-  "fetch_min_heap": 80,        # kB frei (nach gc), sonst kein HTTPS-Abruf (TLS braucht ~40 kB am Stück)
+  "fetch_min_heap": 70,        # kB frei (nach gc), sonst kein HTTPS-Abruf (TLS braucht ~40 kB am Stück)
   "csv_hourly": false          # ERWEITERUNGSPUNKT Bonus CSV: Stundenwerte zusätzlich ablegen
 }
 
