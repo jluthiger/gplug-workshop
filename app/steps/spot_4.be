@@ -26,6 +26,8 @@ import json
 import persist
 import path
 
+var SPOT_VERSION = "0.13.0"     # gleich wie VERSION; Titelzeile, Log und WebUI
+
 # ============================ Konfiguration ============================
 spot_cfg = {
   "sim": true,                 # true: Zähler-Simulator statt Smart Meter (Workshop ohne Meter)
@@ -865,6 +867,7 @@ class SpotApp
       tasmota.web_send(string.format("{s}<span style='color:%s'>&#9888; Zeitzone</span>{m}<span style='color:%s'>%s</span>{e}",
         self.COL_COST, self.COL_COST, self.tz_warn))
     end
+    tasmota.web_send("{s}App{m}v" + SPOT_VERSION + "{e}")
     tasmota.web_send(string.format("</table><hr style='border:0;border-top:1px solid %s;margin:8px 0'></div>{t}", self.COL_AXIS))
   end
 
@@ -1148,4 +1151,4 @@ tasmota.add_cmd("SpotPrices", /c, i, p -> spot.cmd_prices(c, i, p))
 tasmota.add_cmd("SpotFetch",  /c, i, p -> spot.cmd_fetch(c, i, p))
 tasmota.add_cmd("SpotTick",   /c, i, p -> spot.cmd_tick(c, i, p))
 tasmota.add_cmd("SpotStatus", /c, i, p -> spot.cmd_status(c, i, p))
-log(string.format("SPOT: v0.13.0 geladen, sim=%s, heap_free=%d kB", spot_cfg["sim"] ? "true" : "false", tasmota.memory("heap_free")), 2)
+log(string.format("SPOT: v%s geladen, sim=%s, heap_free=%d kB", SPOT_VERSION, spot_cfg["sim"] ? "true" : "false", tasmota.memory("heap_free")), 2)

@@ -562,8 +562,8 @@ def main():
         print("FEHLER: f3() erzeugt nicht mehr die Referenz spot_4.be, Generator nachziehen")
         return 1
     version = open(os.path.join(ROOT, "VERSION")).read().strip()
-    if "Referenz-App v%s" % version not in base or "SPOT: v%s geladen" % version not in base:
-        print("FEHLER: spot_4.be trägt nicht die Version %s aus VERSION (Titelzeile und Log)" % version)
+    if "Referenz-App v%s" % version not in base or 'var SPOT_VERSION = "%s"' % version not in base:
+        print("FEHLER: spot_4.be trägt nicht die Version %s aus VERSION (Titelzeile und SPOT_VERSION)" % version)
         return 1
     stale = 0
     for S, path in sorted(TARGETS.items()):
