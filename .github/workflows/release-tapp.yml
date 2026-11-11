@@ -47,7 +47,7 @@ jobs:
 
           - Einspeisung: vollständig simuliert, auch die Vortage. Der echte Zähler wird nicht gelesen.
           - Preise heute: echte BKW-Preise, aber von 12 bis 15 Uhr immer durch ein künstliches
-            Mittagstief ersetzt (um 13 Uhr ca. -8 Rp.). Fehlende Stunden kommen vom Folgetag, sonst
+            Mittagstief ersetzt (um 13:30 Uhr ca. -8 Rp.). Fehlende Stunden kommen vom Folgetag, sonst
             aus einer Fake-Kurve.
           - Preise morgen: echt, sobald BKW sie liefert.
           - Preise gestern und vorgestern: Fake-Kurve, solange keine Werte vorliegen.
