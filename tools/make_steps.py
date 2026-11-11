@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Erzeugt Starter und Checkpoints aus der Referenz-App app/steps/spot_4.be. Die Stände
 # unterscheiden sich nur in F3 (Chart) und wenigen Zeilen davor; alles andere kommt aus der Referenz.
-#   tools/make_steps.py          prüft nur, ob app/spot.be (Starter) und app/steps/spot_1..3.be
+#   tools/make_steps.py          prüft nur, ob app/spot.be (Starter), app/steps/spot_0.be (Kopie
+#                                des Starters) und app/steps/spot_1..3.be
 #                                aktuell sind (Exit 1, wenn nicht)
 #   tools/make_steps.py --write  schreibt sie neu. Überschreibt app/spot.be: nur zur Vorbereitung,
 #                                nie am Workshop (dort ist app/spot.be die Arbeit der Teilnehmenden)
@@ -13,9 +14,10 @@ import sys, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(ROOT, "app", "steps", "spot_4.be")
-TARGETS = {0: os.path.join(ROOT, "app", "spot.be")}
-for _n in (1, 2, 3):
-    TARGETS[_n] = os.path.join(ROOT, "app", "steps", "spot_%d.be" % _n)
+# (Stufe, Pfad): Stufe 0 = Starter, als app/spot.be und als Sicherung app/steps/spot_0.be
+TARGETS = [(0, os.path.join(ROOT, "app", "spot.be"))]
+for _n in (0, 1, 2, 3):
+    TARGETS.append((_n, os.path.join(ROOT, "app", "steps", "spot_%d.be" % _n)))
 STEP5 = os.path.join(ROOT, "app", "steps", "spot_5.be")
 
 base = open(REF).read()
@@ -566,7 +568,7 @@ def main():
         print("FEHLER: spot_4.be trägt nicht die Version %s aus VERSION (Titelzeile und SPOT_VERSION)" % version)
         return 1
     stale = 0
-    for S, path in sorted(TARGETS.items()):
+    for S, path in TARGETS:
         s = stage(S)
         old = open(path).read() if os.path.exists(path) else None
         rel = os.path.relpath(path, ROOT)
