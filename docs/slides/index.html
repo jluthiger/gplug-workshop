@@ -23,7 +23,9 @@
   .slide th { font-weight:600; border-bottom:2px solid #16212C; }
   .slide td:first-child, .slide th:first-child { white-space:nowrap; }
   .slide .conn { position:absolute; left:0; top:0; width:1920px; height:1080px; pointer-events:none; overflow:visible; }
-  #nav { position:fixed; right:16px; bottom:12px; font:14px/1 'IBM Plex Sans', Arial, sans-serif; color:#8C99A6; user-select:none; }
+  #nav { position:fixed; right:16px; bottom:12px; font:14px/1 'IBM Plex Sans', Arial, sans-serif; color:#8C99A6; user-select:none; transition:opacity .4s; }
+  #nav.idle { opacity:0; pointer-events:none; }
+  body.idle { cursor:none; }
   #nav button { background:#24323F; color:#F5F3EE; border:0; border-radius:6px; padding:8px 12px; margin-left:6px; cursor:pointer; font:inherit; }
   #notes { position:fixed; left:0; right:0; bottom:0; max-height:40%; overflow:auto; background:#16212Cee; color:#F5F3EE;
             font:20px/1.5 'IBM Plex Sans', Arial, sans-serif; padding:16px 24px 56px; display:none; }
@@ -88,10 +90,10 @@
 <h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Eine Sandbox, gleich auf jedem Notebook</h2>
 <div style="display:flex;flex-direction:row;gap:64px;flex:1;padding:40px 0px 0px 0px">
 <div style="flex:1;display:flex;flex-direction:column;gap:28px">
-<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Image</b> ghcr.io/gplug-ch/ki-workshop, einmal laden, ca. 300 MB</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Image</b> ghcr.io/gplug-ch/ki-workshop<br>einmal laden, ca. 300 MB</p>
 <p style="font-size:32px;line-height:1.4;color:#46505C"><b>Inhalt</b> Debian, opencode 2.0.32, berry, git</p>
-<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Sichtbar</b> nur der Workshop-Ordner, im Container als /work</p>
-<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Gedächtnis</b> Sitzungen bleiben im Volume gplug-workshop-data</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Sichtbar</b> nur der Workshop-Ordner (/work)</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Gedächtnis</b> Sitzungen bleiben im Docker-Volume</p>
 <p style="font-size:32px;line-height:1.4;color:#B04E0F;font-weight:600">Der Agent darf Dateien ändern und Befehle ausführen, aber nur in diesem Ordner.</p>
 </div>
 <div style="width:800px;background:#16212C;border-radius:20px;padding:48px;display:flex;flex-direction:column;gap:14px">
@@ -340,7 +342,11 @@ addEventListener('touchend', e => { if (tx === null) return; const d = e.changed
   if (Math.abs(d) > 40) show(i + (d < 0 ? 1 : -1)); tx = null; });
 addEventListener('resize', fit);
 addEventListener('hashchange', () => show(parseInt(location.hash.slice(1)) - 1 || 0));
-fit(); show(i);
+const nav = document.getElementById('nav'); let idleT;
+function wake() { nav.classList.remove('idle'); document.body.classList.remove('idle'); clearTimeout(idleT);
+  idleT = setTimeout(() => { nav.classList.add('idle'); document.body.classList.add('idle'); }, 2500); }
+['mousemove', 'touchstart'].forEach(ev => addEventListener(ev, wake, {passive:true}));
+fit(); show(i); wake();
 </script>
 </body>
 </html>
