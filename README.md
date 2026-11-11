@@ -41,7 +41,7 @@ Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfas
 Befehle für Linux, macOS und Ubuntu in WSL. Windows nur mit PowerShell:
 [`WINDOWS_POWERSHELL.md`](WINDOWS_POWERSHELL.md).
 
-## Übung (55 min)
+## Übung (45 min)
 
 Ablauf, Prompts und Prüfschritte: [`EXERCISES.md`](EXERCISES.md) ([PDF, A4](docs/EXERCISES.pdf)).
 

@@ -205,4 +205,4 @@ Alles grün: weiter mit [`EXERCISES.md`, Abschnitt *Vorbereitung*](https://githu
 - Weiterarbeiten mit KI: [`SETUP_OPENCODE.md`](SETUP_OPENCODE.md); ohne KI, mit Editor und Upload
   von Hand: [`SETUP_OHNE_KI.md`](SETUP_OHNE_KI.md).
 
-Weiter zur [Übung (55 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-55-min).
+Weiter zur [Übung (45 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-45-min).

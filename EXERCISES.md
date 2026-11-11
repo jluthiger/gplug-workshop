@@ -28,7 +28,7 @@ darüber hinaus: 2 Tage mit Viertelstunden statt 3 Tage mit Stundenwerten.
 - Jeder Schritt ist in der WebUI sichtbar und für sich lauffähig. 1–2 ändern nur den einen Tag
   (klein, schnell), 3 ist der Umbau, 4 baut auf 3 auf. Schritte 1–2 gelingen auch, wenn 3 scheitert.
 - **Pflicht: Schritte 1 und 2. Schritte 3 und 4 für Schnelle. Schritt 5 für Fortgeschrittene**
-  (baut auf 4 auf, ändert das Zielbild). Zeitbudget im Übungsblock 55 min.
+  (baut auf 4 auf, ändert das Zielbild). Zeitbudget im Übungsblock 45 min.
 - **Checkpoints**: `app/steps/spot_1.be` … `spot_5.be` enthalten den fertigen Stand nach jedem
   Schritt. Wer hängen bleibt, kopiert den vorherigen Checkpoint nach `app/spot.be` und macht dort
   weiter (`cp app/steps/spot_2.be app/spot.be && ./upload.sh app/spot.be`).
