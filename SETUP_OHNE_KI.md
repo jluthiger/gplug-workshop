@@ -75,7 +75,7 @@ Gelten mit und ohne KI. Ausführlich in [`AGENTS.md`](AGENTS.md) §6, die API in
 [`TASMOTA_BERRY_API.md`](TASMOTA_BERRY_API.md).
 
 - Kein Callback länger als 50 ms; lange Arbeit mit `tasmota.set_timer` aufteilen.
-- RAM knapp (~120 kB frei): keine grossen Strings oder Listen, HTML stückweise senden.
+- RAM knapp (~110 kB frei): keine grossen Strings oder Listen, HTML stückweise senden.
 - Jeder Callback-Body in `try ... except .. as e, m ... end`.
 - Neue Instanzvariablen mit `var` deklarieren (strict mode).
 - Flash schonen: Dateien selten schreiben.

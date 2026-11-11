@@ -102,7 +102,7 @@ kopieren.
   zusätzlich `"Po"`.
 
 Speicher: 4 Tage × 100 Slots × 2 Byte je für Preis und Energie, ca. 1.6 kB RAM. Freier Heap
-mit geladener App ~120 kB.
+mit geladener App ~110 kB.
 
 ### Installation ohne Skripte
 

@@ -6,7 +6,7 @@ Begriffe und Abkürzungen aus dem Workshop.
 |---|---|
 | **gPlug** | Kleiner Adapter für den Smart-Meter-Anschluss (P1/HAN), läuft mit Tasmota auf einem ESP32-C3. |
 | **Tasmota** | Offene Firmware für ESP-Geräte, mit WebUI, Konsole und Berry-Skripten. |
-| **ESP32-C3** | Mikrocontroller im gPlug (WLAN, wenig RAM, ca. 120 kB frei). |
+| **ESP32-C3** | Mikrocontroller im gPlug (WLAN, wenig RAM, ca. 110 kB frei). |
 | **Berry** | Kleine Skriptsprache in Tasmota; die App `app/spot.be` ist in Berry geschrieben. |
 | **WebUI** | Weboberfläche des Geräts unter `http://<gplug-ip>`. |
 | **Smart Meter** | Elektronischer Stromzähler mit Datenschnittstelle. |

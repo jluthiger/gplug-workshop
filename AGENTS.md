@@ -84,7 +84,7 @@ einhalten. Unklar, ob ein Kommando harmlos ist: Mensch fragen.
 - `tasmota.web_send` nur in `web_sensor()`, im Handler `page_svg()` (`/spot.svg`) und den `send_*`-Helfern;
   `webserver.on` nur in `web_add_handler()`.
 - Strict Mode: keine undeklarierten Globals lesen; Klassen-Member mit `var` deklarieren.
-- RAM ist knapp (~120 kB frei): keine grossen Strings oder Listen aufbauen, HTML/SVG stückweise
+- RAM ist knapp (~110 kB frei): keine grossen Strings oder Listen aufbauen, HTML/SVG stückweise
   senden, BKW-Antwort nie mit `json.load` parsen.
 - Heap im Blick behalten: nach jedem Upload meldet `upload.sh` `heap_free`; unter 100 kB startet es
   das Gerät selbst neu (jeder `BrRestart` kostet ~1 kB, nur ein Neustart gibt das zurück). Fällt der
