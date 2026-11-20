@@ -37,141 +37,18 @@
 <section id="cover" class="slide" style="display:flex; flex-direction:column; gap:40px; justify-content:center; padding:128px; background:#16212c">
   <p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; letter-spacing:2px; text-transform:uppercase; color:#f08a3e">KI-Workshop gPlug</p>
   <h1 style="font-family:'IBM Plex Sans', Arial, sans-serif; font-size:112px; font-weight:700; line-height:1.05; color:#f5f3ee">Die Infrastruktur<br>des Workshops</h1>
-  <p style="font-family:'IBM Plex Sans', Arial, sans-serif; font-size:40px; line-height:1.4; color:#bfc8d2">Was auf deinem Notebook läuft, wo das Sprachmodell rechnet<br>und wie der Agent dein gPlug erreicht.</p>
+  <p style="font-family:'IBM Plex Sans', Arial, sans-serif; font-size:40px; line-height:1.4; color:#bfc8d2">Wie die KI arbeitet, was auf deinem Notebook läuft, wo das<br>Sprachmodell rechnet und wie der Agent dein gPlug erreicht.</p>
   <div style="display:flex; flex-direction:row; flex-wrap:wrap; gap:20px">
-    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">Docker</p>
+    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">So arbeitet die KI</p>
     <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">opencode</p>
+    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">Docker</p>
     <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">Infomaniak AI</p>
     <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">Skripte</p>
-    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">gPlug</p>
-    <p style="padding:12px 24px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:28px; color:#f5f3ee; background:#24323f; border-radius:256px">WLAN</p>
   </div>
   
 </section>
-<section id="ueberblick" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">Gesamtbild</p>
-<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Vier Orte, ein Arbeitsablauf</h2>
-<div style="position:absolute;left:128px;top:312px;width:760px;background:#ECE8DF;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:24px">
-<h3 style="font-size:36px;font-weight:600;color:#16212C">Dein Notebook</h3>
-<div style="background:#16212C;border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:12px">
-<h3 style="font-size:32px;font-weight:600;color:#F08A3E">Docker-Container</h3>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">opencode · der Agent</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">berry · Desktop-Test</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">git · Stände sichern</p>
-</div>
-<p style="font-size:26px;color:#46505C">Browser → Tasmota-WebUI des gPlug</p>
-</div>
-<div style="position:absolute;left:1216px;top:410px;width:576px;background:#FBFAF7;border:2px solid #2E6DA4;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
-<h3 style="font-size:32px;font-weight:600;color:#16212C">Infomaniak AI</h3>
-<p style="font-size:24px;color:#46505C">Sprachmodell, Rechenzentrum Schweiz</p>
-</div>
-<div style="position:absolute;left:1216px;top:580px;width:576px;background:#FBFAF7;border:2px solid #B04E0F;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
-<h3 style="font-size:32px;font-weight:600;color:#16212C">gPlug</h3>
-<p style="font-size:24px;color:#46505C">Tasmota + Berry-App spot.be</p>
-</div>
-<div style="position:absolute;left:1216px;top:790px;width:576px;background:#FBFAF7;border:2px solid #8C96A0;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
-<h3 style="font-size:32px;font-weight:600;color:#16212C">api.bkw.ch</h3>
-<p style="font-size:24px;color:#46505C">Einspeisepreise, 96 Werte pro Tag</p>
-</div>
-<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#2E6DA4"/></marker></defs><line x1="856.0" y1="472.0" x2="1216.0" y2="472.0" stroke="#2E6DA4" stroke-width="4.0" marker-start="url(#ah1)" marker-end="url(#ah1)"/></svg>
-<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#B04E0F"/></marker></defs><line x1="856.0" y1="642.0" x2="1216.0" y2="642.0" stroke="#B04E0F" stroke-width="4.0" marker-end="url(#ah2)"/></svg>
-<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#8C96A0"/></marker></defs><line x1="1504.0" y1="704.0" x2="1504.0" y2="790.0" stroke="#8C96A0" stroke-width="4.0" marker-end="url(#ah3)"/></svg>
-<p style="position:absolute;left:904px;top:420px;width:296px;font-size:24px;color:#2E6DA4;font-weight:600">HTTPS · Prompts</p>
-<p style="position:absolute;left:904px;top:590px;width:296px;font-size:24px;color:#B04E0F;font-weight:600">HTTP · 3 Skripte</p>
-<p style="position:absolute;left:904px;top:658px;width:296px;font-size:24px;color:#5F6773">im Workshop-WLAN</p>
-<p style="position:absolute;left:1528px;top:728px;width:264px;font-size:24px;color:#5F6773">HTTPS · Preise</p>
-<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Notebook und gPlug im selben WLAN · Internet für Image, Sprachmodell und Preise</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">2 / 10</p>
-
-</section>
-<section id="docker" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">1 · Docker</p>
-<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Eine Sandbox, gleich auf jedem Notebook</h2>
-<div style="display:flex;flex-direction:row;gap:64px;flex:1;padding:40px 0px 0px 0px">
-<div style="flex:1;display:flex;flex-direction:column;gap:28px">
-<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Image</b> ghcr.io/gplug-ch/ki-workshop<br>einmal laden, ca. 300 MB</p>
-<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Inhalt</b> Debian, opencode 2.0.32, berry, git</p>
-<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Sichtbar</b> nur der Workshop-Ordner</p>
-<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Gedächtnis</b> Sitzungen bleiben im Docker-Volume</p>
-<p style="font-size:32px;line-height:1.4;color:#B04E0F;font-weight:600">Der Agent darf Dateien ändern und Befehle ausführen, aber nur in diesem Ordner.</p>
-</div>
-<div style="width:800px;background:#16212C;border-radius:20px;padding:48px;display:flex;flex-direction:column;gap:14px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">$ ./docker-run.sh opencode --version</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># opencode v2.0.32</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">$ ./docker-run.sh</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># startet den Agenten</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">$ ./docker-run.sh bash</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># Shell im Container, zum Prüfen</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F08A3E">PS&gt; .\docker-run.ps1</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># Windows ohne Ubuntu/WSL</p>
-</div>
-</div>
-<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Notebook</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">3 / 10</p>
-
-</section>
-<section id="opencode" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">2 · opencode</p>
-<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Der Coding-Agent im Terminal</h2>
-<div style="display:flex;flex-direction:row;gap:32px;padding:40px 0px 0px 0px">
-<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
-<svg viewBox="0 0 24 24" fill="none" stroke="#2E6DA4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.2" y2="16.2"/></svg>
-<h3 style="font-size:40px;font-weight:600;color:#16212C">Liest</h3>
-<p style="font-size:30px;line-height:1.4;color:#46505C">Dateien im Ordner, AGENTS.md automatisch bei jedem Start.</p>
-</div>
-<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
-<svg viewBox="0 0 24 24" fill="none" stroke="#2E6DA4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-<h3 style="font-size:40px;font-weight:600;color:#16212C">Handelt</h3>
-<p style="font-size:30px;line-height:1.4;color:#46505C">Ändert app/spot.be, lädt hoch und liest das Log des gPlug.</p>
-</div>
-<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
-<svg viewBox="0 0 24 24" fill="none" stroke="#B04E0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-<h3 style="font-size:40px;font-weight:600;color:#16212C">Fragt</h3>
-<p style="font-size:30px;line-height:1.4;color:#46505C">Befehle nur mit deinem OK. ls, cat, grep frei; rm und sudo gesperrt.</p>
-</div>
-</div>
-<div style="display:flex;flex-direction:row;gap:16px;align-items:center;flex-wrap:wrap;padding:32px 0px 0px 0px">
-<p style="font-size:28px;color:#16212C;font-weight:600">Kontext für den Agenten:</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">AGENTS.md</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">TASMOTA_BERRY_API.md</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">EXERCISES.md</p>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">app/spot.be</p>
-</div>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#46505C">Shift+Tab: Build ↔ Plan (Plan liest nur, lädt nichts hoch) · /exit beendet</p>
-<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Notebook</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">4 / 10</p>
-
-</section>
-<section id="infomaniak" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">3 · Infomaniak AI</p>
-<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Das Sprachmodell rechnet in der Schweiz</h2>
-<div style="display:flex;flex-direction:row;gap:64px;padding:40px 0px 0px 0px">
-<div style="flex:1;display:flex;flex-direction:column;gap:24px">
-<p style="font-size:26px;color:#5F6773;text-transform:uppercase;letter-spacing:2px">Standardmodell</p>
-<p style="font-size:64px;font-weight:700;line-height:1.1;color:#2E6DA4">Qwen3.5 122B-A10B</p>
-<p style="font-size:30px;line-height:1.4;color:#46505C">Offenes Modell, betrieben von Infomaniak. Eure Prompts und euer Code bleiben in der Schweiz.</p>
-<p style="font-size:30px;line-height:1.4;color:#46505C">OpenAI-kompatible API: opencode spricht sie direkt an.</p>
-<p style="font-size:30px;line-height:1.4;color:#B04E0F;font-weight:600">Zugang steckt im Workshop-Image und gilt nur heute.</p>
-</div>
-<div style="width:760px;display:flex;flex-direction:column;gap:20px">
-<table style="font-family:'IBM Plex Sans', Arial, sans-serif;font-size:28px;color:#16212C">
-<tr><th style="width:58%">Modell</th><th style="width:42%">Einsatz</th></tr>
-<tr style="background:#ECE8DF"><td>Qwen3.5 122B-A10B</td><td>Standard</td></tr>
-<tr><td>Qwen3.5 397B-A17B</td><td>grösser</td></tr>
-<tr><td>Kimi K2.6</td><td>Alternative</td></tr>
-<tr><td>Mistral Small 4</td><td>Alternative</td></tr>
-<tr><td>Ministral 3 14B</td><td>Nebenaufgaben</td></tr>
-</table>
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#46505C">Wechseln in opencode: /models</p>
-<p style="font-size:24px;line-height:1.4;color:#5F6773">Emulator-Track: Qwen3.5 397B-A17B, eigenes Infomaniak-Produkt</p>
-</div>
-</div>
-<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Danach eigener Zugang (Infomaniak oder Claude): SETUP_OPENCODE.md</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">5 / 10</p>
-
-</section>
 <section id="rucksack" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">Exkurs · So arbeitet die KI</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">Zuerst · So arbeitet die KI</p>
 <h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Auftrag, Rucksack, Kopf, Resultat</h2>
 <div style="display:flex;flex-direction:row;gap:12px;align-items:stretch;padding:36px 0px 0px 0px">
 <div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:14px">
@@ -216,12 +93,151 @@
 <p style="font-size:30px;line-height:1.4;color:#16212C">Was nicht im Rucksack liegt, muss die KI raten. Darum: erst lesen lassen, dann mit Log und brcmd.sh prüfen.</p>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1400px;font-size:24px;color:#B04E0F;font-weight:600">Gute Antwort = klarer Auftrag + gut gepackter Rucksack + Prüfung durch dich</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">6 / 10</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">2 / 8</p>
+
+</section>
+<section id="ueberblick" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">Gesamtbild · Wo Auftrag, Rucksack und Kopf sitzen</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Vier Orte, ein Arbeitsablauf</h2>
+<div style="position:absolute;left:128px;top:312px;width:760px;background:#ECE8DF;border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:24px">
+<h3 style="font-size:36px;font-weight:600;color:#16212C">Dein Notebook</h3>
+<div style="background:#16212C;border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:12px">
+<h3 style="font-size:32px;font-weight:600;color:#F08A3E">Docker-Container</h3>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">opencode · nimmt den Auftrag</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">berry · Desktop-Test</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">Workshop-Ordner · der Rucksack</p>
+</div>
+<p style="font-size:26px;color:#46505C">Browser → Tasmota-WebUI des gPlug</p>
+</div>
+<div style="position:absolute;left:1216px;top:410px;width:576px;background:#FBFAF7;border:2px solid #2E6DA4;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
+<h3 style="font-size:32px;font-weight:600;color:#16212C">Infomaniak AI</h3>
+<p style="font-size:24px;color:#46505C">Der Kopf · Sprachmodell in der Schweiz</p>
+</div>
+<div style="position:absolute;left:1216px;top:580px;width:576px;background:#FBFAF7;border:2px solid #B04E0F;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
+<h3 style="font-size:32px;font-weight:600;color:#16212C">gPlug</h3>
+<p style="font-size:24px;color:#46505C">Hier landet das Resultat: spot.be</p>
+</div>
+<div style="position:absolute;left:1216px;top:790px;width:576px;background:#FBFAF7;border:2px solid #8C96A0;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;gap:4px">
+<h3 style="font-size:32px;font-weight:600;color:#16212C">api.bkw.ch</h3>
+<p style="font-size:24px;color:#46505C">Einspeisepreise, 96 Werte pro Tag</p>
+</div>
+<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#2E6DA4"/></marker></defs><line x1="856.0" y1="472.0" x2="1216.0" y2="472.0" stroke="#2E6DA4" stroke-width="4.0" marker-start="url(#ah1)" marker-end="url(#ah1)"/></svg>
+<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#B04E0F"/></marker></defs><line x1="856.0" y1="642.0" x2="1216.0" y2="642.0" stroke="#B04E0F" stroke-width="4.0" marker-end="url(#ah2)"/></svg>
+<svg class="conn" viewBox="0 0 1920 1080" aria-hidden="true"><defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#8C96A0"/></marker></defs><line x1="1504.0" y1="704.0" x2="1504.0" y2="790.0" stroke="#8C96A0" stroke-width="4.0" marker-end="url(#ah3)"/></svg>
+<p style="position:absolute;left:904px;top:420px;width:296px;font-size:24px;color:#2E6DA4;font-weight:600">HTTPS · Prompts</p>
+<p style="position:absolute;left:904px;top:590px;width:296px;font-size:24px;color:#B04E0F;font-weight:600">HTTP · 3 Skripte</p>
+<p style="position:absolute;left:904px;top:658px;width:296px;font-size:24px;color:#5F6773">im Workshop-WLAN</p>
+<p style="position:absolute;left:1528px;top:728px;width:264px;font-size:24px;color:#5F6773">HTTPS · Preise</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Notebook und gPlug im selben WLAN · Internet für Image, Sprachmodell und Preise</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">3 / 8</p>
+
+</section>
+<section id="opencode" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">1 · opencode</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Der Agent: nimmt den Auftrag, packt den Rucksack</h2>
+<div style="position:absolute;right:128px;top:124px;display:flex;flex-direction:row;gap:10px;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:#16212C;color:#F5F3EE;border:2px solid #16212C">Auftrag</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:#16212C;color:#F5F3EE;border:2px solid #16212C">Rucksack</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Kopf</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Resultat</p>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px;padding:40px 0px 0px 0px">
+<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<svg viewBox="0 0 24 24" fill="none" stroke="#2E6DA4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.2" y2="16.2"/></svg>
+<h3 style="font-size:40px;font-weight:600;color:#16212C">Packt den Rucksack</h3>
+<p style="font-size:30px;line-height:1.4;color:#46505C">Liest Dateien im Ordner. AGENTS.md liegt immer drin.</p>
+</div>
+<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<svg viewBox="0 0 24 24" fill="none" stroke="#2E6DA4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+<h3 style="font-size:40px;font-weight:600;color:#16212C">Setzt das Resultat um</h3>
+<p style="font-size:30px;line-height:1.4;color:#46505C">Ändert app/spot.be, lädt hoch und liest das Log des gPlug.</p>
+</div>
+<div style="flex:1;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<svg viewBox="0 0 24 24" fill="none" stroke="#B04E0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:56px;height:56px" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+<h3 style="font-size:40px;font-weight:600;color:#16212C">Fragt dich</h3>
+<p style="font-size:30px;line-height:1.4;color:#46505C">Befehle nur mit deinem OK. ls, cat, grep frei; rm und sudo gesperrt.</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center;flex-wrap:wrap;padding:32px 0px 0px 0px">
+<p style="font-size:28px;color:#16212C;font-weight:600">Im Rucksack:</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">AGENTS.md</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">TASMOTA_BERRY_API.md</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">EXERCISES.md</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#16212C;background:#ECE8DF;padding:8px 20px;border-radius:999px">app/spot.be</p>
+</div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#46505C">Shift+Tab: Build ↔ Plan (Plan liest nur, lädt nichts hoch) · /exit beendet</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Notebook</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">4 / 8</p>
+
+</section>
+<section id="docker" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">2 · Docker</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Die Sandbox: nur ein Ordner passt in den Rucksack</h2>
+<div style="position:absolute;right:128px;top:124px;display:flex;flex-direction:row;gap:10px;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Auftrag</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:#16212C;color:#F5F3EE;border:2px solid #16212C">Rucksack</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Kopf</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Resultat</p>
+</div>
+<div style="display:flex;flex-direction:row;gap:64px;flex:1;padding:40px 0px 0px 0px">
+<div style="flex:1;display:flex;flex-direction:column;gap:28px">
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Image</b> fertig von GitHub, einmal laden</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Inhalt</b> opencode und Werkzeuge zum Testen</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Rucksack</b> nur aus dem Workshop-Ordner</p>
+<p style="font-size:32px;line-height:1.4;color:#46505C"><b>Verlauf</b> bleibt erhalten, auch nach /exit</p>
+<p style="font-size:32px;line-height:1.4;color:#B04E0F;font-weight:600">Der Agent darf Dateien ändern und Befehle ausführen, aber nur in diesem Ordner.</p>
+</div>
+<div style="width:800px;background:#16212C;border-radius:20px;padding:48px;display:flex;flex-direction:column;gap:14px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">$ ./docker-run.sh</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># startet den Agenten</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE">$ ./docker-run.sh bash</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># Shell im Container, zum Prüfen</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F08A3E">PS&gt; .\docker-run.ps1</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#8C99A6"># Windows ohne Ubuntu/WSL</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Notebook</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">5 / 8</p>
+
+</section>
+<section id="infomaniak" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">3 · Infomaniak AI</p>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Der Kopf rechnet in der Schweiz</h2>
+<div style="position:absolute;right:128px;top:124px;display:flex;flex-direction:row;gap:10px;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Auftrag</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Rucksack</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:#16212C;color:#F5F3EE;border:2px solid #16212C">Kopf</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Resultat</p>
+</div>
+<div style="display:flex;flex-direction:row;gap:64px;padding:40px 0px 0px 0px">
+<div style="flex:1;display:flex;flex-direction:column;gap:24px">
+<p style="font-size:26px;color:#5F6773;text-transform:uppercase;letter-spacing:2px">Im Workshop</p>
+<p style="font-size:64px;font-weight:700;line-height:1.1;color:#2E6DA4">Ein offenes Sprachmodell</p>
+<p style="font-size:30px;line-height:1.4;color:#46505C">Betrieben von Infomaniak, einem Schweizer Anbieter. Eure Prompts und euer Code bleiben in der Schweiz.</p>
+<p style="font-size:30px;line-height:1.4;color:#B04E0F;font-weight:600">Zugang steckt im Workshop-Image und gilt nur heute.</p>
+</div>
+<div style="width:760px;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:20px">
+<h3 style="font-size:36px;font-weight:600;color:#16212C">Bei jedem Prompt</h3>
+<ol style="font-size:30px;line-height:1.4;color:#46505C">
+<li>opencode schickt Auftrag und Rucksack.</li>
+<li>Das Modell antwortet: Text und Code-Änderungen.</li>
+<li>Es merkt sich nichts. Der Rucksack reist jedes Mal neu mit.</li>
+</ol>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Nach dem Workshop mit eigenem Zugang: SETUP_OPENCODE.md</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">6 / 8</p>
 
 </section>
 <section id="skripte" class="slide" style="background:#ECE8DF;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
 <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">4 · Brücke zum Gerät</p>
-<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Drei Skripte reden mit dem gPlug</h2>
+<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Das Resultat: drei Skripte bringen es aufs Gerät</h2>
+<div style="position:absolute;right:128px;top:124px;display:flex;flex-direction:row;gap:10px;align-items:center">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Auftrag</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Rucksack</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:transparent;color:#8C96A0;border:2px solid #C9C2B5">Kopf</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;padding:6px 18px;border-radius:999px;background:#16212C;color:#F5F3EE;border:2px solid #16212C">Resultat</p>
+</div>
 <div style="display:flex;flex-direction:row;gap:20px;align-items:center;padding:32px 0px 8px 0px">
 <p style="font-size:30px;color:#46505C">Die IP steht in der Datei .gplug:</p>
 <p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F5F3EE;background:#16212C;padding:10px 24px;border-radius:12px">echo &lt;gplug-ip&gt; &gt; .gplug</p>
@@ -233,91 +249,15 @@
 <tr style="background:#F5F3EE"><td>log.sh</td><td>letzte Zeilen der Konsole lesen</td><td>./log.sh</td></tr>
 </table>
 <div style="display:flex;flex-direction:row;gap:20px;align-items:center;padding:32px 0px 0px 0px">
-<svg viewBox="0 0 24 24" fill="none" stroke="#B04E0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:48px;height:48px" aria-hidden="true"><path d="M12 3 22 20H2Z"/><line x1="12" y1="9" x2="12" y2="14"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-<p style="font-size:30px;line-height:1.4;color:#16212C">Der Agent nutzt nur diese Skripte, kein direktes curl. brcmd.sh sperrt Reset, Firmware- und WLAN-Befehle.</p>
+<svg viewBox="0 0 24 24" fill="none" stroke="#B04E0F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:48px;height:48px" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg>
+<p style="font-size:30px;line-height:1.4;color:#16212C">Was die Skripte melden, kommt zurück in den Rucksack: so prüft der Agent sein Resultat. Gefährliche Befehle sind gesperrt.</p>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Gerät und Netz</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">7 / 10</p>
-
-</section>
-<section id="gplug" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">5 · gPlug</p>
-<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Kleines Gerät, knapper Speicher</h2>
-<div style="display:flex;flex-direction:row;gap:32px;padding:40px 0px 0px 0px">
-<div style="flex:1;background:#16212C;border-radius:20px;padding:32px 40px;display:flex;flex-direction:column;gap:8px">
-<p style="font-size:56px;font-weight:700;color:#F08A3E">ESP32-C3</p>
-<p style="font-size:26px;color:#BFC8D2">Mikrocontroller mit WLAN</p>
-</div>
-<div style="flex:1;background:#16212C;border-radius:20px;padding:32px 40px;display:flex;flex-direction:column;gap:8px">
-<p style="font-size:56px;font-weight:700;color:#F08A3E">15.3.0+</p>
-<p style="font-size:26px;color:#BFC8D2">Tasmota mit Berry</p>
-</div>
-<div style="flex:1;background:#16212C;border-radius:20px;padding:32px 40px;display:flex;flex-direction:column;gap:8px">
-<p style="font-size:56px;font-weight:700;color:#F08A3E">~110 kB</p>
-<p style="font-size:26px;color:#BFC8D2">freier Heap mit App</p>
-</div>
-<div style="flex:1;background:#16212C;border-radius:20px;padding:32px 40px;display:flex;flex-direction:column;gap:8px">
-<p style="font-size:56px;font-weight:700;color:#F08A3E">50 ms</p>
-<p style="font-size:26px;color:#BFC8D2">max. pro Callback</p>
-</div>
-</div>
-<div style="display:flex;flex-direction:row;gap:32px;padding:32px 0px 0px 0px">
-<div style="flex:1;display:flex;flex-direction:column;gap:12px">
-<h3 style="font-size:36px;font-weight:600;color:#16212C">Die App spot.be</h3>
-<p style="font-size:28px;line-height:1.4;color:#46505C">Holt die BKW-Einspeisepreise, misst die Energie pro ¼ h, zeichnet das Chart in der WebUI.</p>
-</div>
-<div style="flex:1;display:flex;flex-direction:column;gap:12px">
-<h3 style="font-size:36px;font-weight:600;color:#16212C">Heute: Simulator</h3>
-<p style="font-size:28px;line-height:1.4;color:#46505C">Kein Smart Meter vor Ort. Der Simulator liefert Einspeisung, Vortage und Negativpreise am Mittag.</p>
-</div>
-<div style="flex:1;display:flex;flex-direction:column;gap:12px">
-<h3 style="font-size:36px;font-weight:600;color:#16212C">Darum</h3>
-<p style="font-size:28px;line-height:1.4;color:#46505C">Kleine Schritte, Heap nach jedem Upload prüfen, über 100 kB bleiben.</p>
-</div>
-</div>
-<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Workshop-Infrastruktur · Gerät und Netz</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">8 / 10</p>
-
-</section>
-<section id="wlan" class="slide" style="background:#F5F3EE;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">6 · WLAN</p>
-<h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Alle im selben Netz</h2>
-<div style="display:flex;flex-direction:row;gap:64px;padding:40px 0px 0px 0px">
-<div style="flex:1;display:flex;flex-direction:column;gap:20px">
-<h3 style="font-size:36px;font-weight:600;color:#16212C">gPlug ins Workshop-WLAN</h3>
-<ol style="font-size:30px;line-height:1.45;color:#46505C">
-<li>gPlug einstecken, 1–2 min warten.</li>
-<li>Mit seinem WLAN „gPlug…“ oder „tasmota…“ verbinden, sonst http://192.168.4.1 öffnen.</li>
-<li>Workshop-WLAN wählen, Passwort vom Zettel. Neue IP notieren.</li>
-<li>Notebook zurück ins Workshop-WLAN, http://&lt;gplug-ip&gt; öffnen.</li>
-</ol>
-</div>
-<div style="width:680px;background:#FBFAF7;border:1px solid #DAD4C8;border-radius:20px;padding:40px;display:flex;flex-direction:column;gap:20px">
-<h3 style="font-size:36px;font-weight:600;color:#16212C">Muss ins Internet</h3>
-<div style="display:flex;flex-direction:column;gap:4px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#16212C">ghcr.io</p>
-<p style="font-size:26px;color:#5F6773">Docker-Image, einmal</p>
-</div>
-<div style="display:flex;flex-direction:column;gap:4px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#16212C">api.infomaniak.com</p>
-<p style="font-size:26px;color:#5F6773">Sprachmodell, bei jedem Prompt</p>
-</div>
-<div style="display:flex;flex-direction:column;gap:4px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#16212C">api.bkw.ch</p>
-<p style="font-size:26px;color:#5F6773">Preise, vom gPlug stündlich geprüft</p>
-</div>
-<div style="display:flex;flex-direction:column;gap:4px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:22px;color:#16212C">docker.io · deb.debian.org · github.com · opencode.ai · claude.ai</p>
-<p style="font-size:26px;color:#5F6773">Emulator-Track: Image lokal bauen, einmal</p>
-</div>
-</div>
-</div>
-<p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#B04E0F;font-weight:600">Nach dem Workshop: gPlug zurück ins Heim-WLAN</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">9 / 10</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">7 / 8</p>
 
 </section>
 <section id="zuhause" class="slide" style="background:#ECE8DF;color:#16212C;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:16px">
-<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">7 · Zuhause</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#B04E0F;letter-spacing:2px;text-transform:uppercase">5 · Zuhause</p>
 <h2 style="font-size:64px;font-weight:600;line-height:1.15;color:#16212C">Weiterbauen: das Minimum</h2>
 <div style="display:flex;flex-direction:row;gap:16px;align-items:center;padding:24px 0px 0px 0px">
 <p style="font-size:28px;color:#16212C;font-weight:600">Immer:</p>
@@ -347,21 +287,21 @@
 <ol style="font-size:28px;line-height:1.45;color:#46505C">
 <li>AI Tools aktivieren, Ausgabenlimite setzen.</li>
 <li>API-Token erstellen, mit Product-ID als Variablen setzen.</li>
-<li>./docker-run.sh, alles wie heute.</li>
+<li>./docker-run.sh: Auftrag, Rucksack, Resultat wie heute.</li>
 </ol>
 <p style="font-size:24px;line-height:1.4;color:#16212C;background:#ECE8DF;padding:16px 20px;border-radius:12px"><b>API-Token:</b> dein Schlüssel, geheim wie ein Passwort. <b>Tokens:</b> Textstücke (≈ ¾ Wort), die das Modell liest und schreibt. Danach zahlst du.</p>
 <p style="font-size:24px;color:#46505C">Alternative: Claude von Anthropic</p>
 </div>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1300px;font-size:24px;color:#5F6773">Anleitungen: SETUP_OHNE_KI.md · SETUP_OPENCODE.md</p>
-<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">10 / 10</p>
+<p style="position:absolute;right:128px;bottom:64px;width:200px;font-size:24px;color:#5F6773;text-align:right">8 / 8</p>
 
 </section>
 </div>
 <div id="notes"></div>
 <div id="nav"><span id="pos"></span><button id="prev" aria-label="Zurück">←</button><button id="next" aria-label="Weiter">→</button><button id="nbtn" title="Notizen (N)">Notizen</button><button id="fbtn" title="Vollbild (F)">⛶</button></div>
 <script>
-const notes = ["15 Minuten. Ziel: Alle wissen, welche Teile zusammenspielen, bevor wir einrichten. Details stehen im RUNBOOK.md, hier nur das Bild im Kopf.", "Das ganze Bild auf einer Folie. Links euer Notebook: Docker startet einen Container, darin läuft der Agent opencode. Der Agent schickt Prompts per HTTPS an Infomaniak in der Schweiz und bekommt Antworten zurück. Zum gPlug spricht er nur über drei Skripte, per HTTP im Workshop-WLAN. Der gPlug selbst holt die Einspeisepreise bei der BKW. Ihr schaut im Browser auf die WebUI des gPlug.", "Docker gibt allen dieselbe Umgebung, egal ob Mac, Linux oder Windows mit WSL. Das Image kommt fertig von GitHub, nichts zu bauen. Wichtig ist die Grenze: Im Container sieht der Agent nur den Workshop-Ordner. Er kann also nichts auf eurem Notebook kaputt machen. Der Zugang zum Sprachmodell steckt im Workshop-Image und gilt nur heute.", "opencode ist ein Open-Source-Agent fürs Terminal. Er liest Dateien, schreibt Code und führt Befehle aus. Die Regeln für unser Projekt stehen in AGENTS.md, die liest er von selbst. Welche Befehle er ohne Rückfrage ausführen darf, steht in opencode.json. Im Plan-Modus darf er nur lesen und planen; zum Ändern und Hochladen wechselt ihr mit Shift+Tab in den Build-Modus. Mehr zum Prompten um 18:25.", "Der Agent ist nur so gut wie das Modell dahinter. Wir nutzen Infomaniak, einen Schweizer Anbieter mit offenen Modellen. Standard ist Qwen3.5 mit 122 Milliarden Parametern, davon 10 Milliarden aktiv pro Token: schnell genug für den Workshop. Wer will, probiert ein anderes Modell aus der Liste. Der Emulator-Track nutzt ein eigenes Infomaniak-Produkt mit Qwen3.5 397B als Standard; 122B gibt es dort nicht. Der Schlüssel im Image läuft morgen ab; wer weitermachen will, findet in SETUP_OPENCODE.md den Weg zu einem eigenen Zugang.", "Wie funktioniert das eigentlich? Stellt euch einen sehr belesenen Handwerker vor. Der Prompt ist euer Auftrag, zum Beispiel: Zeige den Verbrauch in kWh im Chart. Das Modell ist sein Kopf: trainiert mit riesigen Mengen Text und Code, aber danach fest. Es lernt im Gespräch nichts dazu und kennt euer Projekt nicht. Alles Projektwissen steckt im Rucksack, dem Kontext: der Code spot.be, die Regeln in AGENTS.md, die API-Doku, Logs vom Gerät und der bisherige Chat. Der Rucksack hat eine begrenzte Grösse; wird er voll, wird Altes zusammengefasst, und ein neuer Chat beginnt mit leerem Rucksack. Die Antwort entsteht Wort für Wort, jeweils das wahrscheinlichste nächste Stück. Sie klingt immer überzeugt, auch wenn sie falsch ist. Was nicht im Rucksack liegt, muss die KI raten, so entstehen erfundene Funktionen. Darum verlangt AGENTS.md: zuerst lesen, nicht raten. Und darum prüft der Agent nach jedem Upload Log und Resultat. Das Modell könnt ihr nicht ändern, den Rucksack schon.","Der Agent hat keine Hände am Gerät, nur diese drei Skripte. Upload lädt die App hoch und startet sie neu. brcmd führt einen Berry-Ausdruck aus, so prüft der Agent selbst, ob seine Änderung wirkt. log zeigt Fehlermeldungen; die liest der Agent nach jedem Upload. Gefährliche Befehle sind gesperrt, damit niemand sein Gerät aus dem WLAN wirft.", "Der gPlug liest normalerweise den Smart Meter aus. Darauf läuft Tasmota, und Tasmota kann Berry-Skripte ausführen. Unsere App ist so ein Skript. Das Gerät ist klein: rund 110 kB freier Speicher, und jeder Callback blockiert das ganze Gerät, also maximal 50 ms. Das muss auch der Agent wissen, deshalb steht es in AGENTS.md. Heute ohne Zähler: der Simulator füllt das Chart.", "Euer gPlug kennt nur euer Heim-WLAN. Findet er es nicht, öffnet er ein eigenes WLAN; darüber tragt ihr das Workshop-WLAN ein. Danach müssen Notebook und gPlug im selben Netz sein, sonst erreichen die Skripte das Gerät nicht. Ins Internet gehen drei Dinge: das Docker-Image, das Sprachmodell und die BKW-Preise. Der Emulator-Track baut sein Image vor Ort und braucht dafür einmal Docker Hub, Debian, GitHub, opencode.ai und claude.ai. Helfer kommen um 17:45 an die Tische.", "Was braucht ihr zuhause? Immer: den gPlug zurück im Heim-WLAN, den Workshop-Ordner und die neue IP in .gplug. Ohne KI reichen Texteditor und Browser: Datei ändern, über die WebUI hochladen, in der Konsole BrRestart. Dann die Konsole lesen: Zeilen mit BRY: kommen von Berry. Berry initialized und Successfully loaded sind normal. Steht nach BRY: ein Fehler mit Zeilennummer, etwa ein Syntaxfehler oder ein fehlendes var, dann dort in spot.be nachsehen. Wer die Skripte mag, nimmt upload.sh und log.sh. Mit KI ist es dasselbe Setup wie heute, nur mit eigenem Zugang: Infomaniak AI Tools aktivieren, Kreditkarte und Ausgabenlimite, API-Token erstellen, zwei Variablen setzen, docker-run.sh. Achtung, zwei Bedeutungen von Token: Der API-Token ist euer Schlüssel, geheim halten, nie committen. Tokens sind die Textstücke, die das Modell liest und schreibt; jeder Prompt schickt Code und Kontext mit, darum kostet ein langer Chat mehr als ein kurzer. Abgerechnet wird pro Million Tokens, getrennt nach Input und Output. Die Ausgabenlimite schützt vor Überraschungen. Neukunden bekommen Gratis-Credits für einen Monat. Wer lieber Claude nutzt: Anleitung steht in SETUP_OPENCODE.md."];
+const notes = ["15 Minuten. Ziel ist ein Überblick, keine Details. Zuerst ein Bild davon, wie die KI arbeitet: Auftrag, Rucksack, Kopf, Resultat. Darauf bauen wir die Infrastruktur auf: Wo sitzt was? Details stehen im RUNBOOK.md, hier nur das Bild im Kopf.", "Bevor wir über Docker und Netz reden: Wie funktioniert das eigentlich? Stellt euch einen sehr belesenen Handwerker vor. Der Prompt ist euer Auftrag, zum Beispiel: Zeige den Verbrauch in kWh im Chart. Das Modell ist sein Kopf: trainiert mit riesigen Mengen Text und Code, aber danach fest. Es lernt im Gespräch nichts dazu und kennt euer Projekt nicht. Alles Projektwissen steckt im Rucksack, dem Kontext: der Code spot.be, die Regeln in AGENTS.md, die API-Doku, Logs vom Gerät und der bisherige Chat. Der Rucksack hat eine begrenzte Grösse; wird er voll, wird Altes zusammengefasst, und ein neuer Chat beginnt mit leerem Rucksack. Die Antwort entsteht Wort für Wort, jeweils das wahrscheinlichste nächste Stück. Sie klingt immer überzeugt, auch wenn sie falsch ist. Was nicht im Rucksack liegt, muss die KI raten, so entstehen erfundene Funktionen. Darum verlangt AGENTS.md: zuerst lesen, nicht raten. Und darum prüft der Agent nach jedem Upload Log und Resultat. Das Modell könnt ihr nicht ändern, den Rucksack schon. Dieses Bild begleitet uns durch die nächsten Folien: Jeder Teil der Infrastruktur ist entweder Auftrag, Rucksack, Kopf oder Weg zum Resultat.", "Jetzt dasselbe Bild als Infrastruktur. Links euer Notebook: Docker startet einen Container, darin läuft der Agent opencode. Er nimmt euren Auftrag entgegen und packt den Rucksack aus dem Workshop-Ordner. Auftrag und Rucksack gehen per HTTPS zum Kopf, dem Sprachmodell bei Infomaniak in der Schweiz; zurück kommt die Antwort. Das Resultat landet auf dem gPlug: Zu ihm spricht der Agent nur über drei Skripte, per HTTP im Workshop-WLAN. Der gPlug selbst holt die Einspeisepreise bei der BKW. Ihr schaut im Browser auf die WebUI des gPlug.", "opencode ist ein Open-Source-Agent fürs Terminal. Bei ihm gebt ihr den Auftrag ein, und er packt den Rucksack: Er liest Dateien, schreibt Code und führt Befehle aus. Oben rechts seht ihr auf jeder Folie, bei welchem Teil des Bildes wir sind. Die Regeln für unser Projekt stehen in AGENTS.md, die liest er von selbst; sie liegt also immer im Rucksack. Welche Befehle er ohne Rückfrage ausführen darf, steht in opencode.json. Im Plan-Modus darf er nur lesen und planen; zum Ändern und Hochladen wechselt ihr mit Shift+Tab in den Build-Modus. Mehr zum Prompten um 18:25.", "Wo läuft der Agent, und was kann er in den Rucksack packen? Docker gibt allen dieselbe Umgebung, egal ob Mac, Linux oder Windows mit WSL. Das Image kommt fertig von GitHub, nichts zu bauen. Wichtig ist die Grenze: Im Container sieht der Agent nur den Workshop-Ordner. Mehr kann nicht in den Rucksack, und er kann nichts auf eurem Notebook kaputt machen. Der Verlauf, also ein Teil des Rucksacks, bleibt zwischen den Sitzungen erhalten. Der Zugang zum Sprachmodell steckt im Workshop-Image und gilt nur heute.", "Jetzt der Kopf. Der Agent ist nur so gut wie das Modell dahinter. Wir nutzen ein offenes Modell bei Infomaniak, einem Schweizer Anbieter: Prompts und Code bleiben in der Schweiz. Bei jedem Prompt schickt opencode Auftrag und Rucksack hin und bekommt die Antwort zurück. Das Modell selbst merkt sich nichts, darum reist der Rucksack jedes Mal mit. Der Zugang im Image gilt nur heute; wer weitermachen will, findet in SETUP_OPENCODE.md den Weg zu einem eigenen Zugang.", "Bleibt das Resultat: Wie kommt der Code aufs Gerät, und wie wird er geprüft? Der Agent hat keine Hände am Gerät, nur diese drei Skripte. Upload lädt die App hoch und startet sie neu. brcmd führt einen Berry-Ausdruck aus, so prüft der Agent selbst, ob seine Änderung wirkt. log zeigt Fehlermeldungen; die liest der Agent nach jedem Upload. Diese Meldungen landen wieder im Rucksack: Der Kreis schliesst sich, und der nächste Prompt weiss, was auf dem Gerät passiert ist. Gefährliche Befehle sind gesperrt, damit niemand sein Gerät aus dem WLAN wirft. Der gPlug ist ein kleines Gerät mit wenig Speicher. Darum arbeiten wir in kleinen Schritten und prüfen nach jedem Upload.", "Was braucht ihr zuhause? Immer: den gPlug zurück im Heim-WLAN, den Workshop-Ordner und die neue IP in .gplug. Ohne KI reichen Texteditor und Browser: Datei ändern, über die WebUI hochladen, in der Konsole BrRestart. Dann die Konsole lesen: Zeilen mit BRY: kommen von Berry. Berry initialized und Successfully loaded sind normal. Steht nach BRY: ein Fehler mit Zeilennummer, etwa ein Syntaxfehler oder ein fehlendes var, dann dort in spot.be nachsehen. Wer die Skripte mag, nimmt upload.sh und log.sh. Mit KI ist es dasselbe Setup wie heute, nur mit eigenem Zugang: Infomaniak AI Tools aktivieren, Kreditkarte und Ausgabenlimite, API-Token erstellen, zwei Variablen setzen, docker-run.sh. Achtung, zwei Bedeutungen von Token: Der API-Token ist euer Schlüssel, geheim halten, nie weitergeben. Tokens sind die Textstücke, die das Modell liest und schreibt; jeder Prompt schickt Code und Kontext mit, darum kostet ein langer Chat mehr als ein kurzer. Abgerechnet wird pro Million Tokens, getrennt nach Input und Output. Die Ausgabenlimite schützt vor Überraschungen. Neukunden bekommen Gratis-Credits für einen Monat. Wer lieber Claude nutzt: Anleitung steht in SETUP_OPENCODE.md."];
 const slides = [...document.querySelectorAll('.slide')];
 const stage = document.getElementById('stage');
 let i = Math.min(Math.max(parseInt(location.hash.slice(1)) - 1 || 0, 0), slides.length - 1);

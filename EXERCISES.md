@@ -217,7 +217,7 @@ Daten vollständig, Darstellung minimal:
 
 ## Farbcode: plan oder build
 
-opencode hat zwei Agenten. Der aktive steht unten im Eingabefeld, **`Tab`** wechselt. Der
+opencode hat zwei Agenten. Der aktive steht unten im Eingabefeld, **`Shift+Tab`** wechselt. Der
 Gesprächsverlauf bleibt erhalten.
 
 > [!NOTE]
@@ -245,7 +245,7 @@ schreibst ihn besser. Dabei lernst du die beiden Agenten (plan, build) und die d
 <details>
 <summary><b>0.1 Einfacher Prompt</b> 🔵</summary>
 
-> **🔵 PLAN** – `Tab`, bis unten `Plan` steht. Prompt einfügen, genau so kurz.
+> **🔵 PLAN** – `Shift+Tab`, bis unten `Plan` steht. Prompt einfügen, genau so kurz.
 
 ```
 Schreibe eine Hello-World-App für den gPlug.
@@ -329,7 +329,7 @@ Neuen Plan mit dem aus 0.1 vergleichen: Was ist jetzt festgelegt, was rät der A
 <details>
 <summary><b>0.4 Umsetzen lassen</b> 🟢</summary>
 
-> **🟢 BUILD** – `Tab`, bis unten `Build` steht. Prompt einfügen.
+> **🟢 BUILD** – `Shift+Tab`, bis unten `Build` steht. Prompt einfügen.
 
 ```
 Setze den Plan um, in dieser Reihenfolge:
@@ -400,7 +400,7 @@ Viertelstunde) hinter der Preislinie, eigene Achse links.
 <details>
 <summary><b>1.1 Planen lassen</b> 🔵</summary>
 
-> **🔵 PLAN** – `Tab`, bis unten `Plan` steht. Prompt einfügen.
+> **🔵 PLAN** – `Shift+Tab`, bis unten `Plan` steht. Prompt einfügen.
 
 ```
 Lies @AGENTS.md, @TASMOTA_BERRY_API.md und in @app/spot.be den Abschnitt "F3  Chart" mit dem
@@ -432,7 +432,7 @@ Rückbau.
 <details>
 <summary><b>1.2 Umsetzen lassen</b> 🟢</summary>
 
-> **🟢 BUILD** – `Tab`, bis unten `Build` steht. Prompt einfügen.
+> **🟢 BUILD** – `Shift+Tab`, bis unten `Build` steht. Prompt einfügen.
 
 ```
 Setze den Plan um, in dieser Reihenfolge:
@@ -536,7 +536,7 @@ Hängen geblieben? `cp app/steps/spot_1.be app/spot.be && ./upload.sh app/spot.b
 <details>
 <summary><b>2.1 Planen lassen</b> 🔵</summary>
 
-> **🔵 PLAN** – zurück auf plan: `Tab`, bis unten `Plan` steht. Prompt einfügen.
+> **🔵 PLAN** – zurück auf plan: `Shift+Tab`, bis unten `Plan` steht. Prompt einfügen.
 
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 2".
@@ -560,7 +560,7 @@ prüfen, «mach es orange» nicht.
 <details>
 <summary><b>2.2 Umsetzen lassen</b> 🟢</summary>
 
-> **🟢 BUILD** – `Tab`, bis unten `Build` steht. Gleicher Prompt wie in Schritt 1.
+> **🟢 BUILD** – `Shift+Tab`, bis unten `Build` steht. Gleicher Prompt wie in Schritt 1.
 
 ```
 Setze den Plan um, in dieser Reihenfolge:
