@@ -1,6 +1,6 @@
 #!/bin/sh
 # sync_participant.sh – Stand dieses Repos ins Teilnehmer-Repo (gplug-ch/ki-workshop) übertragen.
-#   tools/sync_participant.sh ../workshop-261112
+#   tools/sync_participant.sh ../workshop-270114
 # Kopiert alle committeten Dateien ausser den internen (INTERN), löscht dort Dateien, die es hier
 # nicht mehr gibt, und entfernt im README den Block <!-- kursleitung -->. Committet nicht:
 # Ergebnis mit git diff im Ziel prüfen, dann dort committen und pushen.

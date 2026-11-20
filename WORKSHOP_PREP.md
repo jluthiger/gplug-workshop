@@ -1,4 +1,4 @@
-# Workshop-Vorbereitung DIY Tasmota/Berry App — 12.11.2026
+# Workshop-Vorbereitung DIY Tasmota/Berry App — 14.01.2027
 
 Checkliste für eine reibungslose Durchführung. Ergänzt `INTENT.md` (App) und `TASMOTA_BERRY_API.md` (Agent-Kontext).
 Rahmen: Do 17:00, ca. 3 h, 20 + 4 Teilnehmende, BYOD (eigener gPlug, eigenes Notebook mit USB), Barzahlung vor Ort.

@@ -14,7 +14,7 @@ Tasmota-WebUI.
 
 Ablauf pro Durchführung im Ordner [`workshop-instances/`](workshop-instances/):
 
-- [Do 12.11.2026, 17:00–20:00](workshop-instances/2026-11-12.md)
+- [Do 14.01.2027, 17:00–20:00](workshop-instances/2027-01-14.md)
 
 ## Mitbringen
 
