@@ -2,20 +2,19 @@
 
 📄 [Diese Übung als PDF (A4)](docs/EXERCISES.pdf) · [Begriffe: LEGENDE.md](LEGENDE.md)
 
-Gegenstand der Übungen ist der **Arbeitszyklus mit dem Agenten**: Kontext geben → kleine,
-prüfbare Aufgabe formulieren → Code aufs Gerät laden → Konsole lesen → Fehler wörtlich
-zurückgeben. Die Berry-App `app/spot.be` ist nur das Übungsobjekt. Die Übungen ändern nur die
-Darstellung, nie den Datenfluss; bei Fehlern bleibt der Kern der App intakt.
-
-Grundlagen: `AGENTS.md` (Regeln und Werkzeuge, liest der Agent automatisch), `TASMOTA_BERRY_API.md`
-(die Tasmota-API, ohne die der Agent rät), `SETUP_OPENCODE.md` §7 (Arbeitsweise im Agenten).
+Du übst den **Arbeitszyklus mit dem Agenten**: planen lassen → umsetzen lassen → Log lesen →
+Fehler wörtlich zurückgeben → selbst prüfen. Die Berry-App `app/spot.be` ist nur das
+Übungsobjekt. Vorher machst du den Zyklus einmal von Hand (Schritt 0). Von oben nach unten lesen und
+Punkt für Punkt aufklappen (▸).
 
 ## Überblick: Hello World, dann vom Starter zur Referenz-App in 4 Schritten, dazu Schritt 5
 
-Zuerst schreibt jede und jeder **von Hand** ein Hello World aufs Gerät (Schritt 0, ohne Agent und
-ohne Skripte). Danach erhalten Teilnehmende im Docker-Container einen **Starter** und bauen die
-Grafik in vier Schritten bis zum Zielbild `docs/zielbild.jpg` aus. Schritt 5 für Fortgeschrittene
-geht darüber hinaus: 2 Tage mit Viertelstunden statt 3 Tage mit Stundenwerten.
+**Teil A:** ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte). **Teil B:** vom **Starter**
+(nur Preislinie) zum Zielbild `docs/zielbild.jpg`. **Im Zeitplan: Schritt 0 (~10 min) und
+Schritte 1 und 2** (Übungsblock 45 min). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
+
+<details>
+<summary>Alle Schritte im Überblick (Tabelle)</summary>
 
 | Schritt | Ziel | Sichtbares Resultat | Lernziel KI |
 |---|---|---|---|
@@ -27,18 +26,164 @@ geht darüber hinaus: 2 Tage mit Viertelstunden statt 3 Tage mit Stundenwerten.
 | 4 Vergütungs-Chart | Zweites Chart darunter: CHF/h gelb/rot, Σ über 3 Tage | Zielbild komplett | Auf eigenem Ergebnis aufbauen; Wiederverwendung einfordern |
 | 5 2 Tage, Viertelstunden | 192 ¼-h-Werte: gestern + heute, ab Preisen für morgen heute + morgen; Preis als Treppe | Preisspitzen innerhalb der Stunde sichtbar | Konstanten statt Zahlen; Kosten (Bytes, ms, Heap) messen lassen |
 
-- Jeder Schritt ist in der WebUI sichtbar und für sich lauffähig. 1–2 ändern nur den einen Tag
-  (klein, schnell), 3 ist der Umbau, 4 baut auf 3 auf. Schritte 1–2 gelingen auch, wenn 3 scheitert.
-- **Im Zeitplan: Schritt 0 (vor dem Starter, ~10 min) und Schritte 1 und 2** (Übungsblock 45 min:
-  ~20 + ~15 min, Rest Puffer). **Optional, nicht eingeplant:** Schritte 3 und 4 für Schnelle,
-  Schritt 5 für Fortgeschrittene (baut auf 4 auf, ändert das Zielbild).
-- **Checkpoints**: `app/steps/spot_1.be` … `spot_5.be` enthalten den fertigen Stand nach jedem
-  Schritt. Wer hängen bleibt, kopiert den vorherigen Checkpoint nach `app/spot.be` und macht dort
-  weiter (`cp app/steps/spot_2.be app/spot.be && ./upload.sh app/spot.be`).
+**Checkpoints**: `app/steps/spot_0.be` (Starter) … `spot_5.be` enthalten den fertigen Stand nach
+jedem Schritt. Wer hängen bleibt, kopiert selbst den passenden nach `app/spot.be`.
 
-### Starter
+</details>
 
-Ausgangspunkt nach Schritt 0, Stand auch in `app/steps/spot_0.be`.
+---
+
+# Teil A – Von Hand, ohne Agent
+
+Nur Texteditor und Browser. Kein opencode, kein Terminal, keine Skripte.
+
+## Schritt 0 – Hello World von Hand (alle, ~10 min)
+
+**Ziel:** Du hast den ganzen Zyklus einmal von Hand gemacht: **Code schreiben → aufs Gerät
+laden → laufen lassen → Resultat ansehen → ändern.** In der WebUI steht die Zeile «Hallo gPlug».
+
+Kursleitung zeigt es am Beamer (3 min), danach alle selbst. Punkt für Punkt aufklappen. Wenn die
+Zeile steht und aufgeräumt ist, weiter mit `RUNBOOK.md` Schritt 7 (Starter aufs Gerät), danach
+hier bei *Teil B*.
+
+<details open>
+<summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
+
+Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
+
+<details>
+<summary><b>Die App <code>app/hello.be</code></b></summary>
+
+Liegt fertig im Workshop-Ordner. Im Texteditor öffnen:
+
+```berry
+# hello.be – Schritt 0: Hello World auf dem gPlug
+# Von Hand hochladen (Werkzeuge -> Dateisystem verwalten), laden in der Konsole mit:
+#   Br load("hello")
+# Steht nicht in autoexec.be: der nächste BrRestart (Upload des Starters) entfernt die App.
+
+import global
+
+class Hello
+  var start                       # tasmota.millis() beim Laden
+
+  def init()
+    self.start = tasmota.millis()
+  end
+
+  # Zeile im Sensorbereich der WebUI, wird alle paar Sekunden neu geholt
+  def web_sensor()
+    var s = (tasmota.millis() - self.start) / 1000
+    tasmota.web_send("{s}Hallo gPlug{m}läuft seit " + str(s) + " s{e}")
+  end
+end
+
+# Nochmals laden ersetzt die alte Instanz, statt eine zweite Zeile anzuhängen
+if global.contains("hello") && global.hello != nil
+  tasmota.remove_driver(global.hello)
+end
+global.hello = Hello()
+tasmota.add_driver(global.hello)
+log("HELLO: Hallo Welt", 2)
+```
+
+</details>
+
+<details>
+<summary><b>1. Hochladen</b></summary>
+
+WebUI → *Werkzeuge* (*Tools*) → *Dateisystem verwalten* (*Manage File system*) → Datei
+`app/hello.be` wählen → hochladen.
+
+Erwartet: `hello.be` erscheint in der Dateiliste.
+
+</details>
+
+<details>
+<summary><b>2. Laden</b></summary>
+
+*Werkzeuge* → *Konsole* (*Console*), eingeben:
+
+```
+Br load("hello")
+```
+
+Erwartet: `HELLO: Hallo Welt`, danach `RESULT = {"Br":"true"}`. Keine Zeile mit `BRY:` und
+Fehlermeldung.
+
+</details>
+
+<details>
+<summary><b>3. Resultat ansehen</b></summary>
+
+*Hauptmenü* (*Main Menu*).
+
+Erwartet: Zeile **Hallo gPlug**, rechts **läuft seit N s**; die Sekunden zählen bei jedem
+Refresh (alle paar Sekunden) hoch.
+
+</details>
+
+<details>
+<summary><b>4. Ändern, nochmals</b></summary>
+
+In `app/hello.be` den Text `Hallo gPlug` durch den eigenen Namen ersetzen, speichern, Punkte 1–3
+wiederholen (gleicher Dateiname überschreibt).
+
+Erwartet: die Zeile zeigt den neuen Text, die Sekunden beginnen bei 0, es bleibt **eine** Zeile
+(die App ersetzt beim Laden ihre alte Instanz).
+
+</details>
+
+<details>
+<summary><b>5. Optional: Fehler ansehen</b></summary>
+
+Ein `end` löschen, hochladen, laden.
+
+Erwartet: `BRY:`-Zeile mit Fehler und Zeilennummer. So sehen Berry-Fehler aus; du brauchst sie
+in den nächsten Schritten wieder. Danach `end` wieder einfügen, hochladen, laden.
+
+</details>
+
+<details>
+<summary><b>6. Aufräumen</b></summary>
+
+*Werkzeuge* → *Konsole*, eingeben:
+
+```
+Br tasmota.remove_driver(global.hello) global.hello = nil
+```
+
+Erwartet: im *Hauptmenü* ist die Zeile «Hallo gPlug» weg. Die Datei `hello.be` darf auf dem
+Gerät bleiben (sie steht nicht in `autoexec.be`, startet also nie von selbst) oder unter
+*Dateisystem verwalten* gelöscht werden.
+
+</details>
+
+</details>
+
+---
+
+# Teil B – Mit dem Agenten
+
+Ab hier arbeitest du mit opencode. Was du in Schritt 0 von Hand gemacht hast, erledigen Skripte:
+`upload.sh` = hochladen + laden, `log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
+
+## Vorbereitung (5 min)
+
+Der Starter ist auf dem Gerät (`RUNBOOK.md` Schritt 7).
+
+1. Geräte-IP prüfen (RUNBOOK, Schritt 7.1): `cat .gplug`
+2. Gerät antwortet mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
+   ```sh
+   ./brcmd.sh 'tasmota.cmd("SpotStatus")'
+   ```
+3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
+4. opencode starten: `./docker-run.sh` (ohne Docker: `opencode` im Repo-Ordner).
+
+<details>
+<summary>Starter: was schon da ist</summary>
+
+Ausgangspunkt für Schritt 1, Stand auch in `app/steps/spot_0.be`.
 
 ![Starter: nur die Preislinie, 1 Tag](docs/steps/schritt_0.png)
 
@@ -61,150 +206,39 @@ Daten vollständig, Darstellung minimal:
 - Cursor-Script in allen Stufen gleich: es zeigt jeden vorhandenen Wert (`data-p`, `data-e`,
   `data-v`) und rechnet die Zeit aus `data-m` (15 oder 60 min). Kein Schritt ändert das Script.
 
-## Schritt 0 – Hello World von Hand (alle, ~10 min)
+</details>
 
-Einmal den nackten Zyklus sehen, bevor Skripte und Agent ihn verstecken: **Code schreiben → aufs
-Gerät laden → laufen lassen → Resultat ansehen → ändern, nochmals.** Nur Texteditor und
-Tasmota-WebUI, kein `upload.sh`, `brcmd.sh`, `log.sh`, kein Agent. Kursleitung zeigt es einmal am
-Beamer (3 min), danach alle selbst. Zeitpunkt: nach `RUNBOOK.md` Schritt 5 (Firmware, Zeitzone),
-vor dem Starter (Schritt 7).
+## Farbcode: plan oder build
 
-Die App `app/hello.be` (fertig im Workshop-Ordner, im Texteditor öffnen):
+opencode hat zwei Agenten. Der aktive steht unten im Eingabefeld, **`Tab`** wechselt. Der
+Gesprächsverlauf bleibt erhalten.
 
-```berry
-class Hello
-  var start                       # tasmota.millis() beim Laden
-  def init()
-    self.start = tasmota.millis()
-  end
-  def web_sensor()                # Zeile im Sensorbereich der WebUI
-    var s = (tasmota.millis() - self.start) / 1000
-    tasmota.web_send("{s}Hallo gPlug{m}läuft seit " + str(s) + " s{e}")
-  end
-end
-...
-tasmota.add_driver(global.hello)  # Tasmota ruft web_sensor() bei jedem Seiten-Refresh
-log("HELLO: Hallo Welt", 2)       # Zeile in der Konsole
-```
+> [!NOTE]
+> **🔵 PLAN** – Agent liest nur. Für den Prompt «planen».
 
-Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
+> [!TIP]
+> **🟢 BUILD** – Agent ändert Dateien und führt Befehle aus (nach Freigabe). Für «umsetzen» und
+> «Fehler zurückgeben».
 
-1. **Hochladen**: WebUI → *Werkzeuge* (*Tools*) → *Dateisystem verwalten* (*Manage File system*)
-   → Datei `app/hello.be` wählen → hochladen. Erwartet: `hello.be` erscheint in der Dateiliste.
-2. **Laden**: *Werkzeuge* → *Konsole* (*Console*), eingeben:
-   ```
-   Br load("hello")
-   ```
-   Erwartet in der Konsole: `HELLO: Hallo Welt`, danach `RESULT = {"Br":"true"}`. Keine Zeile mit
-   `BRY:` und Fehlermeldung.
-3. **Resultat ansehen**: *Hauptmenü* (*Main Menu*). Erwartet: Zeile **Hallo gPlug**, rechts
-   **läuft seit N s**; die Sekunden zählen bei jedem Refresh (alle paar Sekunden) hoch.
-4. **Ändern, nochmals**: In `app/hello.be` den Text `Hallo gPlug` durch den eigenen Namen ersetzen,
-   speichern, Schritte 1–3 wiederholen (gleicher Dateiname überschreibt). Erwartet: die Zeile zeigt
-   den neuen Text, die Sekunden beginnen bei 0, es bleibt **eine** Zeile (die App ersetzt beim
-   Laden ihre alte Instanz).
-5. Optional, **Fehler ansehen**: ein `end` löschen, hochladen, laden. Erwartet: `BRY:`-Zeile mit
-   Fehler und Zeilennummer. Genau solche Zeilen gebt ihr später wörtlich an den Agenten. Danach
-   `end` wieder einfügen.
+> [!WARNING]
+> **⚠️ Stolperstein** – was hier typischerweise schiefgeht.
 
-**Aufräumen**: nichts nötig. `hello.be` steht nicht in `autoexec.be`; der Upload des Starters
-(`./upload.sh`, macht `BrRestart`) entfernt die App, die Zeile verschwindet. Die Datei darf auf dem
-Gerät bleiben oder unter *Dateisystem verwalten* gelöscht werden. Sofort ohne Neustart stoppen:
-`Br tasmota.remove_driver(global.hello) global.hello = nil`.
-
-Ab jetzt erledigen das die Skripte: `upload.sh` = Schritte 1 + 2 (mit `BrRestart` statt `load`),
-`log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
-
-## Vorbereitung (5 min)
-
-1. Geräte-IP prüfen (eingetragen im RUNBOOK, Schritt 7.1). Erwartet: die IP, z.B. `192.168.1.50`.
-   ```sh
-   cat .gplug
-   ```
-2. Gerät antwortet, erwartet JSON mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
-   ```sh
-   ./brcmd.sh 'tasmota.cmd("SpotStatus")'
-   ```
-3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
-4. opencode starten:
-   ```sh
-   ./docker-run.sh
-   ```
-   Nur ohne Docker (nativ installiert, `SETUP_OPENCODE.md`), im Repo-Ordner:
-   ```sh
-   opencode
-   ```
-   opencode startet im **build**-Agent; vor dem ersten Prompt auf **plan** schalten (`Tab`, siehe
-   *Ablauf pro Schritt*).
-
-## Ablauf pro Schritt
-
-opencode hat zwei Agenten. Welcher aktiv ist, steht unten im Eingabefeld (`Plan` bzw. `Build`).
-Umschalten mit **`Tab`** (oder `Shift+Tab`), jedes Drücken wechselt zum anderen Agenten. Der
-Gesprächsverlauf bleibt beim Wechsel erhalten: der Build-Agent kennt den Plan.
-
-| Agent | darf | wofür |
-|---|---|---|
-| **plan** | nur lesen, nichts ändern, nicht hochladen | Prompt «planen» |
-| **build** | Dateien ändern, Befehle ausführen (nach Freigabe) | Prompt «umsetzen», «Fehler zurückgeben» |
-
-opencode startet im **build**-Agent. Jeder Schritt läuft so:
-
-1. **Auf plan schalten**: `Tab` drücken, bis unten `Plan` steht.
-2. Prompt «planen» des Schritts einfügen, absenden. Plan lesen; weicht er von den Vorgaben ab
-   (eigene Zeichenschleife, Checkboxen, JavaScript): im plan-Agent ablehnen, Vorgabe zitieren,
-   neuen Plan verlangen. Erst weiter, wenn der Plan stimmt.
-3. **Auf build schalten**: `Tab` drücken, bis unten `Build` steht.
-4. Prompt «umsetzen» (gleich für alle Schritte, unten) einfügen, absenden. Shell-Befehle einzeln
-   freigeben (nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `berry`, `cp`, `git`).
-5. Fehler im **build**-Agent mit Prompt «Fehler zurückgeben» melden (nicht umschalten).
-6. Prüfschritte selbst durchgehen, in der WebUI ansehen, Stand sichern: Kopie
-   `cp app/spot.be spot_schritt1.be` (Nummer des Schritts); wer git kennt: `git commit`.
-7. Nächster Schritt: wieder bei 1, **zurück auf plan**.
-
-Merkregel: **planen = plan, alles andere = build.** Antwortet der Agent auf «umsetzen» nur mit
-Text und ändert nichts, ist noch plan aktiv: auf build schalten, Prompt nochmals senden.
-
-### Prompt «umsetzen» (alle Schritte, im build-Agent)
-
-```
-Setze den Plan um, in dieser Reihenfolge:
-1. Änderung in app/spot.be.
-2. cd app && berry desktop_harness.be – muss mit HARNESS OK enden.
-3. ./upload.sh app/spot.be, danach ./log.sh. Jede Zeile mit BRY: oder SPOT: wörtlich zeigen.
-4. ./brcmd.sh 'tasmota.gc()' und ./brcmd.sh 'tasmota.memory("heap_free")', Heap melden.
-Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe ich selbst.
-```
-
-### Prompt «Fehler zurückgeben» (im build-Agent)
-
-```
-./log.sh zeigt nach dem Upload:
-<Zeilen wörtlich einfügen>
-Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
-```
+Merkregel: **planen = plan, alles andere = build.** opencode startet im **build**-Agent.
 
 ## Schritt 1 – Energie-Balken (Pflicht, ~20 min)
 
+**Ziel:** Die App zeigt neben dem Preis auch deine Einspeisung: grüne Balken (kWh pro
+Viertelstunde) hinter der Preislinie, eigene Achse links.
+
+<details open>
+<summary><b>Schritt 1 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
+
 ![Ziel Schritt 1: grüne Energie-Balken, kWh-Achse links](docs/steps/schritt_1.png)
 
-### Aufgabe
+<details>
+<summary><b>1.1 Planen lassen</b> 🔵</summary>
 
-Das Chart zeigt nur die Preislinie. Ergänze die **eingespeiste Energie pro Viertelstunde (kWh) als
-grüne Balken** hinter der Linie, mit eigener Achse links.
-
-Vorgaben:
-
-- Datenquelle `self.store.energy_at(key, slot)` (Einheit 0.01 kWh, `nil` = Lücke, kein Balken).
-- Kurzbuchstabe `e` (SVG-Gruppe `se`), Farbe `COL_ENERGY` (grün).
-- Achse **links** mit kWh-Werten von 0 bis Tagesmaximum, Beschriftung «kWh» oben links. Das ist
-  die einzige neue Achse; die Preisachse rechts bleibt unverändert.
-- Eintrag «Einspeisung» in der Legende mit Balkensymbol `&#9632;`, ein-/ausblendbar wie Spotpreis.
-- Balken vor der Preislinie zeichnen (Linie liegt oben).
-- Bestehende Helfer verwenden (`chart_curves`, `value_range`, `y_scale`). Keine neue Schleife über
-  die Slots ausserhalb einer Methode `send_bars`, kein JavaScript, nichts anderes ändern.
-
-### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
+> **🔵 PLAN** – `Tab`, bis unten `Plan` steht. Prompt einfügen.
 
 ```
 Lies @AGENTS.md, @TASMOTA_BERRY_API.md und in @app/spot.be den Abschnitt "F3  Chart" mit dem
@@ -223,51 +257,124 @@ Schreibe einen Plan: welche Methoden du änderst oder neu anlegst und wie du das
 (Desktop-Harness, upload.sh, log.sh, Heap). Frag nach, wenn etwas unklar ist. Noch nichts ändern.
 ```
 
-### Erwartetes Resultat
+*Warum?* Einen falschen Ansatz im Plan zu erkennen kostet eine Minute, im Code einen Upload und
+Rückbau.
 
-- Grüne Balken mit Tageskurve (Simulator: Maximum um 12:40, Sockel 0.3 kW = 0.075 kWh/¼ h).
+> **⚠️ Plan ablehnen bei:** eigener Zeichenschleife ausserhalb `send_bars` · Checkboxen oder
+> `<script>` (laufen in Tasmota nie) · weiteren Achsen · Funktionen, die nicht in
+> `TASMOTA_BERRY_API.md` stehen · Änderungen ausserhalb der Aufgabe. Im plan-Agent bleiben,
+> Vorgabe zitieren, neuen Plan verlangen.
+
+</details>
+
+<details>
+<summary><b>1.2 Umsetzen lassen</b> 🟢</summary>
+
+> **🟢 BUILD** – `Tab`, bis unten `Build` steht. Prompt einfügen.
+
+```
+Setze den Plan um, in dieser Reihenfolge:
+1. Änderung in app/spot.be.
+2. cd app && berry desktop_harness.be – muss mit HARNESS OK enden.
+3. ./upload.sh app/spot.be, danach ./log.sh. Jede Zeile mit BRY: oder SPOT: wörtlich zeigen.
+4. ./brcmd.sh 'tasmota.gc()' und ./brcmd.sh 'tasmota.memory("heap_free")', Heap melden.
+Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe ich selbst.
+```
+
+Shell-Befehle einzeln freigeben, nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `berry`, `cp`, `git`.
+
+*Warum?* Der Harness findet Syntaxfehler in Sekunden ohne Gerät; die feste Reihenfolge
+verhindert übersprungene Prüfungen.
+
+> **⚠️** Agent antwortet nur mit Text: noch plan aktiv, auf build schalten. Aufs Gerät gehört
+> nur `app/spot.be`. Kein `BrRestart`/`Restart` über `brcmd.sh`.
+
+</details>
+
+<details>
+<summary><b>1.3 Log lesen, Fehler zurückgeben</b> 🟢</summary>
+
+Ausgabe von `./log.sh` selbst lesen:
+
+- **`BRY:`** – Berry konnte die App nicht laden oder ausführen (Syntax, strict mode), meist mit
+  Zeilennummer.
+- **`SPOT:`** – die App hat in einem Callback einen Fehler abgefangen (`SPOT: page_svg …`).
+- Keines von beiden: App geladen, weiter bei 1.4.
+
+> **🟢 BUILD** – nicht umschalten. Fehlerzeilen wörtlich zurückgeben.
+
+```
+./log.sh zeigt nach dem Upload:
+<Zeilen wörtlich einfügen>
+Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
+```
+
+*Warum?* `upload.sh` meldet `OK`, sobald die Datei auf dem Gerät liegt; ob Berry sie laden
+konnte, steht nur im Log. Aus der wörtlichen Meldung findet der Agent die Stelle, aus «geht
+nicht» rät er.
+
+> **⚠️** `BRY:`-Fehler direkt beim Laden: oft fehlendes `var` (strict mode). Zweimal derselbe
+> Fehler: anhalten, Kursleitung fragen oder Checkpoint nehmen.
+
+</details>
+
+<details>
+<summary><b>1.4 Resultat prüfen</b></summary>
+
+```sh
+./brcmd.sh 'tasmota.cmd("SpotStatus")'            # HeapFree nahe Ausgangswert
+./brcmd.sh 'tasmota.gc()'; ./brcmd.sh 'tasmota.memory("heap_free")'   # > 100 kB
+```
+
+Browser: Seite **neu laden** (sonst fehlen Chart oder Cursor). Erwartet:
+
+- Grüne Balken mit Tageskurve (Sim: Maximum um 12:40, Sockel 0.075 kWh/¼ h).
 - Achse links in kWh, Preisachse rechts unverändert, Legende mit «Einspeisung».
 - Summe der Balken ≈ «Einspeisung heute» in der Kopfzeile.
-- `app/sensor.html` (Harness) enthält `<g id='se'>`.
 
-> [!WARNING]
-> **Das Resultat des Agenten kann falsch sein, auch wenn alles «OK» meldet.**
-> `HARNESS OK`, ein sauberes Log und ein Chart mit grünen Balken beweisen nur, dass der Code
-> läuft, **nicht, dass er richtig rechnet**. Der Agent sagt «fertig» genauso überzeugt, wenn die
-> Werte falsch sind.
+*Warum Heap?* Nur ~110 kB RAM frei. Jeder Upload kostet ~1 kB; fällt der Wert stärker, ist die
+Änderung schuld.
+
+> **⚠️ Das Resultat kann falsch sein, auch wenn alles «OK» meldet.** `HARNESS OK` und ein
+> sauberes Log beweisen nur, dass der Code läuft, nicht, dass er richtig rechnet. Typisch:
+> **falsche Skala** (Balken mit Preis-Skala gezeichnet und nur 1–2 Pixel hoch; Achse zeigt «30»
+> statt «0.30» kWh; Balkenhöhe passt nicht zur Achse).
 >
-> Typisches Beispiel: **falsche Skala.**
->
-> - Balken mit der Preis-Skala statt mit eigener kWh-Skala gezeichnet: 0.075 kWh auf einer Achse
->   von 0–15 Rp. ergibt Balken von 1–2 Pixel, das Chart sieht «fast leer» aus.
-> - Achse links in Rohwerten (0.01 kWh) beschriftet: oben steht «30» statt «0.30» kWh.
-> - Achse links beschriftet, Balken aber mit anderem Maximum skaliert: Balkenhöhe passt nicht zur
->   Zahl auf der Achse.
->
-> **Selbst nachrechnen, nicht dem Agenten glauben:** Höchster Balken = Zahl oben an der kWh-Achse?
-> Sockel ≈ 0.075 kWh? Summe ≈ «Einspeisung heute»? Preislinie unverändert wie vorher? Stimmt eine
-> Zahl nicht: Fehler mit konkreten Werten an den Agenten zurückgeben.
+> **Selbst nachrechnen:** Höchster Balken = Zahl oben an der kWh-Achse? Sockel ≈ 0.075 kWh?
+> Summe ≈ «Einspeisung heute»? Stimmt eine Zahl nicht: mit konkreten Werten zurück an den
+> Agenten (🟢 BUILD).
+
+</details>
+
+<details>
+<summary><b>1.5 Stand sichern</b></summary>
+
+```sh
+cp app/spot.be spot_schritt1.be      # oder: git add app/spot.be && git commit -m "Schritt 1"
+```
+
+*Warum?* Rückweg, wenn Schritt 2 schiefgeht, und Vergleich per `diff`.
+
+Hängen geblieben? `cp app/steps/spot_1.be app/spot.be && ./upload.sh app/spot.be`
+
+</details>
+
+</details>
 
 ## Schritt 2 – Negativpreis hervorheben (Pflicht, ~15 min)
 
+**Ziel:** Die App zeigt, wann Einspeisen Geld kostet: Balken orange bei Preis < 0, Bereich unter
+0 Rp. schattiert.
+
+<details open>
+<summary><b>Schritt 2 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
+
 ![Ziel Schritt 2: orange Balken bei Preis < 0, Bereich unter 0 schattiert](docs/steps/schritt_2.png)
 
-### Aufgabe
+<details>
+<summary><b>2.1 Planen lassen</b> 🔵</summary>
 
-Einspeisung bei negativem Preis kostet Geld. Mach das sichtbar: **Balken orange, wenn der Preis im
-Slot < 0 ist**, und **Bereich unter 0 Rp. schattiert** mit Text «negativer Preis».
-
-Vorgaben:
-
-- Farbe `COL_NEG` (orange) für Balken mit `self.store.price(key, slot) < 0`, sonst `COL_ENERGY`.
-- Schattierung: ein Rechteck von der Nulllinie bis zum unteren Rand, halbtransparent, hinter allem.
-  Nur zeichnen, wenn der Tag negative Preise hat (die Preisachse reicht dann unter 0).
-- Legendeneintrag «Einspeisung bei Preis < 0» in Orange.
-- Testfall: Im Sim-Modus hat der heutige Tag ein Mittagstief mit negativen Preisen (Preislinie
-  im Chart unter 0). Nicht über `SpotPrices` prüfen: das zeigt nur die nächsten 10 h, am Abend
-  ist das Mittagstief vorbei.
-
-### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
+> **🔵 PLAN** – zurück auf plan: `Tab`, bis unten `Plan` steht. Prompt einfügen.
 
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 2".
@@ -280,36 +387,102 @@ Nichts anderes ändern. Nenne im Plan, wie du prüfst, dass orange Balken genau 
 Preis erscheinen (der Simulator liefert heute ein Mittagstief < 0). Noch nichts ändern.
 ```
 
-### Erwartetes Resultat
+*Warum ein Testfall im Prompt?* «Orange genau dort, wo der Preis < 0 ist» kann der Agent
+prüfen, «mach es orange» nicht.
 
-- Orange Balken genau dort, wo die Preislinie unter 0 liegt (Sim: Mittagstief).
-- Schattierung nur, wenn der Tag negative Preise hat; ohne sieht das Chart aus wie nach Schritt 1.
+> **⚠️ Plan ablehnen bei:** zweiter Balken-Methode statt Farbwahl in `send_bars` · Checkboxen,
+> `<script>`, weiteren Achsen · Prüfung über `SpotPrices` (zeigt nur die nächsten 10 h).
+
+</details>
+
+<details>
+<summary><b>2.2 Umsetzen lassen</b> 🟢</summary>
+
+> **🟢 BUILD** – `Tab`, bis unten `Build` steht. Gleicher Prompt wie in Schritt 1.
+
+```
+Setze den Plan um, in dieser Reihenfolge:
+1. Änderung in app/spot.be.
+2. cd app && berry desktop_harness.be – muss mit HARNESS OK enden.
+3. ./upload.sh app/spot.be, danach ./log.sh. Jede Zeile mit BRY: oder SPOT: wörtlich zeigen.
+4. ./brcmd.sh 'tasmota.gc()' und ./brcmd.sh 'tasmota.memory("heap_free")', Heap melden.
+Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe ich selbst.
+```
+
+*Warum derselbe Prompt?* Gleiche Meldung bei jedem Schritt: du siehst sofort, wenn eine Prüfung
+fehlt.
+
+> **⚠️ Scope-Creep** («bei der Gelegenheit habe ich auch …»): «nichts anderes ändern»
+> wiederholen, mit `/undo` zurücknehmen.
+
+</details>
+
+<details>
+<summary><b>2.3 Log lesen, Fehler zurückgeben</b> 🟢</summary>
+
+`./log.sh` lesen. Zeile mit `BRY:` oder `SPOT:`-Fehler:
+
+> **🟢 BUILD** – nicht umschalten. Fehlerzeilen wörtlich zurückgeben.
+
+```
+./log.sh zeigt nach dem Upload:
+<Zeilen wörtlich einfügen>
+Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
+```
+
+*Warum «nur diesen Fehler»?* Sonst baut der Agent bei der Fehlersuche weiteres um.
+
+> **⚠️** Zweimal derselbe Fehler: `cp spot_schritt1.be app/spot.be`, neu planen.
+
+</details>
+
+<details>
+<summary><b>2.4 Resultat prüfen</b></summary>
+
+```sh
+./brcmd.sh 'tasmota.cmd("SpotStatus")'            # HeapFree nahe Ausgangswert
+./brcmd.sh 'tasmota.gc()'; ./brcmd.sh 'tasmota.memory("heap_free")'   # > 100 kB
+diff spot_schritt1.be app/spot.be | head -40      # wenige Stellen (oder git diff --stat)
+```
+
+Browser: Seite **neu laden**. Erwartet:
+
+- Orange Balken genau dort, wo die Preislinie unter 0 liegt (Sim: Mittagstief), sonst grün.
+- Schattierung mit Text «negativer Preis» unter der Nulllinie, Legendeneintrag in Orange.
+- Balkenhöhen wie nach Schritt 1.
+
+*Warum der `diff`?* Er zeigt, was der Agent wirklich geändert hat, unabhängig von seiner Meldung.
+
+</details>
+
+<details>
+<summary><b>2.5 Stand sichern</b></summary>
+
+```sh
+cp app/spot.be spot_schritt2.be      # oder: git add app/spot.be && git commit -m "Schritt 2"
+```
+
+Hängen geblieben? `cp app/steps/spot_2.be app/spot.be && ./upload.sh app/spot.be`
+
+</details>
+
+</details>
+
+**Pflichtteil geschafft.** Ablauf ab jetzt: 🔵 planen → Plan prüfen → 🟢 umsetzen → Log lesen →
+Heap und WebUI prüfen → sichern.
 
 ## Schritt 3 – 3 Tage mit Stundenwerten (für Schnelle, ~20 min)
 
+**Ziel:** Die App zeigt den ganzen Speicher: 3 Tage nebeneinander mit Stundenwerten und
+Tagesnamen («Do 11.06.»).
+
+<details>
+<summary><b>Schritt 3 – Anleitung aufklappen</b></summary>
+
 ![Ziel Schritt 3: 3 Tage mit Stundenwerten und Tagesnamen](docs/steps/schritt_3.png)
 
-### Aufgabe
-
-Das Chart zeigt **die 3 Tage im Speicher** (Ringpuffer, ältester links; ab ~17 Uhr ist der
-jüngste Tag morgen) **mit Stundenwerten** statt einem Tag mit Viertelstunden.
-
-Vorgaben:
-
-- 72 Werte. Stundenwert: Preis = **Mittel**, Energie = **Summe** der 4 Viertelstunden. Fehlen
-  alle 4 Werte: Lücke. Stundenwerte **einmal pro Aufruf** von `page_svg` (Handler `/spot.svg`) rechnen
-  (`fill_hours(start)` in feste `bytes`-Puffer), Kurven lesen sie mit `hour_p(i)`/`hour_e(i)`.
-  Grund: 72 × 4 Store-Zugriffe pro Kurve überschreiten sonst die 50-ms-Grenze.
-- x-Achse: Tagesgrenzen gestrichelt, Marken 00 und 12, Tagesname mit Datum unter jedem Tag
-  («Do 11.06.»).
-- «jetzt»-Marke an der richtigen Stunde über alle 3 Tage.
-- Orange-Regel aus Schritt 2 gilt pro Stunde (Stundenpreis < 0).
-- Bestehende Methoden umbauen, nicht kopieren: `value_range`, `send_polyline`, `send_bars`,
-  `send_x_axis` bekommen den Bereich (Starttag, Anzahl Werte) als Parameter.
-- **Heap**: vor und nach der Änderung `tasmota.gc()` + `heap_free` messen, Differenz melden.
-  Mehr als 5 kB Einbruch beim Rendern: anhalten.
-
-### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
+> **🔵 PLAN** – Prompt einfügen. Plan prüfen: jede geänderte Methode aufgelistet, keine Kopien,
+> Heap-Messung vorher/nachher.
 
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 3".
@@ -325,34 +498,69 @@ und nach der Änderung (tasmota.gc(), dann heap_free). Liste im Plan jede Method
 änderst, und warum. Noch nichts ändern.
 ```
 
-### Erwartetes Resultat
+> **🟢 BUILD** – wie in Schritt 1–2: «umsetzen» → Log → Heap und WebUI → sichern
+> (`cp app/spot.be spot_schritt3.be`).
 
-- 3 Tage nebeneinander, Tagesnamen, 72 Balken, Preislinie in Stundenstufen.
-- Vergleich mit der Sicherung des vorherigen Schritts: Umbau in bestehenden Methoden, keine
-  kopierten `send_..._3d`-Varianten.
-- Heap nach Upload und `tasmota.gc()` höchstens ~2 kB unter dem Wert vor dem Schritt.
+**Erwartet:** 3 Tage, Tagesnamen, 72 Balken, Preislinie in Stundenstufen. Heap höchstens ~2 kB
+tiefer als vorher.
+
+> **⚠️ Kopieren statt umbauen** (`send_x_axis_3d`, `value_range2`): «Bau die bestehende Methode
+> um, lösche die Kopie.»
+
+<details>
+<summary>Vorgaben im Detail</summary>
+
+- 72 Werte. Stundenwert: Preis = **Mittel**, Energie = **Summe** der 4 Viertelstunden. Fehlen
+  alle 4 Werte: Lücke. Stundenwerte **einmal pro Aufruf** von `page_svg` (Handler `/spot.svg`) rechnen
+  (`fill_hours(start)` in feste `bytes`-Puffer), Kurven lesen sie mit `hour_p(i)`/`hour_e(i)`.
+  Grund: 72 × 4 Store-Zugriffe pro Kurve überschreiten sonst die 50-ms-Grenze.
+- x-Achse: Tagesgrenzen gestrichelt, Marken 00 und 12, Tagesname mit Datum unter jedem Tag.
+- «jetzt»-Marke an der richtigen Stunde über alle 3 Tage (ältester Tag links; ab ~17 Uhr ist der
+  jüngste Tag morgen).
+- Orange-Regel aus Schritt 2 gilt pro Stunde (Stundenpreis < 0).
+- Bestehende Methoden umbauen, nicht kopieren: `value_range`, `send_polyline`, `send_bars`,
+  `send_x_axis` bekommen den Bereich (Starttag, Anzahl Werte) als Parameter.
+- **Heap**: vor und nach der Änderung `tasmota.gc()` + `heap_free` messen, Differenz melden.
+  Mehr als 5 kB Einbruch beim Rendern: anhalten.
+
+</details>
+
+<details>
+<summary>Prompts «umsetzen» und «Fehler zurückgeben», Checkpoint</summary>
+
+```
+Setze den Plan um, in dieser Reihenfolge:
+1. Änderung in app/spot.be.
+2. cd app && berry desktop_harness.be – muss mit HARNESS OK enden.
+3. ./upload.sh app/spot.be, danach ./log.sh. Jede Zeile mit BRY: oder SPOT: wörtlich zeigen.
+4. ./brcmd.sh 'tasmota.gc()' und ./brcmd.sh 'tasmota.memory("heap_free")', Heap melden.
+Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe ich selbst.
+```
+
+```
+./log.sh zeigt nach dem Upload:
+<Zeilen wörtlich einfügen>
+Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
+```
+
+Hängen geblieben? `cp app/steps/spot_3.be app/spot.be && ./upload.sh app/spot.be`
+
+</details>
+
+</details>
 
 ## Schritt 4 – Vergütungs-Chart (für Schnelle, ~15 min)
 
+**Ziel:** Die App zeigt, was die Einspeisung einbringt: zweites, flaches Chart «Vergütung CHF/h»
+mit Summe Σ über die 3 Tage. Damit ist das Zielbild erreicht.
+
+<details>
+<summary><b>Schritt 4 – Anleitung aufklappen</b></summary>
+
 ![Ziel Schritt 4: zweites Chart Vergütung CHF/h mit Summe](docs/steps/schritt_4.png)
 
-### Aufgabe
-
-Unter dem bestehenden Chart ein **zweites, flaches Chart: Vergütung pro Stunde (CHF)**, gleiche
-x-Achse, mit **Summe Σ über die 3 Tage** oben rechts.
-
-Vorgaben:
-
-- Vergütung pro Stunde = Summe über die 4 Viertelstunden von Preis × Energie. In `fill_hours` aus
-  Schritt 3 mitrechnen (dritter Puffer, `hour_v(i)`), nicht neu schleifen.
-- Balken gelb (`COL_PAY`) bei ≥ 0, rot (`COL_COST`) bei < 0. Nulllinie, Achse links mit Max/0/Min
-  in CHF. Text «negativ = Einspeisung kostet» unten links, nur wenn es negative Werte gibt.
-- Titel «Vergütung CHF/h» links, «Σ x.xx CHF» rechts.
-- Gleiche x-Positionen wie oben (Stunde n liegt in beiden Charts übereinander), «jetzt»-Marke auch
-  unten.
-- Stückweise senden wie das obere Chart (`tasmota.web_send` pro Teil), kein Gesamtstring.
-
-### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
+> **🔵 PLAN** – Prompt einfügen. Plan prüfen: nennt er, was er wiederverwendet (`fill_hours`,
+> Zeichenmethoden) und was neu ist?
 
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 4".
@@ -367,46 +575,68 @@ Sende stückweise mit tasmota.web_send. Nenne im Plan, welche Methoden du wieder
 welche neu sind. Noch nichts ändern.
 ```
 
-### Erwartetes Resultat
+> **🟢 BUILD** – wie in Schritt 1–2: «umsetzen» → Log → Heap und WebUI → sichern
+> (`cp app/spot.be spot_schritt4.be`).
 
-- Zielbild `docs/zielbild.jpg` erreicht: zwei Charts, Stunden übereinander, Σ stimmt mit der Summe der
-  Tageswerte überein (Kopfzeile «Vergütung heute» + Vortage).
-- Heap nach Upload und `tasmota.gc()` > 100 kB, Rendering ohne Einbruch > 5 kB.
+**Erwartet:** Zielbild `docs/zielbild.jpg`: zwei Charts, Stunden übereinander, Σ = «Vergütung
+heute» + Vortage. Heap > 100 kB.
+
+> **⚠️** Neue Schleife für die Vergütung statt Mitrechnen in `fill_hours`, oder kopierte
+> Zeichenmethoden fürs zweite Chart: ablehnen.
+
+<details>
+<summary>Vorgaben im Detail</summary>
+
+- Vergütung pro Stunde = Summe über die 4 Viertelstunden von Preis × Energie. In `fill_hours` aus
+  Schritt 3 mitrechnen (dritter Puffer, `hour_v(i)`), nicht neu schleifen.
+- Balken gelb (`COL_PAY`) bei ≥ 0, rot (`COL_COST`) bei < 0. Nulllinie, Achse links mit Max/0/Min
+  in CHF. Text «negativ = Einspeisung kostet» unten links, nur wenn es negative Werte gibt.
+- Titel «Vergütung CHF/h» links, «Σ x.xx CHF» rechts.
+- Gleiche x-Positionen wie oben (Stunde n liegt in beiden Charts übereinander), «jetzt»-Marke auch
+  unten.
+- Stückweise senden wie das obere Chart (`tasmota.web_send` pro Teil), kein Gesamtstring.
+- Rendering ohne Heap-Einbruch > 5 kB.
+
+</details>
+
+<details>
+<summary>Prompts «umsetzen» und «Fehler zurückgeben», Checkpoint</summary>
+
+```
+Setze den Plan um, in dieser Reihenfolge:
+1. Änderung in app/spot.be.
+2. cd app && berry desktop_harness.be – muss mit HARNESS OK enden.
+3. ./upload.sh app/spot.be, danach ./log.sh. Jede Zeile mit BRY: oder SPOT: wörtlich zeigen.
+4. ./brcmd.sh 'tasmota.gc()' und ./brcmd.sh 'tasmota.memory("heap_free")', Heap melden.
+Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe ich selbst.
+```
+
+```
+./log.sh zeigt nach dem Upload:
+<Zeilen wörtlich einfügen>
+Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
+```
+
+Hängen geblieben? `cp app/steps/spot_4.be app/spot.be && ./upload.sh app/spot.be`
+
+</details>
+
+</details>
 
 ## Schritt 5 – 2 Tage mit Viertelstunden (für Fortgeschrittene, ~25 min)
 
-![Ziel Schritt 5: 2 Tage mit 192 Viertelstunden, Preis als Treppe](docs/steps/schritt_5.png)
-
-Hintergrund: BKW publiziert inzwischen **verschiedene Preise pro Viertelstunde** (z.B.
-16 Uhr: 32.8 / 34.4 / 46.5 / 48.9 Rp.). Das Stundenmittel aus Schritt 3
-glättet die Spitzen weg (Mittel 40.6 Rp.). Die Daten im Speicher sind schon Viertelstunden, nur
-die Darstellung fasst zusammen.
+**Ziel:** Die App zeigt die Preise so fein, wie BKW sie publiziert: beide Charts mit 2 Tagen zu
+je 96 Viertelstunden, Preis als Treppe.
 
 Voraussetzung: Schritt 4 fertig, sonst `cp app/steps/spot_4.be app/spot.be && ./upload.sh app/spot.be`.
 
-### Aufgabe
+<details>
+<summary><b>Schritt 5 – Anleitung aufklappen</b></summary>
 
-Beide Charts zeigen **2 Tage mit je 96 Viertelstunden** (192 Werte) statt 3 Tage mit Stundenwerten.
+![Ziel Schritt 5: 2 Tage mit 192 Viertelstunden, Preis als Treppe](docs/steps/schritt_5.png)
 
-Vorgaben:
-
-- Tage: **gestern (Verlauf) + heute**; sobald Preise für morgen da sind (BKW ab ca. 17 Uhr),
-  **heute + morgen**. In `chart_start`.
-- Neue Konstanten `CH_DAYS = 2` und `CH_Q = 1` (Viertelstunden pro Wert), dazu `CH_N = 192`,
-  `CH_MIN = 15`. Keine 2, 96, 192 oder 24 mehr als Zahl im Chart-Code. Prüfung: mit `CH_DAYS = 3`,
-  `CH_Q = 4`, `CH_N = 72`, `CH_MIN = 60` muss wieder das Chart aus Schritt 4 erscheinen.
-- `fill_hours` umbauen (umbenennen in `fill_values`, `hour_*` in `val_*`): `CH_Q` Viertelstunden pro Wert;
-  Preis = Mittel, Energie und Vergütung = Summe wie bisher.
-- Preis als **Treppenlinie**: jeder Wert waagrecht über seine ganze Breite (`send_polyline`
-  umbauen, keine zweite Zeichenmethode).
-- `send_bars` sendet einen Pfad, sobald er `PATH_MAX` (600) Byte lang ist, und beginnt einen neuen.
-  Grund: 192 Balken ergäben ~3 kB pro Pfad-String.
-- x-Achse pro Tag: Marken 00/06/12/18, Tagesname; `data-d` mit einem Eintrag pro Tag. Unteres
-  Chart: «Vergütung CHF/¼h».
-- **Kosten messen und melden**: Grösse von `/spot.svg` im Desktop-Harness (`SVG … bytes`),
-  Laufzeit von `fill_values` auf dem Gerät, Heap vor/nach. Grenzen: SVG < 16 kB, Heap > 100 kB.
-
-### Prompt «planen» (im plan-Agent, `Tab` bis unten `Plan` steht)
+> **🔵 PLAN** – Prompt einfügen. Plan prüfen: jede geänderte Methode genannt, Konstanten statt
+> Zahlen, Messung von SVG-Grösse, Laufzeit und Heap.
 
 ```
 Lies in @app/spot.be den Abschnitt "F3  Chart" mit dem Kommentar "ERWEITERUNGSPUNKT Schritt 5".
@@ -423,64 +653,69 @@ wie du SVG-Grösse (Desktop-Harness), Laufzeit von fill_values (tasmota.millis()
 Heap misst. Noch nichts ändern.
 ```
 
-### Erwartetes Resultat
+> **🟢 BUILD** – wie in Schritt 1–2: «umsetzen» → Log → Heap und WebUI → sichern
+> (`cp app/spot.be spot_schritt5.be`).
 
-- 2 Tage nebeneinander, 192 schmale Balken, Preis als Treppe mit ¼-h-Stufen. Mit echten BKW-Preisen
-  sind die Spitzen innerhalb einer Stunde sichtbar (Vergleich: Grafana/BKW-Kurve).
-- Vor 17 Uhr gestern + heute, «jetzt» im rechten Tag; danach heute + morgen, «jetzt» im linken Tag.
-- Cursor zeigt Tag und Uhrzeit auf die Viertelstunde (`data-m` = 15).
-- Referenzwerte (`spot_5.be`): Harness `SVG … bytes = 12204` (Schritt 4: 7010), `fill_values` 57 ms
-  auf dem C3, Heap 111 kB stabil nach mehrfachem Rendern.
+**Erwartet:** 2 Tage, 192 schmale Balken, Preis als Treppe mit ¼-h-Stufen. Vor 17 Uhr gestern +
+heute, danach heute + morgen. Agent meldet SVG-Bytes, ms und Heap.
 
-## Prüfschritte (alle Schritte)
+> **⚠️** Zahlen statt Konstanten: Gegenprobe mit `CH_DAYS = 3`, `CH_Q = 4`, `CH_N = 72`,
+> `CH_MIN = 60` verlangen (muss Chart aus Schritt 4 ergeben). Zweite Zeichenmethode für die
+> Treppe: ablehnen.
 
-```sh
-cd app && berry desktop_harness.be | tail -1      # HARNESS OK
-cd ..
-./upload.sh app/spot.be                           # OK ... heap_free N kB
-./log.sh                                          # keine BRY:-Fehlermeldung
-./brcmd.sh 'tasmota.cmd("SpotStatus")'            # Days vorhanden, HeapFree nahe Ausgangswert
-./brcmd.sh 'tasmota.gc()'; ./brcmd.sh 'tasmota.memory("heap_free")'
-diff spot_schritt2.be app/spot.be | head -40      # wenige Stellen (oder git diff --stat)
+<details>
+<summary>Hintergrund, Vorgaben und Referenzwerte</summary>
+
+Hintergrund: BKW publiziert inzwischen **verschiedene Preise pro Viertelstunde** (z.B.
+16 Uhr: 32.8 / 34.4 / 46.5 / 48.9 Rp.). Das Stundenmittel aus Schritt 3
+glättet die Spitzen weg (Mittel 40.6 Rp.). Die Daten im Speicher sind schon Viertelstunden, nur
+die Darstellung fasst zusammen.
+
+- Tage: **gestern (Verlauf) + heute**; sobald Preise für morgen da sind (BKW ab ca. 17 Uhr),
+  **heute + morgen**. In `chart_start`.
+- Neue Konstanten `CH_DAYS = 2` und `CH_Q = 1` (Viertelstunden pro Wert), dazu `CH_N = 192`,
+  `CH_MIN = 15`. Keine 2, 96, 192 oder 24 mehr als Zahl im Chart-Code.
+- `fill_hours` umbauen (umbenennen in `fill_values`, `hour_*` in `val_*`): `CH_Q` Viertelstunden pro Wert;
+  Preis = Mittel, Energie und Vergütung = Summe wie bisher.
+- Preis als **Treppenlinie**: jeder Wert waagrecht über seine ganze Breite (`send_polyline`
+  umbauen, keine zweite Zeichenmethode).
+- `send_bars` sendet einen Pfad, sobald er `PATH_MAX` (600) Byte lang ist, und beginnt einen neuen.
+  Grund: 192 Balken ergäben ~3 kB pro Pfad-String.
+- x-Achse pro Tag: Marken 00/06/12/18, Tagesname; `data-d` mit einem Eintrag pro Tag. Unteres
+  Chart: «Vergütung CHF/¼h». Cursor zeigt die Viertelstunde (`data-m` = 15).
+- **Kosten messen und melden**: Grösse von `/spot.svg` im Desktop-Harness (`SVG … bytes`),
+  Laufzeit von `fill_values` auf dem Gerät, Heap vor/nach. Grenzen: SVG < 16 kB, Heap > 100 kB.
+- Referenzwerte (`app/steps/spot_5.be`): Harness `SVG … bytes = 12204` (Schritt 4: 7010),
+  `fill_values` 57 ms auf dem C3, Heap 111 kB stabil nach mehrfachem Rendern.
+
+</details>
+
+<details>
+<summary>Prompts «umsetzen» und «Fehler zurückgeben»</summary>
+
+```
+Setze den Plan um, in dieser Reihenfolge:
+1. Änderung in app/spot.be.
+2. cd app && berry desktop_harness.be – muss mit HARNESS OK enden.
+3. ./upload.sh app/spot.be, danach ./log.sh. Jede Zeile mit BRY: oder SPOT: wörtlich zeigen.
+4. ./brcmd.sh 'tasmota.gc()' und ./brcmd.sh 'tasmota.memory("heap_free")', Heap melden.
+Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe ich selbst.
 ```
 
-Im Browser: Seite **neu laden** (Cmd+R / F5), Kurven per Legende aus- und einblenden, mit der Maus
-Werte anfahren.
+```
+./log.sh zeigt nach dem Upload:
+<Zeilen wörtlich einfügen>
+Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
+```
 
-## Stolpersteine (aus einem Probelauf: 30 min, 14 Uploads)
+</details>
 
-1. **Weitere Achsen.** Erlaubt ist nur die kWh-Achse links aus Schritt 1 (und die CHF-Achse im
-   eigenen Chart aus Schritt 4), so steht es auch in `AGENTS.md`. Will der Agent mehr
-   beschriften: nein sagen, Vorgabe zitieren.
-2. **Checkboxen / `onchange` im Chart** funktionieren nie: Tasmota ersetzt den Sensorbereich alle
-   paar Sekunden per AJAX, Scripts darin laufen nicht. Legende über `chart_curves()` erweitern.
-3. **Eigene Zeichenschleife.** Der Agent kopiert die Polyline-Logik (gern zweimal). `send_polyline`
-   bzw. `send_bars` einfordern.
-4. **Kopieren statt umbauen** (Schritt 3/4): `send_x_axis_3d`, `value_range2` usw. Prompt: «Bau die
-   bestehende Methode um, lösche die Kopie.»
-5. **Heap.** Jeder Upload kostet ~1 kB, den erst ein Neustart zurückgibt; `upload.sh` startet das
-   Gerät unter 100 kB selbst neu. Scheitert der Agent zweimal gleich: anhalten, Log selbst lesen.
-6. **Erfundene API** (`webserver.content_send` in `web_sensor`, nicht existierende `tasmota.*`-
-   Funktionen). Auf `TASMOTA_BERRY_API.md` verweisen; nur dort Genanntes gilt.
-7. **`BrRestart` / `Restart` über `brcmd.sh`** sind gesperrt (Absturz bzw. Reboot). App neu laden
-   nur über `./upload.sh`.
-8. **Fehlendes `var`** für eine neue Instanzvariable → `BRY:`-Fehler mit Zeilennummer beim Laden
-   (strict mode). Zeile wörtlich an den Agenten.
-9. **Scope-Creep** («bei der Gelegenheit habe ich auch …»): «nichts anderes ändern» wiederholen,
-   Änderung mit `/undo` zurücknehmen.
-10. **Stubs aufs Gerät** (`persist.be`, `path.be`, `webserver.be`, `desktop_harness.be`): `upload.sh` lehnt ab.
-    Der Agent soll nur `app/spot.be` hochladen.
-11. **Chart oder Cursor fehlt** nach einem Upload: Die Seite läuft noch mit dem alten Script, das
-    `/spot.svg` holt und den Cursor zeichnet (Tasmota ersetzt per AJAX nur den Sensorbereich, das
-    Script lädt nur beim Seitenaufruf). Seite neu laden, kein Fehler im Code. Das Chart steht nicht
-    im Sensorbereich, sondern kommt vom Handler `/spot.svg` (`page_svg`); `web_sensor` sendet nur
-    Zahlen und den Platzhalter `#spotchart`. Will der Agent das Chart zurück in `web_sensor` holen:
-    nein (kostete 1.2 s pro Refresh, Gerät stürzte ab).
-12. **Shell-Freigaben.** opencode fragt vor jedem Befehl. Nur `./upload.sh`, `./log.sh`,
-    `./brcmd.sh`, `berry`, `cp`, `git` freigeben; alles andere ablehnen und den Agenten fragen,
-    wozu.
+</details>
 
 ## Bonus (wer fertig ist)
+
+<details>
+<summary>Zwei Ideen: CSV mit Stundenwerten, Schwellwert an Shelly/MQTT</summary>
 
 - **CSV mit Stundenwerten**: zusätzlich zur Tageszeile `spot_h_YYYY-MM.csv`, Aufbewahrung zwei
   Monate. Erweiterungspunkt `cfg["csv_hourly"]` und `day_end()`. Lehrt: Testbarkeit einfordern
@@ -488,6 +723,8 @@ Werte anfahren.
 - **Schwellwert an Shelly/MQTT**: bei Preis unter/über Schwelle ein HTTP-schaltbares Gerät
   schalten oder per `mqtt.publish` melden. Erweiterungspunkt `json_append()` / neuer Command. Lehrt:
   Drittsystem-API als Kontext geben (Shelly-Doku-Auszug), sonst rät der Agent.
+
+</details>
 
 ## Checkliste Abschlussrunde
 
