@@ -262,7 +262,7 @@ Schreibe einen Plan: Inhalt der Datei und wie du das Ergebnis prüfst (upload.sh
 brcmd.sh, log.sh). Noch nichts ändern.
 ```
 
-*Warum?* Der Plan zeigt, ob der Agent Vorlage und Regeln gelesen hat, bevor er etwas anfasst.
+*Warum zuerst planen?* Der Plan zeigt, ob der Agent Vorlage und Regeln gelesen hat, bevor er etwas anfasst.
 
 > **⚠️ Plan ablehnen bei:** Änderungen an `hello.be`, `spot.be` oder `autoexec.be` · `BrRestart`
 > oder `Restart` · Funktionen, die nicht in `TASMOTA_BERRY_API.md` stehen.
@@ -362,7 +362,7 @@ Schreibe einen Plan: welche Methoden du änderst oder neu anlegst und wie du das
 (Desktop-Harness, upload.sh, log.sh, Heap). Frag nach, wenn etwas unklar ist. Noch nichts ändern.
 ```
 
-*Warum?* Einen falschen Ansatz im Plan zu erkennen kostet eine Minute, im Code einen Upload und
+*Warum zuerst planen?* Einen falschen Ansatz im Plan zu erkennen kostet eine Minute, im Code einen Upload und
 Rückbau.
 
 > **⚠️ Plan ablehnen bei:** eigener Zeichenschleife ausserhalb `send_bars` · Checkboxen oder
@@ -388,7 +388,7 @@ Melde in fünf Zeilen: was geändert, was geprüft, was offen. Die WebUI prüfe 
 
 Shell-Befehle einzeln freigeben, nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `berry`, `cp`, `git`.
 
-*Warum?* Der Harness findet Syntaxfehler in Sekunden ohne Gerät; die feste Reihenfolge
+*Warum Harness zuerst und feste Reihenfolge?* Der Harness findet Syntaxfehler in Sekunden ohne Gerät; die feste Reihenfolge
 verhindert übersprungene Prüfungen.
 
 > **⚠️** Agent antwortet nur mit Text: noch plan aktiv, auf build schalten. Aufs Gerät gehört
@@ -414,7 +414,7 @@ Ausgabe von `./log.sh` selbst lesen:
 Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
 ```
 
-*Warum?* `upload.sh` meldet `OK`, sobald die Datei auf dem Gerät liegt; ob Berry sie laden
+*Warum Log lesen und wörtlich zurückgeben?* `upload.sh` meldet `OK`, sobald die Datei auf dem Gerät liegt; ob Berry sie laden
 konnte, steht nur im Log. Aus der wörtlichen Meldung findet der Agent die Stelle, aus «geht
 nicht» rät er.
 
@@ -458,7 +458,7 @@ Browser: Seite **neu laden** (sonst fehlen Chart oder Cursor). Erwartet:
 cp app/spot.be spot_schritt1.be      # oder: git add app/spot.be && git commit -m "Schritt 1"
 ```
 
-*Warum?* Rückweg, wenn Schritt 2 schiefgeht, und Vergleich per `diff`.
+*Warum sichern?* Rückweg, wenn Schritt 2 schiefgeht, und Vergleich per `diff`.
 
 Hängen geblieben? `cp app/steps/spot_1.be app/spot.be && ./upload.sh app/spot.be`
 
