@@ -11,7 +11,7 @@ Zweck dieses Dokuments: verbindliche Beschreibung *was* die Tasmota-Berry-App le
 
 ## 0. Workshop-Rahmen (prov.)
 
-- Do 12.11.2026, 17:00, max. 20 Plätze + 4 Reserve. Abendveranstaltung → ca. 3 h netto.
+- Do 14.01.2027, 17:00 (erste Durchführung: Do 12.11.2026), max. 20 Plätze + 4 Reserve. Abendveranstaltung → ca. 3 h netto.
 - **BYOD**: Teilnehmende bringen eigenen gPlug (vorhanden oder via Webshop beschafft) und eigenes Notebook mit USB mit. Kein Pre-Flashing durch Veranstalter möglich.
 - Folgen für die App:
   - Geräte kommen mit unterschiedlicher Firmware-**Version**, Heim-WLAN und realer SM-Konfiguration → Mindest-Firmware-Version, Upgrade **vor Ort** per Datei-Upload (keine Vorbereitung durch Teilnehmende), SM-Pfad konfigurierbar, Simulator für den Abend. Berry, UFS und SML sind auf allen Webshop-gPlugs aktiv.
