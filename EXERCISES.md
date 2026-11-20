@@ -33,13 +33,13 @@ jedem Schritt. Wer hängen bleibt, kopiert selbst den passenden nach `app/spot.b
 
 ## Schritt 0 – Hello World von Hand (alle, ~10 min)
 
-**Ziel:** Du hast den nackten Zyklus einmal von Hand gemacht, bevor Skripte und Agent ihn
-verstecken: **Code schreiben → aufs Gerät laden → laufen lassen → Resultat ansehen → ändern.**
-In der WebUI steht die Zeile «Hallo gPlug».
+**Ziel:** Du hast den ganzen Zyklus einmal von Hand gemacht: **Code schreiben → aufs Gerät
+laden → laufen lassen → Resultat ansehen → ändern.** In der WebUI steht die Zeile «Hallo gPlug».
 
-Nur Texteditor und Tasmota-WebUI, keine Skripte, kein Agent. Kursleitung zeigt es am Beamer
-(3 min), danach alle selbst. Punkt für Punkt aufklappen. Wenn die Zeile steht, weiter mit
-`RUNBOOK.md` Schritt 7 (Starter aufs Gerät), danach hier bei *Vorbereitung*.
+Du brauchst nur einen Texteditor und die Tasmota-WebUI im Browser: kein opencode, kein Terminal,
+keine Skripte. Kursleitung zeigt es am Beamer (3 min), danach alle selbst. Punkt für Punkt
+aufklappen. Wenn die Zeile steht und aufgeräumt ist, weiter mit `RUNBOOK.md` Schritt 7 (Starter
+aufs Gerät), danach hier bei *Vorbereitung*.
 
 <details open>
 <summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
@@ -134,21 +134,23 @@ Erwartet: die Zeile zeigt den neuen Text, die Sekunden beginnen bei 0, es bleibt
 
 Ein `end` löschen, hochladen, laden.
 
-Erwartet: `BRY:`-Zeile mit Fehler und Zeilennummer. Genau solche Zeilen gibst du später wörtlich
-an den Agenten. Danach `end` wieder einfügen.
+Erwartet: `BRY:`-Zeile mit Fehler und Zeilennummer. So sehen Berry-Fehler aus; du brauchst sie
+in den nächsten Schritten wieder. Danach `end` wieder einfügen, hochladen, laden.
 
 </details>
 
 <details>
-<summary><b>Aufräumen, und was später die Skripte tun</b></summary>
+<summary><b>6. Aufräumen</b></summary>
 
-**Aufräumen**: nichts nötig. `hello.be` steht nicht in `autoexec.be`; der Upload des Starters
-(`./upload.sh`, macht `BrRestart`) entfernt die App, die Zeile verschwindet. Die Datei darf auf dem
-Gerät bleiben oder unter *Dateisystem verwalten* gelöscht werden. Sofort ohne Neustart stoppen:
-`Br tasmota.remove_driver(global.hello) global.hello = nil`.
+*Werkzeuge* → *Konsole*, eingeben:
 
-Ab jetzt erledigen das die Skripte: `upload.sh` = Punkte 1 + 2 (mit `BrRestart` statt `load`),
-`log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
+```
+Br tasmota.remove_driver(global.hello) global.hello = nil
+```
+
+Erwartet: im *Hauptmenü* ist die Zeile «Hallo gPlug» weg. Die Datei `hello.be` darf auf dem
+Gerät bleiben (sie steht nicht in `autoexec.be`, startet also nie von selbst) oder unter
+*Dateisystem verwalten* gelöscht werden.
 
 </details>
 
@@ -157,6 +159,8 @@ Ab jetzt erledigen das die Skripte: `upload.sh` = Punkte 1 + 2 (mit `BrRestart` 
 ## Vorbereitung (5 min)
 
 Starter ist auf dem Gerät (`RUNBOOK.md` Schritt 7), jetzt beginnt die Arbeit mit dem Agenten.
+Was du in Schritt 0 von Hand gemacht hast, erledigen ab hier Skripte: `upload.sh` = hochladen +
+laden, `log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
 
 1. Geräte-IP prüfen (RUNBOOK, Schritt 7.1): `cat .gplug`
 2. Gerät antwortet mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
