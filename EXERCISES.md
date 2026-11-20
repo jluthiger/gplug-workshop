@@ -9,7 +9,7 @@ Punkt für Punkt aufklappen (▸).
 
 ## Überblick: Hello World, dann vom Starter zur Referenz-App in 4 Schritten, dazu Schritt 5
 
-Zuerst ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte), dann vom **Starter**
+**Teil A:** ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte). **Teil B:** vom **Starter**
 (nur Preislinie) zum Zielbild `docs/zielbild.jpg`. **Im Zeitplan: Schritt 0 (~10 min) und
 Schritte 1 und 2** (Übungsblock 45 min). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
 
@@ -31,15 +31,20 @@ jedem Schritt. Wer hängen bleibt, kopiert selbst den passenden nach `app/spot.b
 
 </details>
 
+---
+
+# Teil A – Von Hand, ohne Agent
+
+Nur Texteditor und Browser. Kein opencode, kein Terminal, keine Skripte.
+
 ## Schritt 0 – Hello World von Hand (alle, ~10 min)
 
 **Ziel:** Du hast den ganzen Zyklus einmal von Hand gemacht: **Code schreiben → aufs Gerät
 laden → laufen lassen → Resultat ansehen → ändern.** In der WebUI steht die Zeile «Hallo gPlug».
 
-Du brauchst nur einen Texteditor und die Tasmota-WebUI im Browser: kein opencode, kein Terminal,
-keine Skripte. Kursleitung zeigt es am Beamer (3 min), danach alle selbst. Punkt für Punkt
-aufklappen. Wenn die Zeile steht und aufgeräumt ist, weiter mit `RUNBOOK.md` Schritt 7 (Starter
-aufs Gerät), danach hier bei *Vorbereitung*.
+Kursleitung zeigt es am Beamer (3 min), danach alle selbst. Punkt für Punkt aufklappen. Wenn die
+Zeile steht und aufgeräumt ist, weiter mit `RUNBOOK.md` Schritt 7 (Starter aufs Gerät), danach
+hier bei *Teil B*.
 
 <details open>
 <summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
@@ -156,11 +161,16 @@ Gerät bleiben (sie steht nicht in `autoexec.be`, startet also nie von selbst) o
 
 </details>
 
+---
+
+# Teil B – Mit dem Agenten
+
+Ab hier arbeitest du mit opencode. Was du in Schritt 0 von Hand gemacht hast, erledigen Skripte:
+`upload.sh` = hochladen + laden, `log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
+
 ## Vorbereitung (5 min)
 
-Starter ist auf dem Gerät (`RUNBOOK.md` Schritt 7), jetzt beginnt die Arbeit mit dem Agenten.
-Was du in Schritt 0 von Hand gemacht hast, erledigen ab hier Skripte: `upload.sh` = hochladen +
-laden, `log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
+Der Starter ist auf dem Gerät (`RUNBOOK.md` Schritt 7).
 
 1. Geräte-IP prüfen (RUNBOOK, Schritt 7.1): `cat .gplug`
 2. Gerät antwortet mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
