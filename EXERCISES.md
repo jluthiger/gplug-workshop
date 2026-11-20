@@ -9,17 +9,19 @@ Punkt für Punkt aufklappen (▸).
 
 ## Überblick: Hello World, dann vom Starter zur Referenz-App in 4 Schritten, dazu Schritt 5
 
-**Teil A:** ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte). **Teil B:** vom **Starter**
-(nur Preislinie) zum Zielbild `docs/zielbild.jpg`. **Im Zeitplan: Schritt 0 (~10 min) und
-Schritte 1 und 2** (Übungsblock 45 min). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
+**Teil A:** ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte). **Teil B:** zuerst
+dasselbe Hello World **mit opencode** (Schritt 0), dann vom **Starter** (nur Preislinie) zum Zielbild
+`docs/zielbild.jpg`. **Im Zeitplan: Schritt 0 von Hand (~10 min), dann Schritt 0 mit opencode
+(~5 min) und Schritte 1 und 2** (Übungsblock 45 min). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
 
 <details>
 <summary>Alle Schritte im Überblick (Tabelle)</summary>
 
 | Schritt | Ziel | Sichtbares Resultat | Lernziel KI |
 |---|---|---|---|
-| 0 Hello World | `app/hello.be` von Hand hochladen und laden | Zeile «Hallo gPlug» in der WebUI, `HELLO:` in der Konsole | – (Zyklus ohne Agent sehen) |
+| 0 Hello World (Teil A) | `app/hello.be` von Hand hochladen und laden | Zeile «Hallo gPlug» in der WebUI, `HELLO:` in der Konsole | – (Zyklus ohne Agent sehen) |
 | Starter | – | Preislinie, 1 Tag, ¼ h | – |
+| 0 Hello World (Teil B) | `app/hello_agent.be` von opencode schreiben, hochladen und laden lassen | Zeile «Hallo opencode» in der WebUI, `HELLO:` im Log | plan und build unterscheiden; Agent fährt den Zyklus mit den Skripten |
 | 1 Energie-Balken | Einspeisung pro ¼ h als grüne Balken, eigene kWh-Achse links | Solarkurve unter der Preislinie | Kontext geben: Erweiterungspunkt und Datenquelle nennen |
 | 2 Negativpreis | Balken orange bei Preis < 0, Bereich unter 0 Rp. schattiert, Legende | Mittagstief fällt auf | Kleine, prüfbare Aufgabe; Testfall benennen (Sim: Mittagstief < 0) |
 | 3 3 Tage, Stundenwerte | x-Achse 72 h, Tagesnamen, 00/12-Marken; Stunde = Mittel (Preis) bzw. Summe (Energie) | Do–Sa wie im Zielbild | Umbauen statt anbauen; Heap vorher/nachher messen |
@@ -167,6 +169,8 @@ Gerät bleiben (sie steht nicht in `autoexec.be`, startet also nie von selbst) o
 
 Ab hier arbeitest du mit opencode. Was du in Schritt 0 von Hand gemacht hast, erledigen Skripte:
 `upload.sh` = hochladen + laden, `log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
+Zuerst lässt du den Agenten dasselbe Hello World bauen (Schritt 0 mit opencode), dann geht es an
+die App `app/spot.be`.
 
 ## Vorbereitung (5 min)
 
@@ -224,6 +228,104 @@ Gesprächsverlauf bleibt erhalten.
 > **⚠️ Stolperstein** – was hier typischerweise schiefgeht.
 
 Merkregel: **planen = plan, alles andere = build.** opencode startet im **build**-Agent.
+
+## Schritt 0 – Hello World mit opencode (alle, ~5 min)
+
+**Ziel:** Dasselbe wie in Teil A, aber der Agent schreibt die App und fährt den Zyklus selbst:
+**planen → schreiben → hochladen → laden → Log lesen.** In der WebUI steht die Zeile
+«Hallo opencode». Du lernst die beiden Agenten (plan, build) und die drei Skripte an einer App
+kennen, bei der nichts schiefgehen kann.
+
+<details open>
+<summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
+
+<details>
+<summary><b>0.1 Planen lassen</b> 🔵</summary>
+
+> **🔵 PLAN** – `Tab`, bis unten `Plan` steht. Prompt einfügen.
+
+```
+Lies @AGENTS.md, @TASMOTA_BERRY_API.md und als Vorlage @app/hello.be.
+
+Aufgabe: Lege eine neue Datei app/hello_agent.be an, eine eigene Hello-World-App für den gPlug.
+
+Vorgaben: Klasse HelloAgent mit web_sensor(), die im Sensorbereich der WebUI eine Zeile zeigt:
+links "Hallo opencode", rechts "Heap frei N kB" aus tasmota.memory("heap_free"). Body von
+web_sensor() in try/except, Fehler mit log("HELLO: ...", 2). Instanz in global.hello_agent;
+nochmals laden ersetzt die alte Instanz (wie in hello.be). Beim Laden log("HELLO: Hallo vom
+Agenten", 2). app/hello.be, app/spot.be und app/autoexec.be nicht ändern.
+
+Schreibe einen Plan: Inhalt der Datei und wie du das Ergebnis prüfst (upload.sh --no-restart,
+brcmd.sh, log.sh). Noch nichts ändern.
+```
+
+*Warum?* Der Plan zeigt, ob der Agent Vorlage und Regeln gelesen hat, bevor er etwas anfasst.
+
+> **⚠️ Plan ablehnen bei:** Änderungen an `hello.be`, `spot.be` oder `autoexec.be` · `BrRestart`
+> oder `Restart` · Funktionen, die nicht in `TASMOTA_BERRY_API.md` stehen.
+
+</details>
+
+<details>
+<summary><b>0.2 Umsetzen lassen</b> 🟢</summary>
+
+> **🟢 BUILD** – `Tab`, bis unten `Build` steht. Prompt einfügen.
+
+```
+Setze den Plan um, in dieser Reihenfolge:
+1. app/hello_agent.be anlegen.
+2. ./upload.sh --no-restart app/hello_agent.be
+3. ./brcmd.sh 'load("hello_agent")' – muss {"Br":"true"} liefern.
+4. ./log.sh, jede Zeile mit BRY: oder HELLO: wörtlich zeigen.
+Melde in drei Zeilen: was angelegt, was geprüft. Die WebUI prüfe ich selbst.
+```
+
+Shell-Befehle einzeln freigeben, nur `./upload.sh`, `./brcmd.sh`, `./log.sh`.
+
+*Warum `--no-restart`?* Ohne startet `upload.sh` Berry neu (`BrRestart`); danach läuft nur, was
+in `autoexec.be` steht, also der Starter, nicht die Hello-App. Darum hochladen ohne Neustart und
+mit `load("hello_agent")` starten, wie in Teil A mit `Br load("hello")`.
+
+> **⚠️** Agent antwortet nur mit Text: noch plan aktiv, auf build schalten.
+
+</details>
+
+<details>
+<summary><b>0.3 Log lesen, Resultat prüfen</b></summary>
+
+Ausgabe von `./log.sh` selbst lesen. Erwartet: `HELLO: Hallo vom Agenten`, keine Zeile mit
+`BRY:`. Bei einem Fehler die Zeilen wörtlich zurückgeben (🟢 BUILD):
+
+```
+./log.sh zeigt nach dem Laden:
+<Zeilen wörtlich einfügen>
+Behebe nur diesen Fehler, lade neu hoch, lade die App und lies das Log erneut.
+```
+
+Browser, *Hauptmenü*. Erwartet: Zeile **Hallo opencode**, rechts **Heap frei N kB**, **eine**
+Zeile, auch wenn der Agent mehrmals geladen hat. Der Starter (Preislinie) läuft daneben weiter.
+
+Datei `app/hello_agent.be` im Editor öffnen und mit `app/hello.be` vergleichen: Was hat der
+Agent übernommen, was ist neu?
+
+</details>
+
+<details>
+<summary><b>0.4 Aufräumen</b></summary>
+
+```sh
+./brcmd.sh 'tasmota.remove_driver(global.hello_agent) global.hello_agent = nil'
+```
+
+Erwartet: die Zeile «Hallo opencode» ist weg. Ohne Aufräumen entfernt sie der erste Upload in
+Schritt 1 (`BrRestart`).
+
+Hängen geblieben? `cp app/steps/hello_agent.be app/hello_agent.be`, dann die Befehle 2–4 aus
+0.2 selbst im Terminal.
+
+</details>
+
+</details>
 
 ## Schritt 1 – Energie-Balken (Pflicht, ~20 min)
 
