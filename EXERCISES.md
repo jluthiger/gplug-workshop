@@ -6,23 +6,6 @@ Du übst den **Arbeitszyklus mit dem Agenten**: planen lassen → umsetzen lasse
 Fehler wörtlich zurückgeben → selbst prüfen. Die Berry-App `app/spot.be` ist nur das
 Übungsobjekt. Vorher machst du den Zyklus einmal von Hand (Schritt 0). Von oben nach unten lesen; Schritte lassen sich auf- und zuklappen (▸).
 
-## Farbcode: plan oder build
-
-opencode hat zwei Agenten. Der aktive steht unten im Eingabefeld, **`Tab`** wechselt. Der
-Gesprächsverlauf bleibt erhalten.
-
-> [!NOTE]
-> **🔵 PLAN** – Agent liest nur. Für den Prompt «planen».
-
-> [!TIP]
-> **🟢 BUILD** – Agent ändert Dateien und führt Befehle aus (nach Freigabe). Für «umsetzen» und
-> «Fehler zurückgeben».
-
-> [!WARNING]
-> **⚠️ Stolperstein** – was hier typischerweise schiefgeht.
-
-Merkregel: **planen = plan, alles andere = build.** opencode startet im **build**-Agent.
-
 ## Überblick: Hello World, dann vom Starter zur Referenz-App in 4 Schritten, dazu Schritt 5
 
 Zuerst ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte), dann vom **Starter**
@@ -148,6 +131,23 @@ Daten vollständig, Darstellung minimal:
   `data-v`) und rechnet die Zeit aus `data-m` (15 oder 60 min). Kein Schritt ändert das Script.
 
 </details>
+
+## Farbcode: plan oder build
+
+opencode hat zwei Agenten. Der aktive steht unten im Eingabefeld, **`Tab`** wechselt. Der
+Gesprächsverlauf bleibt erhalten.
+
+> [!NOTE]
+> **🔵 PLAN** – Agent liest nur. Für den Prompt «planen».
+
+> [!TIP]
+> **🟢 BUILD** – Agent ändert Dateien und führt Befehle aus (nach Freigabe). Für «umsetzen» und
+> «Fehler zurückgeben».
+
+> [!WARNING]
+> **⚠️ Stolperstein** – was hier typischerweise schiefgeht.
+
+Merkregel: **planen = plan, alles andere = build.** opencode startet im **build**-Agent.
 
 ## Schritt 1 – Energie-Balken (Pflicht, ~20 min)
 
