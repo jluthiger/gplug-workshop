@@ -50,6 +50,7 @@ Befehle für Linux, macOS und Ubuntu in WSL. Windows nur mit PowerShell:
 Ablauf, Prompts und Prüfschritte: [`EXERCISES.md`](EXERCISES.md) ([PDF, A4](docs/EXERCISES.pdf)).
 
 0. Hello World von Hand (`app/hello.be`, nur WebUI, vor dem Starter) — **alle**
+0. Hello World mit opencode (`app/hello_agent.be`, schreibt der Agent) — **alle**
 1. Energie-Balken mit kWh-Achse — **Pflicht**
 2. Negativpreis: Balken orange, Bereich unter 0 schattiert — **Pflicht**
 3. 3 Tage mit Stundenwerten — optional, für Schnelle
@@ -70,6 +71,8 @@ kopieren.
 ## Wichtige Dateien
 
 - `app/hello.be` – Hello World für Schritt 0, von Hand über die WebUI.
+- `app/hello_agent.be` – Hello World für Schritt 0 mit opencode; legt der Agent an (Musterlösung:
+  `app/steps/hello_agent.be`).
 - `app/spot.be` – die App, an der du arbeitest. `app/steps/` – Checkpoints nach jedem Schritt.
 - `upload.sh`, `brcmd.sh`, `log.sh` – Gerät bedienen (hochladen, Berry-Befehl, Konsole).
 - `AGENTS.md` – Regeln für den Coding-Agenten (liest opencode automatisch).

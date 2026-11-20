@@ -27,10 +27,11 @@ Vor der ersten Änderung lesen, nicht raten:
 |---|---|---|
 | `app/spot.be` | die App | ja |
 | `app/autoexec.be` | lädt `spot` beim Start und bei `BrRestart` | ja, nur bei Bedarf |
-| `app/hello.be` | Schritt 0 «Hello World», machen die Teilnehmenden **von Hand** über die WebUI; nicht ändern, nicht hochladen, nicht in `autoexec.be` | nur von Hand |
+| `app/hello.be` | Schritt 0 «Hello World» (Teil A), machen die Teilnehmenden **von Hand** über die WebUI; nicht ändern, nicht hochladen, nicht in `autoexec.be`; lesen als Vorlage erlaubt | nur von Hand |
+| `app/hello_agent.be` | Schritt 0 «Hello World» (Teil B), legt der Agent auf Anweisung neu an; hochladen nur mit `./upload.sh --no-restart`, starten mit `./brcmd.sh 'load("hello_agent")'`; nicht in `autoexec.be` | ja, nur in Schritt 0 |
 | `app/desktop_harness.be`, `app/persist.be`, `app/path.be`, `app/webserver.be` | Desktop-Test, Stubs | **nie** |
 | `reference/` | `read_sensors`-Beispiele (Zähler-Pfad) | nein |
-| `app/steps/spot_N.be` | fertiger Stand nach Schritt N; nicht ändern, nur der Mensch kopiert einen davon nach `app/spot.be` | nein (nur als `app/spot.be`) |
+| `app/steps/spot_N.be`, `app/steps/hello_agent.be` | fertiger Stand nach Schritt N bzw. Musterlösung Schritt 0 (Teil B); nicht ändern, nur der Mensch kopiert einen davon nach `app/` | nein (nur als Kopie in `app/`) |
 | `tools/make_steps.py` | Vorbereitung der Kursleitung; nie mit `--write` aufrufen (überschreibt `app/spot.be`) | nein |
 
 ## 3. Werkzeuge (Gerät)
