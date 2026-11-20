@@ -11,9 +11,10 @@ Weicht etwas ab: Hand hoch, Helfer kommen. Begriffe: [`LEGENDE.md`](LEGENDE.md).
 | 3 | Docker-Image laden, Agent testen | 10 min |
 | 4 | gPlug ins Workshop-WLAN | 10 min |
 | 5 | Firmware prüfen, Zeitzone | 5–10 min |
-| 6 | Starter aufs Gerät | 5 min |
+| 6 | Hello World von Hand (Übung Schritt 0) | 10 min |
+| 7 | Starter aufs Gerät | 5 min |
 
-Erst Notebook (Schritte 1–3), dann gPlug (4–5) mit Helfern, zuletzt Starter (6).
+Erst Notebook (Schritte 1–3), dann gPlug (4–5) mit Helfern, dann Hello World (6), zuletzt Starter (7).
 
 ## Was du brauchst
 
@@ -139,7 +140,15 @@ Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
 
 Die WebUI-Seite offen lassen, du brauchst sie in der Übung.
 
-## 6. Starter aufs Gerät
+## 6. Hello World von Hand
+
+Eine Mini-App mit dem Texteditor ändern und nur über die WebUI hochladen und starten, ohne Skripte
+und ohne Agent. Anleitung: [`EXERCISES.md`, *Schritt 0 – Hello World von Hand*](EXERCISES.md#schritt-0--hello-world-von-hand-alle-10-min).
+
+Erwartet: Zeile **Hallo gPlug** (bzw. dein Text) mit «läuft seit N s» in der WebUI. Der nächste
+Schritt entfernt sie wieder.
+
+## 7. Starter aufs Gerät
 
 1. IP eintragen. Die Zeile fragt die IP aus Schritt 4 ab (nur die IP eingeben, z.B. `192.168.1.50`):
    ```sh
@@ -170,7 +179,8 @@ Die WebUI-Seite offen lassen, du brauchst sie in der Übung.
 4. WebUI neu laden (Cmd+R / F5).
 
    Erwartet: drei Kopfzeilen (Spotpreis jetzt, Einspeisung heute, Vergütung heute) und ein Chart
-   mit der cyan Preislinie über einen Tag. Maus über das Chart: Zeit und Preis erscheinen.
+   mit der cyan Preislinie über einen Tag. Maus über das Chart: Zeit und Preis erscheinen. Die
+   Zeile «Hallo gPlug» aus Schritt 6 ist weg.
 
 ## Fertig?
 
