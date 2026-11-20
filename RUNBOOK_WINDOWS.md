@@ -371,4 +371,4 @@ Windows-Variablen sind in Ubuntu/WSL nicht sichtbar, dort `~/.bashrc` verwenden.
 
 </details>
 
-Weiter zur [Übung (45 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-45-min).
+Weiter zur [Übung (65 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-65-min).
