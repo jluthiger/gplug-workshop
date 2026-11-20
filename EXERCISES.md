@@ -4,7 +4,8 @@
 
 Du übst den **Arbeitszyklus mit dem Agenten**: planen lassen → umsetzen lassen → Log lesen →
 Fehler wörtlich zurückgeben → selbst prüfen. Die Berry-App `app/spot.be` ist nur das
-Übungsobjekt. Vorher machst du den Zyklus einmal von Hand (Schritt 0). Von oben nach unten lesen; Schritte lassen sich auf- und zuklappen (▸).
+Übungsobjekt. Vorher machst du den Zyklus einmal von Hand (Schritt 0). Von oben nach unten lesen und
+Punkt für Punkt aufklappen (▸).
 
 ## Überblick: Hello World, dann vom Starter zur Referenz-App in 4 Schritten, dazu Schritt 5
 
@@ -37,48 +38,109 @@ verstecken: **Code schreiben → aufs Gerät laden → laufen lassen → Resulta
 In der WebUI steht die Zeile «Hallo gPlug».
 
 Nur Texteditor und Tasmota-WebUI, keine Skripte, kein Agent. Kursleitung zeigt es am Beamer
-(3 min), danach alle selbst. Zeitpunkt: `RUNBOOK.md` Schritt 6, vor dem Starter.
+(3 min), danach alle selbst. Punkt für Punkt aufklappen. Wenn die Zeile steht, weiter mit
+`RUNBOOK.md` Schritt 7 (Starter aufs Gerät), danach hier bei *Vorbereitung*.
 
 <details open>
 <summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
 
-Die App `app/hello.be` (fertig im Workshop-Ordner, im Texteditor öffnen):
+Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
+
+<details>
+<summary><b>Die App <code>app/hello.be</code></b></summary>
+
+Liegt fertig im Workshop-Ordner. Im Texteditor öffnen:
 
 ```berry
+# hello.be – Schritt 0: Hello World auf dem gPlug
+# Von Hand hochladen (Werkzeuge -> Dateisystem verwalten), laden in der Konsole mit:
+#   Br load("hello")
+# Steht nicht in autoexec.be: der nächste BrRestart (Upload des Starters) entfernt die App.
+
+import global
+
 class Hello
   var start                       # tasmota.millis() beim Laden
+
   def init()
     self.start = tasmota.millis()
   end
-  def web_sensor()                # Zeile im Sensorbereich der WebUI
+
+  # Zeile im Sensorbereich der WebUI, wird alle paar Sekunden neu geholt
+  def web_sensor()
     var s = (tasmota.millis() - self.start) / 1000
     tasmota.web_send("{s}Hallo gPlug{m}läuft seit " + str(s) + " s{e}")
   end
 end
-# ... (alte Instanz entfernen, global.hello = Hello(); siehe Datei)
-tasmota.add_driver(global.hello)  # Tasmota ruft web_sensor() bei jedem Seiten-Refresh
-log("HELLO: Hallo Welt", 2)       # Zeile in der Konsole
+
+# Nochmals laden ersetzt die alte Instanz, statt eine zweite Zeile anzuhängen
+if global.contains("hello") && global.hello != nil
+  tasmota.remove_driver(global.hello)
+end
+global.hello = Hello()
+tasmota.add_driver(global.hello)
+log("HELLO: Hallo Welt", 2)
 ```
 
-Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
+</details>
 
-1. **Hochladen**: WebUI → *Werkzeuge* (*Tools*) → *Dateisystem verwalten* (*Manage File system*)
-   → Datei `app/hello.be` wählen → hochladen. Erwartet: `hello.be` erscheint in der Dateiliste.
-2. **Laden**: *Werkzeuge* → *Konsole* (*Console*), eingeben:
-   ```
-   Br load("hello")
-   ```
-   Erwartet in der Konsole: `HELLO: Hallo Welt`, danach `RESULT = {"Br":"true"}`. Keine Zeile mit
-   `BRY:` und Fehlermeldung.
-3. **Resultat ansehen**: *Hauptmenü* (*Main Menu*). Erwartet: Zeile **Hallo gPlug**, rechts
-   **läuft seit N s**; die Sekunden zählen bei jedem Refresh (alle paar Sekunden) hoch.
-4. **Ändern, nochmals**: In `app/hello.be` den Text `Hallo gPlug` durch den eigenen Namen ersetzen,
-   speichern, Punkte 1–3 wiederholen (gleicher Dateiname überschreibt). Erwartet: die Zeile zeigt
-   den neuen Text, die Sekunden beginnen bei 0, es bleibt **eine** Zeile (die App ersetzt beim
-   Laden ihre alte Instanz).
-5. Optional, **Fehler ansehen**: ein `end` löschen, hochladen, laden. Erwartet: `BRY:`-Zeile mit
-   Fehler und Zeilennummer. Genau solche Zeilen gibst du später wörtlich an den Agenten. Danach
-   `end` wieder einfügen.
+<details>
+<summary><b>1. Hochladen</b></summary>
+
+WebUI → *Werkzeuge* (*Tools*) → *Dateisystem verwalten* (*Manage File system*) → Datei
+`app/hello.be` wählen → hochladen.
+
+Erwartet: `hello.be` erscheint in der Dateiliste.
+
+</details>
+
+<details>
+<summary><b>2. Laden</b></summary>
+
+*Werkzeuge* → *Konsole* (*Console*), eingeben:
+
+```
+Br load("hello")
+```
+
+Erwartet: `HELLO: Hallo Welt`, danach `RESULT = {"Br":"true"}`. Keine Zeile mit `BRY:` und
+Fehlermeldung.
+
+</details>
+
+<details>
+<summary><b>3. Resultat ansehen</b></summary>
+
+*Hauptmenü* (*Main Menu*).
+
+Erwartet: Zeile **Hallo gPlug**, rechts **läuft seit N s**; die Sekunden zählen bei jedem
+Refresh (alle paar Sekunden) hoch.
+
+</details>
+
+<details>
+<summary><b>4. Ändern, nochmals</b></summary>
+
+In `app/hello.be` den Text `Hallo gPlug` durch den eigenen Namen ersetzen, speichern, Punkte 1–3
+wiederholen (gleicher Dateiname überschreibt).
+
+Erwartet: die Zeile zeigt den neuen Text, die Sekunden beginnen bei 0, es bleibt **eine** Zeile
+(die App ersetzt beim Laden ihre alte Instanz).
+
+</details>
+
+<details>
+<summary><b>5. Optional: Fehler ansehen</b></summary>
+
+Ein `end` löschen, hochladen, laden.
+
+Erwartet: `BRY:`-Zeile mit Fehler und Zeilennummer. Genau solche Zeilen gibst du später wörtlich
+an den Agenten. Danach `end` wieder einfügen.
+
+</details>
+
+<details>
+<summary><b>Aufräumen, und was später die Skripte tun</b></summary>
 
 **Aufräumen**: nichts nötig. `hello.be` steht nicht in `autoexec.be`; der Upload des Starters
 (`./upload.sh`, macht `BrRestart`) entfernt die App, die Zeile verschwindet. Die Datei darf auf dem
@@ -90,7 +152,7 @@ Ab jetzt erledigen das die Skripte: `upload.sh` = Punkte 1 + 2 (mit `BrRestart` 
 
 </details>
 
-**Weiter:** `RUNBOOK.md` Schritt 7 (Starter aufs Gerät), danach hier bei *Vorbereitung*.
+</details>
 
 ## Vorbereitung (5 min)
 
@@ -159,7 +221,8 @@ Viertelstunde) hinter der Preislinie, eigene Achse links.
 
 ![Ziel Schritt 1: grüne Energie-Balken, kWh-Achse links](docs/steps/schritt_1.png)
 
-### 1.1 Planen lassen
+<details>
+<summary><b>1.1 Planen lassen</b> 🔵</summary>
 
 > **🔵 PLAN** – `Tab`, bis unten `Plan` steht. Prompt einfügen.
 
@@ -188,7 +251,10 @@ Rückbau.
 > `TASMOTA_BERRY_API.md` stehen · Änderungen ausserhalb der Aufgabe. Im plan-Agent bleiben,
 > Vorgabe zitieren, neuen Plan verlangen.
 
-### 1.2 Umsetzen lassen
+</details>
+
+<details>
+<summary><b>1.2 Umsetzen lassen</b> 🟢</summary>
 
 > **🟢 BUILD** – `Tab`, bis unten `Build` steht. Prompt einfügen.
 
@@ -209,7 +275,10 @@ verhindert übersprungene Prüfungen.
 > **⚠️** Agent antwortet nur mit Text: noch plan aktiv, auf build schalten. Aufs Gerät gehört
 > nur `app/spot.be`. Kein `BrRestart`/`Restart` über `brcmd.sh`.
 
-### 1.3 Log lesen, Fehler zurückgeben
+</details>
+
+<details>
+<summary><b>1.3 Log lesen, Fehler zurückgeben</b> 🟢</summary>
 
 Ausgabe von `./log.sh` selbst lesen:
 
@@ -233,7 +302,10 @@ nicht» rät er.
 > **⚠️** `BRY:`-Fehler direkt beim Laden: oft fehlendes `var` (strict mode). Zweimal derselbe
 > Fehler: anhalten, Kursleitung fragen oder Checkpoint nehmen.
 
-### 1.4 Resultat prüfen
+</details>
+
+<details>
+<summary><b>1.4 Resultat prüfen</b></summary>
 
 ```sh
 ./brcmd.sh 'tasmota.cmd("SpotStatus")'            # HeapFree nahe Ausgangswert
@@ -258,7 +330,10 @@ Browser: Seite **neu laden** (sonst fehlen Chart oder Cursor). Erwartet:
 > Summe ≈ «Einspeisung heute»? Stimmt eine Zahl nicht: mit konkreten Werten zurück an den
 > Agenten (🟢 BUILD).
 
-### 1.5 Stand sichern
+</details>
+
+<details>
+<summary><b>1.5 Stand sichern</b></summary>
 
 ```sh
 cp app/spot.be spot_schritt1.be      # oder: git add app/spot.be && git commit -m "Schritt 1"
@@ -267,6 +342,8 @@ cp app/spot.be spot_schritt1.be      # oder: git add app/spot.be && git commit -
 *Warum?* Rückweg, wenn Schritt 2 schiefgeht, und Vergleich per `diff`.
 
 Hängen geblieben? `cp app/steps/spot_1.be app/spot.be && ./upload.sh app/spot.be`
+
+</details>
 
 </details>
 
@@ -280,7 +357,8 @@ Hängen geblieben? `cp app/steps/spot_1.be app/spot.be && ./upload.sh app/spot.b
 
 ![Ziel Schritt 2: orange Balken bei Preis < 0, Bereich unter 0 schattiert](docs/steps/schritt_2.png)
 
-### 2.1 Planen lassen
+<details>
+<summary><b>2.1 Planen lassen</b> 🔵</summary>
 
 > **🔵 PLAN** – zurück auf plan: `Tab`, bis unten `Plan` steht. Prompt einfügen.
 
@@ -301,7 +379,10 @@ prüfen, «mach es orange» nicht.
 > **⚠️ Plan ablehnen bei:** zweiter Balken-Methode statt Farbwahl in `send_bars` · Checkboxen,
 > `<script>`, weiteren Achsen · Prüfung über `SpotPrices` (zeigt nur die nächsten 10 h).
 
-### 2.2 Umsetzen lassen
+</details>
+
+<details>
+<summary><b>2.2 Umsetzen lassen</b> 🟢</summary>
 
 > **🟢 BUILD** – `Tab`, bis unten `Build` steht. Gleicher Prompt wie in Schritt 1.
 
@@ -320,7 +401,10 @@ fehlt.
 > **⚠️ Scope-Creep** («bei der Gelegenheit habe ich auch …»): «nichts anderes ändern»
 > wiederholen, mit `/undo` zurücknehmen.
 
-### 2.3 Log lesen, Fehler zurückgeben
+</details>
+
+<details>
+<summary><b>2.3 Log lesen, Fehler zurückgeben</b> 🟢</summary>
 
 `./log.sh` lesen. Zeile mit `BRY:` oder `SPOT:`-Fehler:
 
@@ -336,7 +420,10 @@ Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
 
 > **⚠️** Zweimal derselbe Fehler: `cp spot_schritt1.be app/spot.be`, neu planen.
 
-### 2.4 Resultat prüfen
+</details>
+
+<details>
+<summary><b>2.4 Resultat prüfen</b></summary>
 
 ```sh
 ./brcmd.sh 'tasmota.cmd("SpotStatus")'            # HeapFree nahe Ausgangswert
@@ -352,13 +439,18 @@ Browser: Seite **neu laden**. Erwartet:
 
 *Warum der `diff`?* Er zeigt, was der Agent wirklich geändert hat, unabhängig von seiner Meldung.
 
-### 2.5 Stand sichern
+</details>
+
+<details>
+<summary><b>2.5 Stand sichern</b></summary>
 
 ```sh
 cp app/spot.be spot_schritt2.be      # oder: git add app/spot.be && git commit -m "Schritt 2"
 ```
 
 Hängen geblieben? `cp app/steps/spot_2.be app/spot.be && ./upload.sh app/spot.be`
+
+</details>
 
 </details>
 
