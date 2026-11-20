@@ -18,69 +18,53 @@ Ablauf pro Durchführung im Ordner [`workshop-instances/`](workshop-instances/):
 
 ## Mitbringen
 
-Eigener gPlug ([gplug.ch](https://gplug.ch)), Notebook (macOS, Linux, Windows mit Ubuntu in WSL) mit Netzteil,
+Eigener gPlug ([gplug.ch](https://gplug.ch)), Notebook (Windows, macOS oder Linux) mit Netzteil,
 USB-Datenkabel. Installiert: [Docker Desktop](https://docs.docker.com/get-started/get-docker/)
-und ein Texteditor. Sonst keine Vorbereitung nötig.
+(Linux auch Docker Engine) und ein Texteditor. Sonst keine Vorbereitung nötig.
 
 ## Einführung
 
 Folien zur Einführung: <https://gplug-ch.github.io/ki-workshop/slides/>
 
-## Vor Ort einrichten
+## Vor Ort einrichten (40 min)
 
-Schritt für Schritt mit erwarteter Ausgabe, je ein Runbook pro System:
-[Windows](RUNBOOK_WINDOWS.md) · [macOS](RUNBOOK_MACOS.md) · [Linux](RUNBOOK_LINUX.md)
-(Übersicht: [`RUNBOOK.md`](RUNBOOK.md)). Kurzfassung:
+Ein Runbook pro System, Schritt für Schritt mit erwarteter Ausgabe. Übersicht:
+[`RUNBOOK.md`](RUNBOOK.md).
 
-1. Workshop-Ordner als ZIP holen, `./docker-run.sh` starten. Lädt
-   beim ersten Mal das fertige Image und startet den Agenten opencode. Zugang zum Sprachmodell
-   ist eingebaut.
-2. gPlug ins Workshop-WLAN, `http://<gplug-ip>` öffnen. Helfer prüfen Firmware und Zeitzone.
-3. IP eintragen und Starter laden:
-   ```sh
-   echo <gplug-ip> > .gplug
-   ./upload.sh app/spot.be app/autoexec.be
-   ./log.sh                                  # erwartet: SPOT: v… geladen, keine BRY:-Fehlermeldung
-   ```
-   Die WebUI zeigt jetzt die Preislinie (Simulator, kein Smart Meter nötig).
+| Notebook | Runbook | Terminal |
+|---|---|---|
+| Windows | [`RUNBOOK_WINDOWS.md`](RUNBOOK_WINDOWS.md) | Ubuntu in WSL (empfohlen) oder PowerShell |
+| macOS | [`RUNBOOK_MACOS.md`](RUNBOOK_MACOS.md) | Terminal |
+| Linux | [`RUNBOOK_LINUX.md`](RUNBOOK_LINUX.md) | beliebig; Einfügen mit Ctrl+Shift+V |
 
-Befehle für Linux, macOS und Ubuntu in WSL. Windows nur mit PowerShell:
-[`RUNBOOK_WINDOWS.md`](RUNBOOK_WINDOWS.md), Variante B.
+Danach läuft der Agent opencode im Docker-Container (Zugang zum Sprachmodell eingebaut, gilt nur
+am Workshop-Tag), der gPlug ist im Workshop-WLAN und zeigt den Starter: die Preislinie eines Tages
+(Simulator, kein Smart Meter nötig).
 
-## Übung (45 min)
+## Übung (65 min)
 
 Ablauf, Prompts und Prüfschritte: [`EXERCISES.md`](EXERCISES.md) ([PDF, A4](docs/EXERCISES.pdf)).
 
-0. Hello World von Hand (`app/hello.be`, nur WebUI, vor dem Starter) — **alle**
-0. Hello World mit opencode (`app/hello_agent.be`, schreibt der Agent) — **alle**
-1. Energie-Balken mit kWh-Achse — **Pflicht**
-2. Negativpreis: Balken orange, Bereich unter 0 schattiert — **Pflicht**
-3. 3 Tage mit Stundenwerten — optional, für Schnelle
-4. Vergütungs-Chart mit Σ — optional, für Schnelle
+| Teil | Schritt | Für wen |
+|---|---|---|
+| A, von Hand | 0 Hello World: `app/hello.be` über die WebUI hochladen und starten (vor dem Starter, Runbook Schritt 6) | alle |
+| B, mit opencode | 0 Hello World: vom Ein-Satz-Prompt zum vollständigen Prompt, der Agent schreibt `app/hello_agent.be` | alle |
+| | 1 Energie-Balken mit kWh-Achse | Pflicht |
+| | 2 Negativpreis: Balken orange, Bereich unter 0 schattiert | Pflicht |
+| | 3 3 Tage mit Stundenwerten | optional, für Schnelle |
+| | 4 Vergütungs-Chart mit Σ | optional, für Schnelle |
+| | 5 2 Tage mit Viertelstunden | optional, für Fortgeschrittene |
 
 Hängen geblieben: Checkpoint des vorigen Schritts `app/steps/spot_N.be` nach `app/spot.be`
 kopieren.
 
 ## Nach dem Workshop
 
-- gPlug zurück ins Heim-WLAN.
-- Am Smart Meter: in `app/spot.be` `"sim": false` setzen und `./upload.sh app/spot.be`.
-- Weiterarbeiten mit eigenem Zugang zum Sprachmodell: [`SETUP_OPENCODE.md`](SETUP_OPENCODE.md),
-  Image lokal bauen mit `./docker-run.sh --build`.
-- Weiterarbeiten ohne KI, nur mit Texteditor und Upload von Hand (Skript oder WebUI):
+- gPlug zurück ins Heim-WLAN, am Smart Meter Simulator ausschalten: Runbook deines Systems,
+  Abschnitt *Nach dem Workshop*.
+- Weiterarbeiten mit eigenem Zugang zum Sprachmodell: [`SETUP_OPENCODE.md`](SETUP_OPENCODE.md).
+- Weiterarbeiten ohne KI, nur mit Texteditor und Upload von Hand:
   [`SETUP_OHNE_KI.md`](SETUP_OHNE_KI.md).
-
-## Wichtige Dateien
-
-- `app/hello.be` – Hello World für Schritt 0, von Hand über die WebUI.
-- `app/hello_agent.be` – Hello World für Schritt 0 mit opencode; legt der Agent an (Musterlösung:
-  `app/steps/hello_agent.be`).
-- `app/spot.be` – die App, an der du arbeitest. `app/steps/` – Checkpoints nach jedem Schritt.
-- `upload.sh`, `brcmd.sh`, `log.sh` – Gerät bedienen (hochladen, Berry-Befehl, Konsole).
-- `AGENTS.md` – Regeln für den Coding-Agenten (liest opencode automatisch).
-- `LEGENDE.md` – Begriffe und Abkürzungen.
-- `RUNBOOK_WINDOWS.md`, `RUNBOOK_MACOS.md`, `RUNBOOK_LINUX.md` – Einrichten vor Ort, pro System.
-  Windows: Ubuntu in WSL (empfohlen) oder PowerShell.
 
 <!-- kursleitung -->
 ## Nur Kursleitung (nicht im Teilnehmer-Repo)
@@ -130,6 +114,9 @@ Konfiguration am Anfang von `app/spot.be` (`spot_cfg`): `sim`, `meter_path`, `da
   über `chart_curves()` und `send_polyline` / `send_bars` (Abschnitt `F3  Chart`).
 - `app/steps/spot_1.be` … `spot_4.be` – Checkpoints; `spot_4.be` = Referenz-App. `spot_5.be` – Schritt 5
   für Fortgeschrittene (2 Tage, Viertelstunden), baut auf `spot_4.be` auf.
+- `app/steps/hello_agent.be` – Musterlösung Schritt 0 mit opencode (Teil B).
+- `RUNBOOK_WINDOWS.md`, `RUNBOOK_MACOS.md`, `RUNBOOK_LINUX.md` – Schritte 2 und 4–6 sind in allen
+  drei gleich; Änderungen dort in allen dreien nachführen.
 - `tools/build_tapp.sh` – `app/steps/spot_4.be` als `dist/spot.tapp` (Smart Meter) und
   `dist/spot-sim.tapp` (Simulator) packen.
 - `tools/make_steps.py` – erzeugt Starter und Checkpoints 1–3 aus `spot_4.be` (ohne Option nur
@@ -150,7 +137,7 @@ Neuladen ohne Neustart: `Br load("spot")` (idempotent).
 - `WORKSHOP_PREP.md` – Zeitplan, KI-Didaktik, Setup vor Ort, Deliverables, Risiken.
 - `DOCKER_ADMIN.md`, `Dockerfile.workshop`, `tools/publish-image.sh`, `tools/delete-image.sh` –
   Workshop-Image mit Key auf ghcr.io veröffentlichen und danach löschen.
-- `REPLY_RFC.md` – Antwort auf das RFC des Veranstalters; `261021-meeting/` – Meeting 21.10.
+- `261021-meeting/` – Meeting 21.10.
 - `mock/` – UI-Mock mit synthetischen Daten, `ui-drafts/` – die drei UI-Entwürfe.
 - `tools/sync_participant.sh` – überträgt den Stand ins Teilnehmer-Repo `gplug-ch/ki-workshop`.
 - `VERSION` – Version der Unterlagen (SemVer). Vor jedem Sync oder Image-Push anheben, als

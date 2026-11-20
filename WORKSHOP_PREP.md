@@ -17,11 +17,10 @@ Hauptthema: **Arbeiten mit einem Coding-Agenten** auf einem Embedded-Gerät. Die
 | 2c | 1:10–1:15 | Starter hochladen (`upload.sh`, entfernt Hello World per `BrRestart`) | `SpotStatus` liefert JSON auf jedem Gerät | |
 | 2d | 1:15–1:25 | Demo Referenz-App: Datenfluss, Grafik (3 Tage, Simulator-Zeitraffer), CSV, Konsole | Verständnis Übungsobjekt | |
 | 2e | 1:25–1:40 | **KI-Einführung**: Kontext zeigen (INTENT, Cheat-Sheet, AGENTS.md), Live-Demo guter vs. schlechter Prompt, Demo „Agent halluziniert API → Kontext fixt es“, Agent testet selbst auf Gerät via `brcmd.sh` | Arbeitszyklus verstanden | |
-| 2f | 1:40–2:25 | **Übung mit Agent**: Schritt 0 Hello World mit opencode (~10 min, mit Ein-Satz-Prompt und Besprechung), Schritt 1 (~20 min) und Schritt 2 (~15 min), kein Puffer (`EXERCISES.md`) | Schritt 2 läuft auf eigenem Gerät | |
-| 3a | 2:25–2:45 | Zeigen: 3–4 Teilnehmende präsentieren Prompt-Verlauf + Ergebnis; was ging schief, was half | Reflexion Methode | |
-| 3b | 2:45–3:00 | Abschluss, gPlug zurück ins Heim-WLAN, Links, Feedback | — | Veranstalter |
+| 2f | 1:40–2:45 | **Übung mit Agent** (65 min): Schritt 0 Hello World mit opencode (~10 min, mit Ein-Satz-Prompt und Besprechung), Schritt 1 (~20 min) und Schritt 2 (~15 min), 20 min Puffer bzw. Schritt 3 für Schnelle (`EXERCISES.md`) | Schritt 2 läuft auf eigenem Gerät | |
+| 3 | 2:45–3:00 | **Abschluss** (15 min): Ergebnisse zeigen (2–3 Teilnehmende, je 3 min: Prompt-Verlauf + Ergebnis; was ging schief, was half), gPlug zurück ins Heim-WLAN, Links, Feedback | Reflexion Methode | Veranstalter |
 
-Der Zeitplan rechnet nur mit Starter, Schritt 0 und den Schritten 1–2. Schritte 3–5 sind optional und nicht eingeplant: wer in 2f früher fertig ist, macht weiter. Puffer ist knapp; Setup (2a–2c) ist der kritische Teil. **Keine Vorab-Mail**: Teilnehmende machen vor dem Kurs nichts ausser den Voraussetzungen in §2. Firmware-Upgrade, Zeitzone und Agent-Setup laufen vor Ort; 2a und 2b nacheinander, in 2b übernehmen Helfer die Geräte.
+Der Zeitplan rechnet nur mit Starter, Schritt 0 und den Schritten 1–2. Schritte 3–5 sind optional und nicht eingeplant: wer in 2f früher fertig ist, macht weiter. 2f hat 20 min Puffer; Setup (2a–2c) ist der kritische Teil. **Keine Vorab-Mail**: Teilnehmende machen vor dem Kurs nichts ausser den Voraussetzungen in §2. Firmware-Upgrade, Zeitzone und Agent-Setup laufen vor Ort; 2a und 2b nacheinander, in 2b übernehmen Helfer die Geräte.
 
 ## 1a. KI-Didaktik
 

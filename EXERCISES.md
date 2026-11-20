@@ -12,7 +12,7 @@ Punkt für Punkt aufklappen (▸).
 **Teil A:** ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte). **Teil B:** zuerst
 dasselbe Hello World **mit opencode** (Schritt 0), dann vom **Starter** (nur Preislinie) zum Zielbild
 `docs/zielbild.jpg`. **Im Zeitplan: Schritt 0 von Hand (~10 min), dann Schritt 0 mit opencode
-(~10 min) und Schritte 1 und 2** (Übungsblock 45 min). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
+(~10 min) und Schritte 1 und 2** (Übungsblock 65 min, davon 20 min Puffer). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
 
 <details>
 <summary>Alle Schritte im Überblick (Tabelle)</summary>
@@ -889,6 +889,8 @@ Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
 </details>
 
 ## Checkliste Abschlussrunde
+
+Ergebnisse zeigen ist Teil des Abschlusses (15 min): 2–3 Teilnehmende zeigen kurz, je ca. 3 min.
 
 - Der Prompt, der funktioniert hat (wörtlich).
 - Der Prompt, der schiefging, und was der Agent daraus gemacht hat.
