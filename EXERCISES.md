@@ -4,7 +4,7 @@
 
 Du übst den **Arbeitszyklus mit dem Agenten**: planen lassen → umsetzen lassen → Log lesen →
 Fehler wörtlich zurückgeben → selbst prüfen. Die Berry-App `app/spot.be` ist nur das
-Übungsobjekt. Von oben nach unten lesen; Schritte lassen sich auf- und zuklappen (▸).
+Übungsobjekt. Vorher machst du den Zyklus einmal von Hand (Schritt 0). Von oben nach unten lesen; Schritte lassen sich auf- und zuklappen (▸).
 
 ## Farbcode: plan oder build
 
@@ -47,10 +47,84 @@ jedem Schritt. Wer hängen bleibt, kopiert selbst den passenden nach `app/spot.b
 
 </details>
 
+## Schritt 0 – Hello World von Hand (alle, ~10 min)
+
+**Ziel:** Du hast den nackten Zyklus einmal von Hand gemacht, bevor Skripte und Agent ihn
+verstecken: **Code schreiben → aufs Gerät laden → laufen lassen → Resultat ansehen → ändern.**
+In der WebUI steht die Zeile «Hallo gPlug».
+
+Nur Texteditor und Tasmota-WebUI, keine Skripte, kein Agent. Kursleitung zeigt es am Beamer
+(3 min), danach alle selbst. Zeitpunkt: `RUNBOOK.md` Schritt 6, vor dem Starter.
+
+<details open>
+<summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
+
+Die App `app/hello.be` (fertig im Workshop-Ordner, im Texteditor öffnen):
+
+```berry
+class Hello
+  var start                       # tasmota.millis() beim Laden
+  def init()
+    self.start = tasmota.millis()
+  end
+  def web_sensor()                # Zeile im Sensorbereich der WebUI
+    var s = (tasmota.millis() - self.start) / 1000
+    tasmota.web_send("{s}Hallo gPlug{m}läuft seit " + str(s) + " s{e}")
+  end
+end
+# ... (alte Instanz entfernen, global.hello = Hello(); siehe Datei)
+tasmota.add_driver(global.hello)  # Tasmota ruft web_sensor() bei jedem Seiten-Refresh
+log("HELLO: Hallo Welt", 2)       # Zeile in der Konsole
+```
+
+Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
+
+1. **Hochladen**: WebUI → *Werkzeuge* (*Tools*) → *Dateisystem verwalten* (*Manage File system*)
+   → Datei `app/hello.be` wählen → hochladen. Erwartet: `hello.be` erscheint in der Dateiliste.
+2. **Laden**: *Werkzeuge* → *Konsole* (*Console*), eingeben:
+   ```
+   Br load("hello")
+   ```
+   Erwartet in der Konsole: `HELLO: Hallo Welt`, danach `RESULT = {"Br":"true"}`. Keine Zeile mit
+   `BRY:` und Fehlermeldung.
+3. **Resultat ansehen**: *Hauptmenü* (*Main Menu*). Erwartet: Zeile **Hallo gPlug**, rechts
+   **läuft seit N s**; die Sekunden zählen bei jedem Refresh (alle paar Sekunden) hoch.
+4. **Ändern, nochmals**: In `app/hello.be` den Text `Hallo gPlug` durch den eigenen Namen ersetzen,
+   speichern, Punkte 1–3 wiederholen (gleicher Dateiname überschreibt). Erwartet: die Zeile zeigt
+   den neuen Text, die Sekunden beginnen bei 0, es bleibt **eine** Zeile (die App ersetzt beim
+   Laden ihre alte Instanz).
+5. Optional, **Fehler ansehen**: ein `end` löschen, hochladen, laden. Erwartet: `BRY:`-Zeile mit
+   Fehler und Zeilennummer. Genau solche Zeilen gibst du später wörtlich an den Agenten. Danach
+   `end` wieder einfügen.
+
+**Aufräumen**: nichts nötig. `hello.be` steht nicht in `autoexec.be`; der Upload des Starters
+(`./upload.sh`, macht `BrRestart`) entfernt die App, die Zeile verschwindet. Die Datei darf auf dem
+Gerät bleiben oder unter *Dateisystem verwalten* gelöscht werden. Sofort ohne Neustart stoppen:
+`Br tasmota.remove_driver(global.hello) global.hello = nil`.
+
+Ab jetzt erledigen das die Skripte: `upload.sh` = Punkte 1 + 2 (mit `BrRestart` statt `load`),
+`log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
+
+</details>
+
+**Weiter:** `RUNBOOK.md` Schritt 7 (Starter aufs Gerät), danach hier bei *Vorbereitung*.
+
+## Vorbereitung (5 min)
+
+Starter ist auf dem Gerät (`RUNBOOK.md` Schritt 7), jetzt beginnt die Arbeit mit dem Agenten.
+
+1. Geräte-IP prüfen (RUNBOOK, Schritt 7.1): `cat .gplug`
+2. Gerät antwortet mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
+   ```sh
+   ./brcmd.sh 'tasmota.cmd("SpotStatus")'
+   ```
+3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
+4. opencode starten: `./docker-run.sh` (ohne Docker: `opencode` im Repo-Ordner).
+
 <details>
 <summary>Starter: was schon da ist</summary>
 
-Ausgangspunkt nach Schritt 0, Stand auch in `app/steps/spot_0.be`.
+Ausgangspunkt für Schritt 1, Stand auch in `app/steps/spot_0.be`.
 
 ![Starter: nur die Preislinie, 1 Tag](docs/steps/schritt_0.png)
 
@@ -74,75 +148,6 @@ Daten vollständig, Darstellung minimal:
   `data-v`) und rechnet die Zeit aus `data-m` (15 oder 60 min). Kein Schritt ändert das Script.
 
 </details>
-
-## Schritt 0 – Hello World von Hand (alle, ~10 min)
-
-Einmal den nackten Zyklus sehen, bevor Skripte und Agent ihn verstecken: **Code schreiben → aufs
-Gerät laden → laufen lassen → Resultat ansehen → ändern, nochmals.** Nur Texteditor und
-Tasmota-WebUI, kein `upload.sh`, `brcmd.sh`, `log.sh`, kein Agent. Kursleitung zeigt es einmal am
-Beamer (3 min), danach alle selbst. Zeitpunkt: nach `RUNBOOK.md` Schritt 5 (Firmware, Zeitzone),
-vor dem Starter (Schritt 7).
-
-<details open>
-<summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
-
-Die App `app/hello.be` (fertig im Workshop-Ordner, im Texteditor öffnen):
-
-```berry
-class Hello
-  var start                       # tasmota.millis() beim Laden
-  def init()
-    self.start = tasmota.millis()
-  end
-  def web_sensor()                # Zeile im Sensorbereich der WebUI
-    var s = (tasmota.millis() - self.start) / 1000
-    tasmota.web_send("{s}Hallo gPlug{m}läuft seit " + str(s) + " s{e}")
-  end
-end
-...
-tasmota.add_driver(global.hello)  # Tasmota ruft web_sensor() bei jedem Seiten-Refresh
-log("HELLO: Hallo Welt", 2)       # Zeile in der Konsole
-```
-
-Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
-
-1. **Hochladen**: WebUI → *Werkzeuge* (*Tools*) → *Dateisystem verwalten* (*Manage File system*)
-   → Datei `app/hello.be` wählen → hochladen. Erwartet: `hello.be` erscheint in der Dateiliste.
-2. **Laden**: *Werkzeuge* → *Konsole* (*Console*), eingeben:
-   ```
-   Br load("hello")
-   ```
-   Erwartet in der Konsole: `HELLO: Hallo Welt`, danach `RESULT = {"Br":"true"}`. Keine Zeile mit
-   `BRY:` und Fehlermeldung.
-3. **Resultat ansehen**: *Hauptmenü* (*Main Menu*). Erwartet: Zeile **Hallo gPlug**, rechts
-   **läuft seit N s**; die Sekunden zählen bei jedem Refresh (alle paar Sekunden) hoch.
-4. **Ändern, nochmals**: In `app/hello.be` den Text `Hallo gPlug` durch den eigenen Namen ersetzen,
-   speichern, Schritte 1–3 wiederholen (gleicher Dateiname überschreibt). Erwartet: die Zeile zeigt
-   den neuen Text, die Sekunden beginnen bei 0, es bleibt **eine** Zeile (die App ersetzt beim
-   Laden ihre alte Instanz).
-5. Optional, **Fehler ansehen**: ein `end` löschen, hochladen, laden. Erwartet: `BRY:`-Zeile mit
-   Fehler und Zeilennummer. Genau solche Zeilen gebt ihr später wörtlich an den Agenten. Danach
-   `end` wieder einfügen.
-
-**Aufräumen**: nichts nötig. `hello.be` steht nicht in `autoexec.be`; der Upload des Starters
-(`./upload.sh`, macht `BrRestart`) entfernt die App, die Zeile verschwindet. Die Datei darf auf dem
-Gerät bleiben oder unter *Dateisystem verwalten* gelöscht werden. Sofort ohne Neustart stoppen:
-`Br tasmota.remove_driver(global.hello) global.hello = nil`.
-
-Ab jetzt erledigen das die Skripte: `upload.sh` = Schritte 1 + 2 (mit `BrRestart` statt `load`),
-`log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
-
-</details>
-
-## Vorbereitung (5 min)
-
-1. Geräte-IP prüfen (RUNBOOK, Schritt 7.1): `cat .gplug`
-2. Gerät antwortet mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
-   ```sh
-   ./brcmd.sh 'tasmota.cmd("SpotStatus")'
-   ```
-3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
-4. opencode starten: `./docker-run.sh` (ohne Docker: `opencode` im Repo-Ordner).
 
 ## Schritt 1 – Energie-Balken (Pflicht, ~20 min)
 
