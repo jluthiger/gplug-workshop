@@ -30,7 +30,7 @@ Fenster freigeben (gilt nur für dieses Fenster), dann erneut starten:
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-## RUNBOOK Schritt 6 und Übung: Geräte-Skripte
+## RUNBOOK Schritt 7 und Übung: Geräte-Skripte
 
 `upload.sh`, `log.sh`, `brcmd.sh` und `echo … > .gplug` laufen nicht in PowerShell. Zuerst die
 Container-Shell öffnen (`.\docker-run.ps1 bash`), dort die Befehle wie in den Unterlagen eingeben.
