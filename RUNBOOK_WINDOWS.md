@@ -35,8 +35,8 @@ Zwei Varianten. Einmal wählen und dabei bleiben:
 | **A** | **Ubuntu in WSL** (empfohlen) | alle; die Befehle der Unterlagen gelten unverändert |
 | **B** | PowerShell | wer kein Ubuntu installieren kann oder will; Geräte-Skripte laufen in der Container-Shell |
 
-In jedem Schritt steht zuerst Variante A. Weicht Variante B ab, folgt ein Block **PowerShell
-(Variante B)**; ohne solchen Block gilt der Schritt für beide.
+In jedem Schritt steht zuerst Variante A. Weicht Variante B ab, folgt ein zugeklappter Block **PowerShell
+(Variante B)**; ohne solchen Block gilt der Schritt für beide. Variante A: diese Blöcke überspringen.
 
 ### Variante A: Ubuntu in WSL (empfohlen)
 
@@ -56,8 +56,13 @@ Alle Befehle ab hier im **Ubuntu**-Fenster.
 
 ### Variante B: PowerShell
 
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
+
 Docker Desktop installieren (mit WSL 2, Standard des Installers). Alle Befehle ab hier in der
 normalen **PowerShell** (Startmenü → *Terminal* oder *PowerShell*), nicht als Administrator.
+
+</details>
 
 ### Docker testen (beide Varianten)
 
@@ -99,7 +104,8 @@ Prüfen, erwartet u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`:
 ls
 ```
 
-**PowerShell (Variante B):**
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
 
 ```powershell
 cd $HOME
@@ -109,6 +115,8 @@ cd ki-workshop
 ```
 
 Mit git: dieselben drei Zeilen wie oben (`cd ~`, `git clone …`, `cd ki-workshop`). Prüfen mit `ls`.
+
+</details>
 
 </details>
 
@@ -152,7 +160,10 @@ Abschnitt *Alternative: Claude-Modelle von Anthropic*.
 
    Prompts aus `EXERCISES.md` kopieren und mit **Ctrl+V** oder Rechtsklick in opencode einfügen.
 
-**PowerShell (Variante B):** statt `./docker-run.sh` überall `.\docker-run.ps1`:
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
+
+Statt `./docker-run.sh` überall `.\docker-run.ps1`:
 
 ```powershell
 .\docker-run.ps1 opencode --version    # Punkt 1
@@ -173,6 +184,8 @@ Fenster freigeben (gilt nur für dieses Fenster), dann erneut starten:
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
+
+</details>
 
 </details>
 
@@ -239,7 +252,10 @@ Schritt entfernt sie wieder.
 <details>
 <summary><b>Schritt 7 – Anleitung</b> (aufklappen)</summary>
 
-**PowerShell (Variante B):** `upload.sh`, `log.sh`, `brcmd.sh` und die Zeile für `.gplug` laufen
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
+
+`upload.sh`, `log.sh`, `brcmd.sh` und die Zeile für `.gplug` laufen
 nicht in PowerShell. Zuerst die Container-Shell öffnen und offen lassen, dort die Befehle der
 Punkte 1–3 unverändert eingeben. Für die Übung ein zweites PowerShell-Fenster für den Agenten
 (`.\docker-run.ps1`) öffnen; der Agent führt die Skripte selbst im Container aus.
@@ -247,6 +263,8 @@ Punkte 1–3 unverändert eingeben. Für die Übung ein zweites PowerShell-Fenst
 ```powershell
 .\docker-run.ps1 bash
 ```
+
+</details>
 
 1. IP eintragen. Die Zeile fragt die IP aus Schritt 4 ab (nur die IP eingeben, z.B. `192.168.1.50`):
    ```sh
@@ -320,6 +338,9 @@ Alles grün: weiter mit [`EXERCISES.md`, Abschnitt *Vorbereitung*](https://githu
 
 ### Eigener Zugang in PowerShell (Variante B)
 
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
+
 Ersetzt in [`SETUP_OPENCODE.md`](SETUP_OPENCODE.md) den Schritt 3 (Variablen setzen). Variante A
 folgt dort den Befehlen für Ubuntu.
 
@@ -347,5 +368,7 @@ Prüfen (zeigt den Token nicht an), erwartet `ID=123456 KEY=True`:
 ```
 
 Windows-Variablen sind in Ubuntu/WSL nicht sichtbar, dort `~/.bashrc` verwenden.
+
+</details>
 
 Weiter zur [Übung (45 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-45-min).
