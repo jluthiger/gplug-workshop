@@ -45,7 +45,7 @@ Nur Texteditor und Browser. Kein opencode, kein Terminal, keine Skripte.
 laden → laufen lassen → Resultat ansehen → ändern.** In der WebUI steht die Zeile «Hallo gPlug».
 
 Kursleitung zeigt es am Beamer (3 min), danach alle selbst. Punkt für Punkt aufklappen. Wenn die
-Zeile steht und aufgeräumt ist, weiter mit `RUNBOOK.md` Schritt 7 (Starter aufs Gerät), danach
+Zeile steht und aufgeräumt ist, weiter mit Schritt 7 im Runbook deines Systems (Starter aufs Gerät), danach
 hier bei *Teil B*.
 
 <details open>
@@ -174,7 +174,7 @@ die App `app/spot.be`.
 
 ## Vorbereitung (5 min)
 
-Der Starter ist auf dem Gerät (`RUNBOOK.md` Schritt 7).
+Der Starter ist auf dem Gerät (Runbook deines Systems, Schritt 7; Übersicht `RUNBOOK.md`).
 
 1. Geräte-IP prüfen (RUNBOOK, Schritt 7.1): `cat .gplug`
 2. Gerät antwortet mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
@@ -182,7 +182,10 @@ Der Starter ist auf dem Gerät (`RUNBOOK.md` Schritt 7).
    ./brcmd.sh 'tasmota.cmd("SpotStatus")'
    ```
 3. WebUI des gPlug im Browser offen lassen (`http://192.168.x.y`).
-4. opencode starten: `./docker-run.sh` (ohne Docker: `opencode` im Repo-Ordner).
+4. opencode starten: `./docker-run.sh` (ohne Docker: `opencode` im Repo-Ordner; Windows mit
+   PowerShell: `.\docker-run.ps1`).
+5. Prompts kopierst du aus diesem Dokument und fügst sie in opencode ein: macOS **Cmd+V**, Windows
+   **Ctrl+V** oder Rechtsklick, Linux **Ctrl+Shift+V** (Ctrl+V fügt im Terminal nichts ein).
 
 <details>
 <summary>Starter: was schon da ist</summary>

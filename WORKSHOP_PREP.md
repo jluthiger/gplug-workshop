@@ -59,7 +59,7 @@ Ausschreibung nennt nur:
 - Software installiert: Docker, Texteditor oder beliebige Entwicklungsumgebung.
 - Optional: eigener Claude-Code-Zugang.
 
-Vor Ort (Block 2a–2c, Anleitung in `RUNBOOK.md`, Repo öffentlich auf GitHub `gplug-ch/ki-workshop`, kein USB-Stick):
+Vor Ort (Block 2a–2c, Anleitung in `RUNBOOK.md` → `RUNBOOK_WINDOWS.md` / `RUNBOOK_MACOS.md` / `RUNBOOK_LINUX.md`, Repo öffentlich auf GitHub `gplug-ch/ki-workshop`, kein USB-Stick):
 
 - [ ] Workshop-Repo holen (ZIP, wer git kennt: `git clone https://github.com/gplug-ch/ki-workshop.git`). Kein Key eintragen: steckt im Image (eigener Claude-Zugang: `SETUP_OPENCODE.md`).
 - [ ] `./docker-run.sh` bzw. `.\docker-run.ps1` lädt das Image beim ersten Start von ghcr.io (~300 MB). Test: `opencode --version` (v2.0.x), erste Frage an den Agenten.
@@ -130,7 +130,7 @@ Hinweise:
 | 6 | `TASMOTA_BERRY_API.md` | Agent-Kontext | Agent baut Übung ohne Halluzination |
 | 7 | `AGENTS.md` | Regeln für opencode.ai: Dateien, Upload-Befehl, Tests, „nie `tasmota.web_send` ausserhalb `web_sensor`“ usw. | Trockenlauf mit Agent |
 | 8 | `upload.sh`, `brcmd.sh`, `log.sh` (+ `.ps1`) | Agent-Werkzeuge: Upload + `BrRestart`, Berry-Ausdruck via `/cm?cmnd=Br`, Konsole lesen | Agent löst Schritt 1 allein, Mensch prüft nur |
-| 9 | `RUNBOOK.md` | Teilnehmer-Schritte **ab Null vor Ort** (Repo klonen, Image bauen, API-Key, WLAN, Firmware-Upload durch Helfer, `Timezone 99`, App hochladen) mit erwarteter Ausgabe pro Schritt (Screenshots) — **Entwurf** (Menünamen vom Gerät .202 übernommen, deutsche WebUI). Offen: Verhalten ohne bekanntes WLAN (AP-Name, `192.168.4.1`, Dauer bis AP) an einem gPlug prüfen; Firmware-Upload durch Helfer: Dateiname auf Stick, bleiben WLAN/Script erhalten (§3); Screenshots | von einer unbeteiligten Person durchgespielt, Block 2a–2c in ≤ 40 min |
+| 9 | `RUNBOOK.md` (Einstieg) und `RUNBOOK_WINDOWS.md`, `RUNBOOK_MACOS.md`, `RUNBOOK_LINUX.md`; Schritte 2 und 4–6 sind in allen drei gleich und müssen bei Änderungen in allen dreien nachgeführt werden | Teilnehmer-Schritte **ab Null vor Ort** (Repo klonen, Image bauen, API-Key, WLAN, Firmware-Upload durch Helfer, `Timezone 99`, App hochladen) mit erwarteter Ausgabe pro Schritt (Screenshots) — **Entwurf** (Menünamen vom Gerät .202 übernommen, deutsche WebUI). Offen: Verhalten ohne bekanntes WLAN (AP-Name, `192.168.4.1`, Dauer bis AP) an einem gPlug prüfen; Firmware-Upload durch Helfer: Dateiname auf Stick, bleiben WLAN/Script erhalten (§3); Screenshots | von einer unbeteiligten Person durchgespielt, Block 2a–2c in ≤ 40 min |
 | 10 | Agent-Setup | Standard: Docker-Image (`Dockerfile`, `docker-run.sh`/`.ps1`, opencode 2.0.32 + berry + git, nur Repo gemountet). Fallback: opencode 2.0 nativ + `opencode.json` (Infomaniak-Provider, Berechtigungen auf Repo + Skripte) — Image vorhanden, auf macOS getestet. Image kommt fertig von `ghcr.io/gplug-ch/ki-workshop:workshop` mit eingebautem Key (siehe Ablauf unten); `docker-run.sh`/`.ps1` laden nur, wenn das Image fehlt, `--build` baut lokal | `docker pull` + erste Agent-Antwort auf Mac, Win, Linux < 10 min |
 | 11 | `EXERCISES.md` | 4 Schritte Starter → Referenz-App mit Prompt-Vorlage, Ergebnis, Prüfschritt — geschrieben; Schritt 5 (2 Tage, Viertelstunden) für Fortgeschrittene ergänzt; Bonus CSV/Shelly | Alle 5 Schritte mit Infomaniak-LLM durchspielen, Zeit pro Schritt messen (Ziel: 1–2 in 35 min) |
 | 12 | Demo-Transkript | 3 Ausschnitte aus Referenz-App-Entwicklung (guter Prompt, Halluzination, Korrektur) | auf Beamer lesbar |
