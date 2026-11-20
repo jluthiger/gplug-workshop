@@ -9,7 +9,8 @@ Darstellung, nie den Datenfluss; bei Fehlern bleibt der Kern der App intakt.
 
 Die Seite ist zum Lesen **von oben nach unten** gebaut: Schritte 1 und 2 führen durch jeden
 Handgriff und erklären das *Warum*. Schritte 3–5 setzen den Ablauf voraus und sind kurz.
-Aufklappbare Zeilen (▸) enthalten Hintergrund, den du beim ersten Durchgang nicht brauchst.
+Jeder Schritt lässt sich auf- und zuklappen (▸): 1 und 2 sind offen, 3–5 zu. Weitere
+aufklappbare Zeilen enthalten Hintergrund, den du beim ersten Durchgang nicht brauchst.
 
 Grundlagen: `AGENTS.md` (Regeln und Werkzeuge, liest der Agent automatisch), `TASMOTA_BERRY_API.md`
 (die Tasmota-API, ohne die der Agent rät), `SETUP_OPENCODE.md` §7 (Arbeitsweise im Agenten).
@@ -31,6 +32,8 @@ ist der häufigste Fehler, darum sind die beiden auf dieser Seite farbig markier
 
 > [!WARNING]
 > **⚠️ Stolperstein** – was an dieser Stelle typischerweise schiefgeht und was du dann tust.
+
+In den Schritten erkennst du die drei am Zeichen am Zeilenanfang: 🔵 PLAN, 🟢 BUILD, ⚠️.
 
 Merkregel: **planen = plan, alles andere = build.** opencode startet im **build**-Agent.
 
@@ -112,6 +115,9 @@ Daten vollständig, Darstellung minimal:
 **Ziel:** Nach diesem Schritt zeigt die App neben dem Preis auch deine Einspeisung. In der WebUI
 siehst du hinter der Preislinie grüne Balken (kWh pro Viertelstunde) mit eigener Achse links.
 
+<details open>
+<summary><b>Schritt 1 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
+
 ![Ziel Schritt 1: grüne Energie-Balken, kWh-Achse links](docs/steps/schritt_1.png)
 
 <details>
@@ -130,7 +136,6 @@ siehst du hinter der Preislinie grüne Balken (kWh pro Viertelstunde) mit eigene
 
 ### 1.1 Planen lassen
 
-> [!NOTE]
 > **🔵 PLAN** – `Tab` drücken, bis unten `Plan` steht. Dann diesen Prompt einfügen und absenden.
 
 ```
@@ -158,7 +163,6 @@ falschen Ansatz erkennst du in einer Minute Lesen; derselbe Fehler im Code koste
 und Rückbau. Der Prompt nennt Erweiterungspunkt und Datenquelle, weil der Agent sonst rät, wo
 und womit er arbeiten soll.
 
-> [!WARNING]
 > **⚠️ Plan ablehnen, wenn er eines davon enthält:**
 >
 > - **Eigene Zeichenschleife** ausserhalb von `send_bars` (der Agent kopiert gern die
@@ -176,7 +180,6 @@ und womit er arbeiten soll.
 
 ### 1.2 Umsetzen lassen
 
-> [!TIP]
 > **🟢 BUILD** – `Tab` drücken, bis unten `Build` steht. Dann diesen Prompt einfügen und absenden.
 
 ```
@@ -195,7 +198,6 @@ opencode fragt vor jedem Shell-Befehl. Einzeln freigeben, und nur diese: `./uplo
 Gerät. Erst was dort mit `HARNESS OK` endet, geht aufs Gerät. Die feste Reihenfolge im Prompt
 verhindert, dass der Agent Prüfungen überspringt und trotzdem «fertig» meldet.
 
-> [!WARNING]
 > **⚠️ Stolpersteine beim Umsetzen**
 >
 > - **Der Agent antwortet nur mit Text und ändert nichts:** es ist noch plan aktiv. Auf build
@@ -219,7 +221,6 @@ Zusammenfassung des Agenten:
 
 Bei einem Fehler:
 
-> [!TIP]
 > **🟢 BUILD** – nicht umschalten. Fehlerzeilen kopieren und mit diesem Prompt zurückgeben.
 
 ```
@@ -232,7 +233,6 @@ Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
 liegt. Ob Berry sie laden konnte, steht nur im Log. **Warum wörtlich?** Meldung und Zeilennummer
 führen den Agenten direkt zur Stelle; aus einer Umschreibung («geht nicht») rät er.
 
-> [!WARNING]
 > **⚠️ Stolpersteine im Log**
 >
 > - **`BRY:`-Fehler mit Zeilennummer direkt beim Laden:** oft ein fehlendes `var` für eine neue
@@ -265,7 +265,6 @@ ersten Laden, sondern erst nach mehreren. Jeder Upload kostet ~1 kB, den erst ei
 zurückgibt; unter 100 kB startet `upload.sh` das Gerät selbst neu. Fällt der Wert stärker als
 das, ist die Änderung schuld.
 
-> [!WARNING]
 > **⚠️ Das Resultat des Agenten kann falsch sein, auch wenn alles «OK» meldet.**
 > `HARNESS OK`, ein sauberes Log und ein Chart mit grünen Balken beweisen nur, dass der Code
 > läuft, **nicht, dass er richtig rechnet**. Der Agent sagt «fertig» genauso überzeugt, wenn die
@@ -283,7 +282,6 @@ das, ist die Änderung schuld.
 > Sockel ≈ 0.075 kWh? Summe ≈ «Einspeisung heute»? Preislinie unverändert wie vorher? Stimmt eine
 > Zahl nicht: Fehler mit konkreten Werten an den Agenten zurückgeben (🟢 BUILD).
 
-> [!WARNING]
 > **⚠️ Chart oder Cursor fehlt nach dem Upload:** Seite neu laden, kein Fehler im Code. Die
 > Seite läuft noch mit dem alten Script (Tasmota ersetzt per AJAX nur den Sensorbereich, das
 > Script lädt nur beim Seitenaufruf). Das Chart kommt vom Handler `/spot.svg` (`page_svg`). Will
@@ -307,10 +305,15 @@ Hängen geblieben? Fertigen Stand von Schritt 1 holen und bei Schritt 2 weiterma
 cp app/steps/spot_1.be app/spot.be && ./upload.sh app/spot.be
 ```
 
+</details>
+
 ## Schritt 2 – Negativpreis hervorheben (Pflicht, ~15 min)
 
 **Ziel:** Nach diesem Schritt zeigt die App, wann Einspeisen Geld kostet. In der WebUI sind die
 Balken orange, wo der Preis unter 0 liegt, und der Bereich unter 0 Rp. ist schattiert.
+
+<details open>
+<summary><b>Schritt 2 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
 
 ![Ziel Schritt 2: orange Balken bei Preis < 0, Bereich unter 0 schattiert](docs/steps/schritt_2.png)
 
@@ -329,7 +332,6 @@ Balken orange, wo der Preis unter 0 liegt, und der Bereich unter 0 Rp. ist schat
 
 ### 2.1 Planen lassen
 
-> [!NOTE]
 > **🔵 PLAN** – zurück auf plan: `Tab` drücken, bis unten `Plan` steht. Prompt einfügen, absenden.
 
 ```
@@ -350,7 +352,6 @@ Plan lesen. Er ist gut, wenn er die Farbe in `send_bars` pro Slot wählt, die Le
 dort, wo der Preis < 0 ist, der Simulator liefert das heute Mittag» schon. Eine kleine Aufgabe
 mit benanntem Testfall ergibt einen Plan, den du in einer Minute beurteilen kannst.
 
-> [!WARNING]
 > **⚠️ Plan ablehnen, wenn er eines davon enthält:**
 >
 > - **Zweite Balken-Methode oder eigene Schleife** für die orangen Balken statt einer Farbwahl
@@ -364,7 +365,6 @@ mit benanntem Testfall ergibt einen Plan, den du in einer Minute beurteilen kann
 
 ### 2.2 Umsetzen lassen
 
-> [!TIP]
 > **🟢 BUILD** – `Tab` drücken, bis unten `Build` steht. Gleicher Prompt wie in Schritt 1.
 
 ```
@@ -383,7 +383,6 @@ Shell-Befehle einzeln freigeben, nur `./upload.sh`, `./log.sh`, `./brcmd.sh`, `b
 Umsetz-Prompt macht die Meldungen des Agenten vergleichbar: du siehst sofort, wenn eine Prüfung
 fehlt.
 
-> [!WARNING]
 > **⚠️ Scope-Creep** («bei der Gelegenheit habe ich auch …»): «nichts anderes ändern»
 > wiederholen, Änderung mit `/undo` zurücknehmen. Antwortet der Agent nur mit Text: noch plan
 > aktiv, auf build schalten.
@@ -394,7 +393,6 @@ fehlt.
 (Zeilennummer!), `SPOT:` = die App hat in einem Callback einen Fehler abgefangen. Keine solche
 Fehlermeldung: weiter bei 2.4. Sonst:
 
-> [!TIP]
 > **🟢 BUILD** – nicht umschalten. Fehlerzeilen wörtlich zurückgeben.
 
 ```
@@ -407,7 +405,6 @@ Behebe nur diesen Fehler, lade neu hoch und lies das Log erneut.
 weiteres um. Dann weisst du nicht mehr, welche Änderung den Fehler behoben oder einen neuen
 gebracht hat.
 
-> [!WARNING]
 > **⚠️ Zweimal derselbe Fehler:** anhalten, Log selbst lesen. Zurück zum gesicherten Stand mit
 > `cp spot_schritt1.be app/spot.be`, dann Schritt 2 mit genauerem Prompt neu planen.
 
@@ -430,7 +427,6 @@ Im Browser: Seite **neu laden**. Erwartet:
 Meldung. Für diesen Schritt sind es wenige Stellen in `F3  Chart`. Viel mehr heisst: der Agent
 hat mehr umgebaut als verlangt.
 
-> [!WARNING]
 > **⚠️ Auch hier selbst nachsehen:** Liegt jeder orange Balken unter einem Stück Preislinie
 > < 0, und kein grüner? Balkenhöhen gleich wie nach Schritt 1 (nur die Farbe ändert)? Chart
 > fehlt nach dem Upload: Seite neu laden.
@@ -448,6 +444,8 @@ schiefgeht, und dieser Stand ist dein Rückweg.
 
 Hängen geblieben? `cp app/steps/spot_2.be app/spot.be && ./upload.sh app/spot.be`
 
+</details>
+
 **Pflichtteil geschafft.** Den Ablauf kennst du jetzt: 🔵 planen → Plan prüfen → 🟢 umsetzen →
 Log lesen → Heap und WebUI prüfen → sichern. Die Schritte 3–5 nennen nur noch, was neu ist.
 
@@ -455,6 +453,9 @@ Log lesen → Heap und WebUI prüfen → sichern. Die Schritte 3–5 nennen nur 
 
 **Ziel:** Nach diesem Schritt zeigt die App den ganzen Speicher statt nur heute. In der WebUI
 siehst du 3 Tage nebeneinander mit Stundenwerten und Tagesnamen («Do 11.06.»).
+
+<details>
+<summary><b>Schritt 3 – Anleitung aufklappen</b></summary>
 
 ![Ziel Schritt 3: 3 Tage mit Stundenwerten und Tagesnamen](docs/steps/schritt_3.png)
 
@@ -474,7 +475,6 @@ jüngste Tag morgen) **mit Stundenwerten** statt einem Tag mit Viertelstunden. V
 - **Heap**: vor und nach der Änderung `tasmota.gc()` + `heap_free` messen, Differenz melden.
   Mehr als 5 kB Einbruch beim Rendern: anhalten.
 
-> [!NOTE]
 > **🔵 PLAN** – `Tab` bis unten `Plan` steht, Prompt einfügen. Plan prüfen: jede geänderte
 > Methode aufgelistet, keine Kopien, Heap-Messung vorher/nachher.
 
@@ -492,7 +492,6 @@ und nach der Änderung (tasmota.gc(), dann heap_free). Liste im Plan jede Method
 änderst, und warum. Noch nichts ändern.
 ```
 
-> [!TIP]
 > **🟢 BUILD** – `Tab` bis unten `Build` steht, dann wie in Schritt 1–2: Prompt «umsetzen» →
 > `./log.sh` lesen, Fehler wörtlich zurück → Heap und WebUI prüfen → sichern mit
 > `cp app/spot.be spot_schritt3.be`.
@@ -539,11 +538,16 @@ diff spot_schritt2.be app/spot.be | head -40      # oder git diff --stat
 
 </details>
 
+</details>
+
 ## Schritt 4 – Vergütungs-Chart (für Schnelle, ~15 min)
 
 **Ziel:** Nach diesem Schritt zeigt die App, was die Einspeisung einbringt. In der WebUI steht
 unter dem Chart ein zweites, flaches Chart «Vergütung CHF/h» mit der Summe Σ über die 3 Tage.
 Damit ist das Zielbild erreicht.
+
+<details>
+<summary><b>Schritt 4 – Anleitung aufklappen</b></summary>
 
 ![Ziel Schritt 4: zweites Chart Vergütung CHF/h mit Summe](docs/steps/schritt_4.png)
 
@@ -559,7 +563,6 @@ x-Achse, mit **Summe Σ über die 3 Tage** oben rechts. Vorgaben:
   unten.
 - Stückweise senden wie das obere Chart (`tasmota.web_send` pro Teil), kein Gesamtstring.
 
-> [!NOTE]
 > **🔵 PLAN** – `Tab` bis unten `Plan` steht, Prompt einfügen. Plan prüfen: nennt er, was er
 > wiederverwendet (`fill_hours`, Zeichenmethoden) und was neu ist?
 
@@ -576,7 +579,6 @@ Sende stückweise mit tasmota.web_send. Nenne im Plan, welche Methoden du wieder
 welche neu sind. Noch nichts ändern.
 ```
 
-> [!TIP]
 > **🟢 BUILD** – `Tab` bis unten `Build` steht, dann wie in Schritt 1–2: Prompt «umsetzen» →
 > `./log.sh` lesen, Fehler wörtlich zurück → Heap und WebUI prüfen → sichern mit
 > `cp app/spot.be spot_schritt4.be`.
@@ -623,12 +625,17 @@ diff spot_schritt3.be app/spot.be | head -40      # oder git diff --stat
 
 </details>
 
+</details>
+
 ## Schritt 5 – 2 Tage mit Viertelstunden (für Fortgeschrittene, ~25 min)
 
 **Ziel:** Nach diesem Schritt zeigt die App die Preise so fein, wie BKW sie publiziert. In der
 WebUI siehst du in beiden Charts 2 Tage mit je 96 Viertelstunden, der Preis als Treppe.
 
 Voraussetzung: Schritt 4 fertig, sonst `cp app/steps/spot_4.be app/spot.be && ./upload.sh app/spot.be`.
+
+<details>
+<summary><b>Schritt 5 – Anleitung aufklappen</b></summary>
 
 <details>
 <summary>Zielbild, Hintergrund und Vorgaben</summary>
@@ -661,7 +668,6 @@ Stundenwerten. Vorgaben:
 
 </details>
 
-> [!NOTE]
 > **🔵 PLAN** – `Tab` bis unten `Plan` steht, Prompt einfügen. Plan prüfen: jede geänderte
 > Methode genannt, Konstanten statt Zahlen, Messung von SVG-Grösse, Laufzeit und Heap.
 
@@ -680,7 +686,6 @@ wie du SVG-Grösse (Desktop-Harness), Laufzeit von fill_values (tasmota.millis()
 Heap misst. Noch nichts ändern.
 ```
 
-> [!TIP]
 > **🟢 BUILD** – `Tab` bis unten `Build` steht, dann wie in Schritt 1–2: Prompt «umsetzen» →
 > `./log.sh` lesen, Fehler wörtlich zurück → Heap und WebUI prüfen → sichern mit
 > `cp app/spot.be spot_schritt5.be`.
@@ -728,6 +733,8 @@ diff spot_schritt4.be app/spot.be | head -40      # oder git diff --stat
 - ⚠️ **Agent meldet keine Messwerte:** nachfragen. Ohne Bytes, ms und Heap ist der Schritt
   nicht fertig.
 - Fertiger Stand zum Vergleich: `app/steps/spot_5.be`.
+
+</details>
 
 </details>
 
