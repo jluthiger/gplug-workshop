@@ -27,6 +27,7 @@ Vor der ersten Änderung lesen, nicht raten:
 |---|---|---|
 | `app/spot.be` | die App | ja |
 | `app/autoexec.be` | lädt `spot` beim Start und bei `BrRestart` | ja, nur bei Bedarf |
+| `app/hello.be` | Schritt 0 «Hello World», machen die Teilnehmenden **von Hand** über die WebUI; nicht ändern, nicht hochladen, nicht in `autoexec.be` | nur von Hand |
 | `app/desktop_harness.be`, `app/persist.be`, `app/path.be`, `app/webserver.be` | Desktop-Test, Stubs | **nie** |
 | `reference/` | `read_sensors`-Beispiele (Zähler-Pfad) | nein |
 | `app/steps/spot_N.be` | fertiger Stand nach Schritt N; nicht ändern, nur der Mensch kopiert einen davon nach `app/spot.be` | nein (nur als `app/spot.be`) |

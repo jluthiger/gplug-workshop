@@ -23,17 +23,19 @@ Gesprächsverlauf bleibt erhalten.
 
 Merkregel: **planen = plan, alles andere = build.** opencode startet im **build**-Agent.
 
-## Überblick: vom Starter zur Referenz-App in 4 Schritten, dazu Schritt 5
+## Überblick: Hello World, dann vom Starter zur Referenz-App in 4 Schritten, dazu Schritt 5
 
-Vom **Starter** (nur Preislinie) zum Zielbild `docs/zielbild.jpg`. **Pflicht: Schritte 1 und 2.**
-3 und 4 für Schnelle, 5 für Fortgeschrittene. Zeitbudget 45 min.
+Zuerst ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte), dann vom **Starter**
+(nur Preislinie) zum Zielbild `docs/zielbild.jpg`. **Im Zeitplan: Schritt 0 (~10 min) und
+Schritte 1 und 2** (Übungsblock 45 min). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
 
 <details>
 <summary>Alle Schritte im Überblick (Tabelle)</summary>
 
 | Schritt | Ziel | Sichtbares Resultat | Lernziel KI |
 |---|---|---|---|
-| 0 Starter | – | Preislinie, 1 Tag, ¼ h | – |
+| 0 Hello World | `app/hello.be` von Hand hochladen und laden | Zeile «Hallo gPlug» in der WebUI, `HELLO:` in der Konsole | – (Zyklus ohne Agent sehen) |
+| Starter | – | Preislinie, 1 Tag, ¼ h | – |
 | 1 Energie-Balken | Einspeisung pro ¼ h als grüne Balken, eigene kWh-Achse links | Solarkurve unter der Preislinie | Kontext geben: Erweiterungspunkt und Datenquelle nennen |
 | 2 Negativpreis | Balken orange bei Preis < 0, Bereich unter 0 Rp. schattiert, Legende | Mittagstief fällt auf | Kleine, prüfbare Aufgabe; Testfall benennen (Sim: Mittagstief < 0) |
 | 3 3 Tage, Stundenwerte | x-Achse 72 h, Tagesnamen, 00/12-Marken; Stunde = Mittel (Preis) bzw. Summe (Energie) | Do–Sa wie im Zielbild | Umbauen statt anbauen; Heap vorher/nachher messen |
@@ -46,7 +48,9 @@ jedem Schritt. Wer hängen bleibt, kopiert selbst den passenden nach `app/spot.b
 </details>
 
 <details>
-<summary>Starter (Schritt 0): was schon da ist</summary>
+<summary>Starter: was schon da ist</summary>
+
+Ausgangspunkt nach Schritt 0, Stand auch in `app/steps/spot_0.be`.
 
 ![Starter: nur die Preislinie, 1 Tag](docs/steps/schritt_0.png)
 
@@ -71,9 +75,68 @@ Daten vollständig, Darstellung minimal:
 
 </details>
 
+## Schritt 0 – Hello World von Hand (alle, ~10 min)
+
+Einmal den nackten Zyklus sehen, bevor Skripte und Agent ihn verstecken: **Code schreiben → aufs
+Gerät laden → laufen lassen → Resultat ansehen → ändern, nochmals.** Nur Texteditor und
+Tasmota-WebUI, kein `upload.sh`, `brcmd.sh`, `log.sh`, kein Agent. Kursleitung zeigt es einmal am
+Beamer (3 min), danach alle selbst. Zeitpunkt: nach `RUNBOOK.md` Schritt 5 (Firmware, Zeitzone),
+vor dem Starter (Schritt 7).
+
+<details open>
+<summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
+
+Die App `app/hello.be` (fertig im Workshop-Ordner, im Texteditor öffnen):
+
+```berry
+class Hello
+  var start                       # tasmota.millis() beim Laden
+  def init()
+    self.start = tasmota.millis()
+  end
+  def web_sensor()                # Zeile im Sensorbereich der WebUI
+    var s = (tasmota.millis() - self.start) / 1000
+    tasmota.web_send("{s}Hallo gPlug{m}läuft seit " + str(s) + " s{e}")
+  end
+end
+...
+tasmota.add_driver(global.hello)  # Tasmota ruft web_sensor() bei jedem Seiten-Refresh
+log("HELLO: Hallo Welt", 2)       # Zeile in der Konsole
+```
+
+Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
+
+1. **Hochladen**: WebUI → *Werkzeuge* (*Tools*) → *Dateisystem verwalten* (*Manage File system*)
+   → Datei `app/hello.be` wählen → hochladen. Erwartet: `hello.be` erscheint in der Dateiliste.
+2. **Laden**: *Werkzeuge* → *Konsole* (*Console*), eingeben:
+   ```
+   Br load("hello")
+   ```
+   Erwartet in der Konsole: `HELLO: Hallo Welt`, danach `RESULT = {"Br":"true"}`. Keine Zeile mit
+   `BRY:` und Fehlermeldung.
+3. **Resultat ansehen**: *Hauptmenü* (*Main Menu*). Erwartet: Zeile **Hallo gPlug**, rechts
+   **läuft seit N s**; die Sekunden zählen bei jedem Refresh (alle paar Sekunden) hoch.
+4. **Ändern, nochmals**: In `app/hello.be` den Text `Hallo gPlug` durch den eigenen Namen ersetzen,
+   speichern, Schritte 1–3 wiederholen (gleicher Dateiname überschreibt). Erwartet: die Zeile zeigt
+   den neuen Text, die Sekunden beginnen bei 0, es bleibt **eine** Zeile (die App ersetzt beim
+   Laden ihre alte Instanz).
+5. Optional, **Fehler ansehen**: ein `end` löschen, hochladen, laden. Erwartet: `BRY:`-Zeile mit
+   Fehler und Zeilennummer. Genau solche Zeilen gebt ihr später wörtlich an den Agenten. Danach
+   `end` wieder einfügen.
+
+**Aufräumen**: nichts nötig. `hello.be` steht nicht in `autoexec.be`; der Upload des Starters
+(`./upload.sh`, macht `BrRestart`) entfernt die App, die Zeile verschwindet. Die Datei darf auf dem
+Gerät bleiben oder unter *Dateisystem verwalten* gelöscht werden. Sofort ohne Neustart stoppen:
+`Br tasmota.remove_driver(global.hello) global.hello = nil`.
+
+Ab jetzt erledigen das die Skripte: `upload.sh` = Schritte 1 + 2 (mit `BrRestart` statt `load`),
+`log.sh` = Konsole lesen, `brcmd.sh` = `Br …` in der Konsole.
+
+</details>
+
 ## Vorbereitung (5 min)
 
-1. Geräte-IP prüfen (RUNBOOK, Schritt 6.1): `cat .gplug`
+1. Geräte-IP prüfen (RUNBOOK, Schritt 7.1): `cat .gplug`
 2. Gerät antwortet mit `"Sim":true`. **`HeapFree` notieren** (Ausgangswert, z.B. 125).
    ```sh
    ./brcmd.sh 'tasmota.cmd("SpotStatus")'

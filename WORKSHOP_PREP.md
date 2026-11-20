@@ -13,14 +13,15 @@ Hauptthema: **Arbeiten mit einem Coding-Agenten** auf einem Embedded-Gerät. Die
 | 1b | 0:15–0:30 | Übersicht Infrastruktur: Docker, Infomaniak, Opencode, gPlug | — | Jürg |
 | 2a | 0:30–0:45 | Notebook: Repo von GitHub (ZIP), Docker-Image laden (`./docker-run.sh`, Key eingebaut), erste Agent-Antwort | Agent antwortet | |
 | 2b | 0:45–1:00 | mit Helfern: gPlug ins Venue-WLAN, Firmware ≥ 15.3.0 per Datei-Upload durch Helfer, `Timezone 99` | `Information` zeigt ≥ 15.3.0, `Time` stimmt | Helfer |
-| 2c | 1:00–1:10 | Starter hochladen (`upload.sh`) | `SpotStatus` liefert JSON auf jedem Gerät | |
-| 2d | 1:10–1:20 | Demo Referenz-App: Datenfluss, Grafik (3 Tage, Simulator-Zeitraffer), CSV, Konsole | Verständnis Übungsobjekt | |
-| 2e | 1:20–1:35 | **KI-Einführung**: Kontext zeigen (INTENT, Cheat-Sheet, AGENTS.md), Live-Demo guter vs. schlechter Prompt, Demo „Agent halluziniert API → Kontext fixt es“, Agent testet selbst auf Gerät via `brcmd.sh` | Arbeitszyklus verstanden | |
-| 2f | 1:35–2:30 | **Übung mit Agent**: Starter → Referenz-App, Schritte 1–2 Pflicht, 3–4 für Schnelle, 5 für Fortgeschrittene (`EXERCISES.md`) | Schritt 2 läuft auf eigenem Gerät | |
-| 3a | 2:30–2:45 | Zeigen: 3–4 Teilnehmende präsentieren Prompt-Verlauf + Ergebnis; was ging schief, was half | Reflexion Methode | |
+| 2c0 | 1:00–1:10 | **Schritt 0 Hello World von Hand** (`EXERCISES.md`): Demo am Beamer 3 min, dann alle selbst: `app/hello.be` über WebUI hochladen, `Br load("hello")`, Text ändern, nochmals. Keine Skripte, kein Agent | «Hallo gPlug» in der WebUI jedes Geräts | Jürg |
+| 2c | 1:10–1:15 | Starter hochladen (`upload.sh`, entfernt Hello World per `BrRestart`) | `SpotStatus` liefert JSON auf jedem Gerät | |
+| 2d | 1:15–1:25 | Demo Referenz-App: Datenfluss, Grafik (3 Tage, Simulator-Zeitraffer), CSV, Konsole | Verständnis Übungsobjekt | |
+| 2e | 1:25–1:40 | **KI-Einführung**: Kontext zeigen (INTENT, Cheat-Sheet, AGENTS.md), Live-Demo guter vs. schlechter Prompt, Demo „Agent halluziniert API → Kontext fixt es“, Agent testet selbst auf Gerät via `brcmd.sh` | Arbeitszyklus verstanden | |
+| 2f | 1:40–2:25 | **Übung mit Agent**: Schritt 1 (~20 min) und Schritt 2 (~15 min), 10 min Puffer (`EXERCISES.md`) | Schritt 2 läuft auf eigenem Gerät | |
+| 3a | 2:25–2:45 | Zeigen: 3–4 Teilnehmende präsentieren Prompt-Verlauf + Ergebnis; was ging schief, was half | Reflexion Methode | |
 | 3b | 2:45–3:00 | Abschluss, gPlug zurück ins Heim-WLAN, Links, Feedback | — | Veranstalter |
 
-Puffer ist knapp; Setup (2a–2c) ist der kritische Teil. **Keine Vorab-Mail**: Teilnehmende machen vor dem Kurs nichts ausser den Voraussetzungen in §2. Firmware-Upgrade, Zeitzone und Agent-Setup laufen vor Ort; 2a und 2b nacheinander, in 2b übernehmen Helfer die Geräte.
+Der Zeitplan rechnet nur mit Starter, Schritt 0 und den Schritten 1–2. Schritte 3–5 sind optional und nicht eingeplant: wer in 2f früher fertig ist, macht weiter. Puffer ist knapp; Setup (2a–2c) ist der kritische Teil. **Keine Vorab-Mail**: Teilnehmende machen vor dem Kurs nichts ausser den Voraussetzungen in §2. Firmware-Upgrade, Zeitzone und Agent-Setup laufen vor Ort; 2a und 2b nacheinander, in 2b übernehmen Helfer die Geräte.
 
 ## 1a. KI-Didaktik
 
@@ -33,6 +34,7 @@ Puffer ist knapp; Setup (2a–2c) ist der kritische Teil. **Keine Vorab-Mail**: 
 
 **Übungsvorlagen** (je mit Prompt-Vorlage, erwartetem Ergebnis, Prüfschritt):
 
+- **Schritt 0 Hello World** (vor dem Starter, ohne Agent): `app/hello.be` von Hand über die WebUI hochladen (*Dateisystem verwalten*) und in der Konsole mit `Br load("hello")` starten, Text ändern, nochmals. Zeigt den Zyklus, den später `upload.sh`/`log.sh`/`brcmd.sh` und der Agent übernehmen. Nicht in `autoexec.be`: der Starter-Upload (`BrRestart`) entfernt es.
 - **Übung: vom Starter zur Referenz-App in 4 Schritten** (Details in `EXERCISES.md`). Starter im Docker-Container zeigt nur die Preislinie (1 Tag, ¼ h); Ziel ist `docs/zielbild.jpg`. Schritte: 1 Energie-Balken mit kWh-Achse, 2 Negativpreis orange + Schattierung, 3 3 Tage mit Stundenwerten, 4 Vergütungs-Chart mit Σ. 1–2 Pflicht, 3–4 für Schnelle; Checkpoints `app/steps/spot_N.be` zum Aufholen. **Schritt 5 für Fortgeschrittene**: 2 Tage mit 192 ¼-h-Werten (gestern + heute, ab Preisen für morgen heute + morgen), Preis als Treppenlinie, Vergütung CHF/¼h; baut auf `spot_4.be` auf. Grund: BKW-Preise unterscheiden sich inzwischen innerhalb der Stunde, das Stundenmittel glättet die Spitzen weg. Probelauf der alten Übung A (Qwen3.5-122B, 30 min, 14 Uploads, dritte Achse/Checkboxen/doppelte Schleife) bleibt Demo-Material für Block 2e.
 - **Bonus** (wer fertig ist): Stunden-CSV mit Aufbewahrung; Schwellwert an Shelly/MQTT.
 
