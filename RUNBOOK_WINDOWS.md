@@ -16,6 +16,7 @@ Anderes System: [macOS](RUNBOOK_MACOS.md), [Linux](RUNBOOK_LINUX.md).
 | 7 | Starter aufs Gerät | 5 min |
 
 Erst Notebook (Schritte 1–3), dann gPlug (4–5) mit Helfern, dann Hello World (6), zuletzt Starter (7).
+Schritt 1 ist offen, 2–7 sind zugeklappt: Anleitung aufklappen (▸), wenn du dort bist; erledigte zuklappen.
 
 ## Was du brauchst
 
@@ -34,8 +35,8 @@ Zwei Varianten. Einmal wählen und dabei bleiben:
 | **A** | **Ubuntu in WSL** (empfohlen) | alle; die Befehle der Unterlagen gelten unverändert |
 | **B** | PowerShell | wer kein Ubuntu installieren kann oder will; Geräte-Skripte laufen in der Container-Shell |
 
-In jedem Schritt steht zuerst Variante A. Weicht Variante B ab, folgt ein Block **PowerShell
-(Variante B)**; ohne solchen Block gilt der Schritt für beide.
+In jedem Schritt steht zuerst Variante A. Weicht Variante B ab, folgt ein zugeklappter Block **PowerShell
+(Variante B)**; ohne solchen Block gilt der Schritt für beide. Variante A: diese Blöcke überspringen.
 
 ### Variante A: Ubuntu in WSL (empfohlen)
 
@@ -55,8 +56,13 @@ Alle Befehle ab hier im **Ubuntu**-Fenster.
 
 ### Variante B: PowerShell
 
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
+
 Docker Desktop installieren (mit WSL 2, Standard des Installers). Alle Befehle ab hier in der
 normalen **PowerShell** (Startmenü → *Terminal* oder *PowerShell*), nicht als Administrator.
+
+</details>
 
 ### Docker testen (beide Varianten)
 
@@ -67,6 +73,9 @@ docker run --rm hello-world
 Notebook zuerst ins Workshop-WLAN, Schritte 1–3 brauchen Internet.
 
 ## 1. Workshop-Ordner herunterladen
+
+<details open>
+<summary><b>Schritt 1 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
 
 ```sh
 cd ~
@@ -95,7 +104,8 @@ Prüfen, erwartet u.a. `RUNBOOK.md`, `EXERCISES.md`, `app`, `docker-run.sh`:
 ls
 ```
 
-**PowerShell (Variante B):**
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
 
 ```powershell
 cd $HOME
@@ -106,13 +116,25 @@ cd ki-workshop
 
 Mit git: dieselben drei Zeilen wie oben (`cd ~`, `git clone …`, `cd ki-workshop`). Prüfen mit `ls`.
 
+</details>
+
+</details>
+
 ## 2. Zugangsdaten für das Sprachmodell
+
+<details>
+<summary><b>Schritt 2 – Anleitung</b> (aufklappen)</summary>
 
 Nichts zu tun: der Workshop-Zugang zu Infomaniak steckt im Docker-Image. Er gilt nur am
 Workshop-Tag. Eigener Zugang (Infomaniak oder Claude): `SETUP_OPENCODE.md`, Schritt 3 bzw.
 Abschnitt *Alternative: Claude-Modelle von Anthropic*.
 
+</details>
+
 ## 3. Docker-Image laden, Agent testen
+
+<details>
+<summary><b>Schritt 3 – Anleitung</b> (aufklappen)</summary>
 
 1. Image laden und opencode prüfen. Beim ersten Mal lädt das Skript das fertige Image von GitHub
    (ca. 300 MB, 1–2 min). Erwartet: `opencode v2.0.32`.
@@ -138,7 +160,10 @@ Abschnitt *Alternative: Claude-Modelle von Anthropic*.
 
    Prompts aus `EXERCISES.md` kopieren und mit **Ctrl+V** oder Rechtsklick in opencode einfügen.
 
-**PowerShell (Variante B):** statt `./docker-run.sh` überall `.\docker-run.ps1`:
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
+
+Statt `./docker-run.sh` überall `.\docker-run.ps1`:
 
 ```powershell
 .\docker-run.ps1 opencode --version    # Punkt 1
@@ -160,7 +185,14 @@ Fenster freigeben (gilt nur für dieses Fenster), dann erneut starten:
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
+</details>
+
+</details>
+
 ## 4. gPlug ins Workshop-WLAN
+
+<details>
+<summary><b>Schritt 4 – Anleitung</b> (aufklappen)</summary>
 
 Das Gerät kennt nur dein Heim-WLAN und findet es hier nicht.
 
@@ -175,7 +207,12 @@ Das Gerät kennt nur dein Heim-WLAN und findet es hier nicht.
 
 Kein gPlug-WLAN sichtbar nach 3 min: Helfer rufen.
 
+</details>
+
 ## 5. Firmware prüfen, Zeitzone
+
+<details>
+<summary><b>Schritt 5 – Anleitung</b> (aufklappen)</summary>
 
 Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
 
@@ -195,7 +232,12 @@ Menünamen wie auf dem gPlug (deutsch), in Klammern englisch.
 
 Die WebUI-Seite offen lassen, du brauchst sie in der Übung.
 
+</details>
+
 ## 6. Hello World von Hand
+
+<details>
+<summary><b>Schritt 6 – Anleitung</b> (aufklappen)</summary>
 
 Eine Mini-App mit dem Texteditor ändern und nur über die WebUI hochladen und starten, ohne Skripte
 und ohne Agent. Anleitung: [`EXERCISES.md`, *Schritt 0 – Hello World von Hand*](EXERCISES.md#schritt-0--hello-world-von-hand-alle-10-min).
@@ -203,9 +245,17 @@ und ohne Agent. Anleitung: [`EXERCISES.md`, *Schritt 0 – Hello World von Hand*
 Erwartet: Zeile **Hallo gPlug** (bzw. dein Text) mit «läuft seit N s» in der WebUI. Der nächste
 Schritt entfernt sie wieder.
 
+</details>
+
 ## 7. Starter aufs Gerät
 
-**PowerShell (Variante B):** `upload.sh`, `log.sh`, `brcmd.sh` und die Zeile für `.gplug` laufen
+<details>
+<summary><b>Schritt 7 – Anleitung</b> (aufklappen)</summary>
+
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
+
+`upload.sh`, `log.sh`, `brcmd.sh` und die Zeile für `.gplug` laufen
 nicht in PowerShell. Zuerst die Container-Shell öffnen und offen lassen, dort die Befehle der
 Punkte 1–3 unverändert eingeben. Für die Übung ein zweites PowerShell-Fenster für den Agenten
 (`.\docker-run.ps1`) öffnen; der Agent führt die Skripte selbst im Container aus.
@@ -213,6 +263,8 @@ Punkte 1–3 unverändert eingeben. Für die Übung ein zweites PowerShell-Fenst
 ```powershell
 .\docker-run.ps1 bash
 ```
+
+</details>
 
 1. IP eintragen. Die Zeile fragt die IP aus Schritt 4 ab (nur die IP eingeben, z.B. `192.168.1.50`):
    ```sh
@@ -245,6 +297,8 @@ Punkte 1–3 unverändert eingeben. Für die Übung ein zweites PowerShell-Fenst
    Erwartet: drei Kopfzeilen (Spotpreis jetzt, Einspeisung heute, Vergütung heute) und ein Chart
    mit der cyan Preislinie über einen Tag. Maus über das Chart: Zeit und Preis erscheinen. Die
    Zeile «Hallo gPlug» aus Schritt 6 ist weg.
+
+</details>
 
 ## Fertig?
 
@@ -284,6 +338,9 @@ Alles grün: weiter mit [`EXERCISES.md`, Abschnitt *Vorbereitung*](https://githu
 
 ### Eigener Zugang in PowerShell (Variante B)
 
+<details>
+<summary><b>PowerShell (Variante B)</b> (aufklappen)</summary>
+
 Ersetzt in [`SETUP_OPENCODE.md`](SETUP_OPENCODE.md) den Schritt 3 (Variablen setzen). Variante A
 folgt dort den Befehlen für Ubuntu.
 
@@ -311,5 +368,7 @@ Prüfen (zeigt den Token nicht an), erwartet `ID=123456 KEY=True`:
 ```
 
 Windows-Variablen sind in Ubuntu/WSL nicht sichtbar, dort `~/.bashrc` verwenden.
+
+</details>
 
 Weiter zur [Übung (45 min)](https://github.com/gplug-ch/ki-workshop/tree/main#%C3%BCbung-45-min).
