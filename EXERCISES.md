@@ -12,7 +12,7 @@ Punkt für Punkt aufklappen (▸).
 **Teil A:** ein Hello World **von Hand** (Schritt 0, ohne Agent und Skripte). **Teil B:** zuerst
 dasselbe Hello World **mit opencode** (Schritt 0), dann vom **Starter** (nur Preislinie) zum Zielbild
 `docs/zielbild.jpg`. **Im Zeitplan: Schritt 0 von Hand (~10 min), dann Schritt 0 mit opencode
-(~5 min) und Schritte 1 und 2** (Übungsblock 45 min). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
+(~10 min) und Schritte 1 und 2** (Übungsblock 45 min). Optional: 3 und 4 für Schnelle, 5 für Fortgeschrittene.
 
 <details>
 <summary>Alle Schritte im Überblick (Tabelle)</summary>
@@ -21,7 +21,7 @@ dasselbe Hello World **mit opencode** (Schritt 0), dann vom **Starter** (nur Pre
 |---|---|---|---|
 | 0 Hello World (Teil A) | `app/hello.be` von Hand hochladen und laden | Zeile «Hallo gPlug» in der WebUI, `HELLO:` in der Konsole | – (Zyklus ohne Agent sehen) |
 | Starter | – | Preislinie, 1 Tag, ¼ h | – |
-| 0 Hello World (Teil B) | `app/hello_agent.be` von opencode schreiben, hochladen und laden lassen | Zeile «Hallo opencode» in der WebUI, `HELLO:` im Log | plan und build unterscheiden; Agent fährt den Zyklus mit den Skripten |
+| 0 Hello World (Teil B) | `app/hello_agent.be` von opencode schreiben, hochladen und laden lassen | Zeile «Hallo opencode» in der WebUI, `HELLO:` im Log | Vom Ein-Satz-Prompt zum vollständigen Prompt: was fehlt, rät der Agent; plan und build unterscheiden |
 | 1 Energie-Balken | Einspeisung pro ¼ h als grüne Balken, eigene kWh-Achse links | Solarkurve unter der Preislinie | Kontext geben: Erweiterungspunkt und Datenquelle nennen |
 | 2 Negativpreis | Balken orange bei Preis < 0, Bereich unter 0 Rp. schattiert, Legende | Mittagstief fällt auf | Kleine, prüfbare Aufgabe; Testfall benennen (Sim: Mittagstief < 0) |
 | 3 3 Tage, Stundenwerte | x-Achse 72 h, Tagesnamen, 00/12-Marken; Stunde = Mittel (Preis) bzw. Summe (Energie) | Do–Sa wie im Zielbild | Umbauen statt anbauen; Heap vorher/nachher messen |
@@ -232,20 +232,73 @@ Gesprächsverlauf bleibt erhalten.
 
 Merkregel: **planen = plan, alles andere = build.** opencode startet im **build**-Agent.
 
-## Schritt 0 – Hello World mit opencode (alle, ~5 min)
+## Schritt 0 – Hello World mit opencode (alle, ~10 min)
 
 **Ziel:** Dasselbe wie in Teil A, aber der Agent schreibt die App und fährt den Zyklus selbst:
 **planen → schreiben → hochladen → laden → Log lesen.** In der WebUI steht die Zeile
-«Hallo opencode». Du lernst die beiden Agenten (plan, build) und die drei Skripte an einer App
-kennen, bei der nichts schiefgehen kann.
+«Hallo opencode». Du beginnst mit einem Prompt aus einem Satz, siehst, was dem Agenten fehlt, und
+schreibst ihn besser. Dabei lernst du die beiden Agenten (plan, build) und die drei Skripte kennen.
 
 <details open>
 <summary><b>Schritt 0 – Anleitung</b> (zuklappen, wenn erledigt)</summary>
 
 <details>
-<summary><b>0.1 Planen lassen</b> 🔵</summary>
+<summary><b>0.1 Einfacher Prompt</b> 🔵</summary>
 
-> **🔵 PLAN** – `Tab`, bis unten `Plan` steht. Prompt einfügen.
+> **🔵 PLAN** – `Tab`, bis unten `Plan` steht. Prompt einfügen, genau so kurz.
+
+```
+Schreibe eine Hello-World-App für den gPlug.
+```
+
+So beginnt fast jeder. Der Agent schreibt einen Plan und ändert nichts (plan-Agent liest nur).
+
+*Warum im plan-Agent?* Der Prompt lässt fast alles offen. Im Plan siehst du gefahrlos, was der
+Agent daraus macht.
+
+</details>
+
+<details>
+<summary><b>0.2 Plan lesen und besprechen</b></summary>
+
+Plan lesen, mit der Nachbarin oder dem Nachbarn vergleichen. Die Pläne unterscheiden sich: der
+Agent musste raten.
+
+- **Datei:** Welche legt er an oder ändert er? `app/hello.be`, `app/spot.be` und
+  `app/autoexec.be` sollen bleiben, wie sie sind.
+- **Resultat:** Wo erscheint «Hello World»: im Log, in der WebUI, oder steht es nicht da?
+- **Aufs Gerät:** Wie lädt er hoch, wie startet er die App? Nach `./upload.sh` ohne
+  `--no-restart` läuft nur, was in `autoexec.be` steht: die Hello-App wäre gleich wieder weg.
+- **Prüfung:** Woran erkennt er, dass es läuft? Liest er das Log?
+- **Erfunden:** Nennt er Funktionen, die nicht in `TASMOTA_BERRY_API.md` stehen?
+
+Ist der Plan trotzdem brauchbar: Woher wusste der Agent das? (opencode liest `AGENTS.md` von
+selbst; der Rest war Glück oder geraten.)
+
+*Warum besprechen?* Was im Prompt fehlt, füllt der Agent mit Annahmen. Die Lücken im Plan zeigen
+dir, was in einen Prompt gehört.
+
+</details>
+
+<details>
+<summary><b>0.3 Prompt verbessern</b> 🔵</summary>
+
+> **🔵 PLAN** – nicht umschalten. Eigenen Prompt schreiben, der die Lücken aus 0.2 schliesst.
+
+In einen guten Prompt gehört:
+
+1. **Kontext:** was der Agent zuerst lesen soll (`@AGENTS.md`, `@TASMOTA_BERRY_API.md`, Vorlage
+   `@app/hello.be`).
+2. **Aufgabe:** neue Datei `app/hello_agent.be` (nur diese erlaubt `AGENTS.md` dem Agenten).
+3. **Sichtbares Resultat:** Zeile in der WebUI, links «Hallo opencode», rechts «Heap frei N kB»;
+   beim Laden `HELLO: Hallo vom Agenten` im Log.
+4. **Grenzen:** `hello.be`, `spot.be`, `autoexec.be` nicht ändern; nochmals laden ersetzt die
+   alte Instanz.
+5. **Prüfung:** `./upload.sh --no-restart`, `./brcmd.sh 'load("hello_agent")'`, `./log.sh`.
+6. **Noch nichts ändern**, nur Plan.
+
+<details>
+<summary>Beispiel eines vollständigen Prompts (erst nach dem eigenen Versuch aufklappen)</summary>
 
 ```
 Lies @AGENTS.md, @TASMOTA_BERRY_API.md und als Vorlage @app/hello.be.
@@ -262,6 +315,10 @@ Schreibe einen Plan: Inhalt der Datei und wie du das Ergebnis prüfst (upload.sh
 brcmd.sh, log.sh). Noch nichts ändern.
 ```
 
+</details>
+
+Neuen Plan mit dem aus 0.1 vergleichen: Was ist jetzt festgelegt, was rät der Agent noch?
+
 *Warum zuerst planen?* Der Plan zeigt, ob der Agent Vorlage und Regeln gelesen hat, bevor er etwas anfasst.
 
 > **⚠️ Plan ablehnen bei:** Änderungen an `hello.be`, `spot.be` oder `autoexec.be` · `BrRestart`
@@ -270,7 +327,7 @@ brcmd.sh, log.sh). Noch nichts ändern.
 </details>
 
 <details>
-<summary><b>0.2 Umsetzen lassen</b> 🟢</summary>
+<summary><b>0.4 Umsetzen lassen</b> 🟢</summary>
 
 > **🟢 BUILD** – `Tab`, bis unten `Build` steht. Prompt einfügen.
 
@@ -294,7 +351,7 @@ mit `load("hello_agent")` starten, wie in Teil A mit `Br load("hello")`.
 </details>
 
 <details>
-<summary><b>0.3 Log lesen, Resultat prüfen</b></summary>
+<summary><b>0.5 Log lesen, Resultat prüfen</b></summary>
 
 Ausgabe von `./log.sh` selbst lesen. Erwartet: `HELLO: Hallo vom Agenten`, keine Zeile mit
 `BRY:`. Bei einem Fehler die Zeilen wörtlich zurückgeben (🟢 BUILD):
@@ -314,7 +371,7 @@ Agent übernommen, was ist neu?
 </details>
 
 <details>
-<summary><b>0.4 Aufräumen</b></summary>
+<summary><b>0.6 Aufräumen</b></summary>
 
 ```sh
 ./brcmd.sh 'tasmota.remove_driver(global.hello_agent) global.hello_agent = nil'
@@ -324,7 +381,7 @@ Erwartet: die Zeile «Hallo opencode» ist weg. Ohne Aufräumen entfernt sie der
 Schritt 1 (`BrRestart`).
 
 Hängen geblieben? `cp app/steps/hello_agent.be app/hello_agent.be`, dann die Befehle 2–4 aus
-0.2 selbst im Terminal.
+0.4 selbst im Terminal.
 
 </details>
 
