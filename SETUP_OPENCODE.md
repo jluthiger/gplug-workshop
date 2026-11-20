@@ -6,7 +6,7 @@ Open-Source-Modell von [Infomaniak AI Services](https://www.infomaniak.com/en/ho
 Zugang steckt dann im Docker-Image. Zeitbedarf ca. 15 min.
 
 Befehle für Linux, macOS und Ubuntu in WSL. Windows mit PowerShell:
-[`WINDOWS_POWERSHELL.md`](WINDOWS_POWERSHELL.md).
+[`RUNBOOK_WINDOWS.md`](RUNBOOK_WINDOWS.md), Variante B und Abschnitt *Eigener Zugang in PowerShell*.
 
 ## 1. Infomaniak AI Tools aktivieren
 
@@ -52,8 +52,8 @@ echo "ID=$INFOMANIAK_PRODUCT_ID KEY=${INFOMANIAK_API_KEY:+gesetzt}"
 
 ## 4. opencode starten
 
-**Standard: Docker.** Der Agent sieht nur den Workshop-Ordner. Docker einrichten: `RUNBOOK.md`,
-*Was du brauchst*. Im Workshop-Ordner:
+**Standard: Docker.** Der Agent sieht nur den Workshop-Ordner. Docker einrichten: Runbook deines
+Systems (`RUNBOOK.md`), *Was du brauchst*. Im Workshop-Ordner:
 
 ```sh
 ./docker-run.sh             # opencode im Container

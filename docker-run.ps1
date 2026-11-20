@@ -29,7 +29,7 @@ if ($rest.Count -gt 0 -and $rest[0] -eq "--build") {
     }
     $Image = $Base
     if (-not $env:INFOMANIAK_API_KEY) {
-      Write-Host "HINWEIS: Basis-Image ohne Infomaniak-Zugang, eigenen setzen: WINDOWS_POWERSHELL.md"
+      Write-Host "HINWEIS: Basis-Image ohne Infomaniak-Zugang, eigenen setzen: RUNBOOK_WINDOWS.md, Eigener Zugang in PowerShell"
     }
   }
 }

@@ -28,7 +28,9 @@ Folien zur Einführung: <https://gplug-ch.github.io/ki-workshop/slides/>
 
 ## Vor Ort einrichten
 
-Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfassung:
+Schritt für Schritt mit erwarteter Ausgabe, je ein Runbook pro System:
+[Windows](RUNBOOK_WINDOWS.md) · [macOS](RUNBOOK_MACOS.md) · [Linux](RUNBOOK_LINUX.md)
+(Übersicht: [`RUNBOOK.md`](RUNBOOK.md)). Kurzfassung:
 
 1. Workshop-Ordner als ZIP holen, `./docker-run.sh` starten. Lädt
    beim ersten Mal das fertige Image und startet den Agenten opencode. Zugang zum Sprachmodell
@@ -43,7 +45,7 @@ Schritt für Schritt mit erwarteter Ausgabe: [`RUNBOOK.md`](RUNBOOK.md). Kurzfas
    Die WebUI zeigt jetzt die Preislinie (Simulator, kein Smart Meter nötig).
 
 Befehle für Linux, macOS und Ubuntu in WSL. Windows nur mit PowerShell:
-[`WINDOWS_POWERSHELL.md`](WINDOWS_POWERSHELL.md).
+[`RUNBOOK_WINDOWS.md`](RUNBOOK_WINDOWS.md), Variante B.
 
 ## Übung (45 min)
 
@@ -77,7 +79,8 @@ kopieren.
 - `upload.sh`, `brcmd.sh`, `log.sh` – Gerät bedienen (hochladen, Berry-Befehl, Konsole).
 - `AGENTS.md` – Regeln für den Coding-Agenten (liest opencode automatisch).
 - `LEGENDE.md` – Begriffe und Abkürzungen.
-- `WINDOWS_POWERSHELL.md` – Abweichungen für Windows ohne Ubuntu.
+- `RUNBOOK_WINDOWS.md`, `RUNBOOK_MACOS.md`, `RUNBOOK_LINUX.md` – Einrichten vor Ort, pro System.
+  Windows: Ubuntu in WSL (empfohlen) oder PowerShell.
 
 <!-- kursleitung -->
 ## Nur Kursleitung (nicht im Teilnehmer-Repo)

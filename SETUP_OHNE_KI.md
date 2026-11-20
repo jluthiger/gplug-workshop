@@ -4,7 +4,7 @@ Für die Arbeit nach dem Workshop: die App `app/spot.be` (oder eine eigene) mit 
 ändern und von Hand auf den gPlug laden. Kein Sprachmodell, kein Zugang nötig. Zeitbedarf ca. 5 min.
 
 Befehle für Linux, macOS und Ubuntu in WSL. Windows mit PowerShell:
-[`WINDOWS_POWERSHELL.md`](WINDOWS_POWERSHELL.md) (Skripte in der Container-Shell
+[`RUNBOOK_WINDOWS.md`](RUNBOOK_WINDOWS.md), Variante B (Skripte in der Container-Shell
 `.\docker-run.ps1 bash`).
 
 ## 1. Was du brauchst
