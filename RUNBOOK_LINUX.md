@@ -129,6 +129,13 @@ Abschnitt *Alternative: Claude-Modelle von Anthropic*.
 <details>
 <summary><b>Schritt 4 – Anleitung</b> (aufklappen)</summary>
 
+Zwei Wege, wähle einen:
+
+- **A: gPlug mitgebracht** – er kommt ins Workshop-WLAN (Standard).
+- **B: gPlug bleibt zu Hause** – du erreichst ihn über ein VPN ins Heimnetz (z.B. WireGuard).
+
+### A: gPlug mitgebracht
+
 Das Gerät kennt nur dein Heim-WLAN und findet es hier nicht.
 
 1. gPlug per USB-Kabel am Notebook oder Netzteil einstecken, 1–2 min warten.
@@ -141,6 +148,37 @@ Das Gerät kennt nur dein Heim-WLAN und findet es hier nicht.
    Erwartet: Tasmota-Startseite des gPlug.
 
 Kein gPlug-WLAN sichtbar nach 3 min: Helfer rufen.
+
+### B: gPlug zu Hause, Zugriff per VPN
+
+Nur wenn zu Hause vorbereitet und getestet, sonst Variante A.
+
+Zu Hause vorbereiten:
+
+- gPlug läuft im Heim-WLAN mit fester IP (im Router reservieren). IP notieren, sie kommt in
+  Schritt 7 in `.gplug`.
+- VPN ins Heimnetz auf dem Notebook eingerichtet (z.B. WireGuard auf dem Router). Das Heimnetz muss
+  im Tunnel sein (WireGuard: `AllowedIPs` enthält z.B. `192.168.1.0/24`); ein Split-Tunnel reicht.
+- Testen aus einem fremden Netz (z.B. Handy-Hotspot): VPN an, `http://<gplug-ip>` im Browser zeigt
+  die Tasmota-Startseite.
+
+Vor Ort:
+
+1. Notebook im Workshop-WLAN, VPN verbinden (z.B. `sudo wg-quick up <tunnel>` oder über den Netzwerk-Manager).
+2. Im Browser `http://<gplug-ip>` (Heimnetz-IP) öffnen.
+
+   Erwartet: Tasmota-Startseite des gPlug.
+
+Docker und die Skripte (`upload.sh`, `brcmd.sh`, `log.sh`) laufen über das VPN des Notebooks,
+nichts weiter einzustellen. VPN während der ganzen Übung verbunden lassen. Der Simulator bleibt an
+(`"sim": true`), auch wenn der gPlug am Zähler hängt. Nach dem Workshop entfällt die Rückkehr ins
+Heim-WLAN.
+
+| Symptom | Lösung |
+|---|---|
+| VPN verbindet nicht | Workshop-WLAN sperrt den VPN-Port (WireGuard: UDP): Handy-Hotspot versuchen, sonst Helfer rufen |
+| VPN verbunden, gPlug nicht erreichbar | Heimnetz und Workshop-WLAN im gleichen Adressbereich (z.B. beide `192.168.1.x`): Helfer rufen |
+| Skripte melden `FEHLER: http://… nicht erreichbar` | VPN getrennt: neu verbinden, Befehl wiederholen |
 
 </details>
 
@@ -242,7 +280,7 @@ Alles grün: weiter mit [`EXERCISES.md`, Abschnitt *Vorbereitung*](https://githu
 | Image-Download bricht ab | `./docker-run.sh bash` erneut; WLAN prüfen; Helfer rufen |
 | `Permission denied` bei `./upload.sh` | `chmod +x *.sh` |
 | `WARNUNG: INFOMANIAK_PRODUCT_ID … nicht gesetzt` / `method_not_found` | Helfer rufen (Workshop-Image fehlt?) |
-| `FEHLER: http://… nicht erreichbar` | IP in `.gplug` falsch, oder Notebook nicht im Workshop-WLAN |
+| `FEHLER: http://… nicht erreichbar` | IP in `.gplug` falsch, Notebook nicht im Workshop-WLAN, oder VPN getrennt (Schritt 4 B) |
 | Upload meldet `Nicht genug Speicherplatz` | `./upload.sh` erneut ausführen |
 | `!! heap_free … < 100 kB: Gerät wird neu gestartet` | normal, das Skript wartet selbst (ca. 20 s) |
 | Chart fehlt, Uhrzeit falsch | `Timezone 99` vergessen, Schritt 5.2 |
